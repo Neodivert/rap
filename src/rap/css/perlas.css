@@ -1,0 +1,75 @@
+/* Estilos relacionados con las perlas */
+
+/*                                 Perlas ya subidas                         */
+/*****************************************************************************/
+
+.perla h1
+{
+	margin-bottom:5px;
+	font-size:22px;
+	color:#61380B;
+	margin-top:20px;
+}
+
+.cuerpo_perla
+{
+	border-top-style:solid;
+	border-top-width:2px;
+	border-top-color:#086A87;
+
+	border-bottom-style:solid;
+	border-bottom-width:2px;
+	border-bottom-color:#086A87;
+}
+
+.cuerpo_perla p
+{
+	font-size:16px;
+	color:#61380B;
+	text-align:justify;
+}
+
+.subtexto
+{
+	font-size:14px;
+}
+
+
+/*                Formulario de subida/actualización de perlas               */
+/*****************************************************************************/
+
+textarea, #titulo_perla, #fecha_perla
+{
+	width:100%;
+}
+
+textarea
+{
+	resize:none;
+	height:400px;
+}
+
+
+/*                 Selección de páginas en el "libro" de perlas              */
+/*****************************************************************************/
+
+#seleccion_paginas, #seleccion_paginas a
+{
+	margin-top:25px;
+	text-align:center;
+}
+
+#seleccion_paginas a
+{
+	text-decoration:none;
+	font-size:20px;
+	color:#FFFFFF;
+
+	padding:5px;
+	background-color:#CA9100;
+}
+
+#seleccion_paginas a:hover
+{
+	background-color:#F2D386;
+}

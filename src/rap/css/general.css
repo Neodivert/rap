@@ -1,0 +1,102 @@
+/* Estilos comunes a todas las páginas */
+
+/*                                  Contenedores                             */
+/*****************************************************************************/
+
+body
+{
+	/* background-color:#086A87; */
+	background-color:#F4E7B8;
+}
+
+#logo_index
+{
+	display:block;
+	margin-left:auto;
+  	margin-right:auto;
+}
+
+#contenedor
+{
+	background-color:#FFFFFF;
+	width:1024px;
+
+	margin-left:auto;
+  	margin-right:auto;
+
+	border-style:solid;
+	border-width:2px;
+	border-color:black;
+}
+
+#visor
+{
+	background-color:#FFFFFF;
+
+	padding:10px;
+}
+
+
+/*                         Menú horizontal de secciones.                     */
+/*****************************************************************************/
+/* Obtenido de http://www.w3schools.com/css/css_navbar.asp */
+
+.menu
+{
+	font-size:18px;
+	display:block;
+	float:left;
+	width:30%;
+
+	list-style-type:none;
+	margin:10px;
+	padding:0px;
+
+	border-width:2px;
+	border-style:solid;
+	border-color:#000000;
+}
+
+.menu lh
+{
+	text-align:center;
+
+	font-weight:bold;
+	display:block;
+	background-color:#F4E7B8;
+
+	border-bottom-width:2px;
+	border-bottom-style:solid;
+	border-bottom-color:#000000;
+}
+
+.menu li
+{
+	padding-left:5px;
+	padding-right:5px;
+}
+
+.menu a
+{
+	display:block;
+	text-decoration:none;
+
+	color:#000000;
+}
+
+.menu a:hover
+{
+	background-color:#FBF8E4;
+}
+
+
+/*                                     Barras                                */
+/*****************************************************************************/
+
+.barra
+{
+	text-align:center;
+	padding:5px;
+}
+
+

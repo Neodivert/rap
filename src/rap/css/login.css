@@ -1,0 +1,24 @@
+/* Estilos del login (index.php) */
+
+body
+{
+	/*background-color:#FCFFF0; */
+	background-color:#FFFFF2;
+}
+
+#panel_login
+{
+	background-color:#FFFFFF;
+	text-align:center;
+	width:250px;
+
+	border-style:solid;
+	border-width:3px;
+	border-color:#7b0000;
+
+	padding:10px;
+
+	margin-top:10px;
+	margin-left:auto;
+  	margin-right:auto;
+}
