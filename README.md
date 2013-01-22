@@ -5,7 +5,7 @@ Este repositorio contiene todo el código necesario para montar una RAP privada 
 
 Importante
 ===
-- He intentado instalar la RAP siguiendo las instrucciones de abajo, pero xampp (y más concretamente phpmyadmin) no parece por la labor. En cuanto tenga tiempo lo corregiré.
+- La guía de instalación siguiente puede contener errores (al principio xampp no estaba por la labor de funcionar y fui tocando por aquí y por allá, por lo que pude haber olvidado algo). Si encuentras algún problema, no dudes en consultarme.
 
 Instalación
 ===
@@ -21,3 +21,4 @@ SERVER_ROOT/lib
 SERVER_ROOT/rap
     - Si se ha instalado xampp, la carpeta del servidor será <ruta_instalacion_xampp>/htdocs/.
 - Reiniciar el servidor para que los cambios surtan efecto.
+- Si se trabaja en local, al intentar acceder a "localhost/phpmyadmin" puede surgir un mensaje de error del tipo "Acceso prohibido! XAMPP nuevo concepto de seguridad: ...". Este "error" lo solucioné en mi caso siguiendo las indicaciones del siguiente enlace: http://stackoverflow.com/questions/11630412/phpmyadmin-xampp-error
