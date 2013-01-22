@@ -89,6 +89,31 @@ body
 	background-color:#FBF8E4;
 }
 
+.titulo_seccion {
+	border-width:2px;
+	border-style:solid;
+	background-color:#F4E7B8;
+}
+
+.galeria
+{
+	overflow: hidden;
+   width: 100%;
+}
+
+.div_avatar {
+	margin-left:5px;
+	display: inline-block
+	text-align:center;
+	float:left;
+}
+
+.avatar {
+	border-width:2px;
+	border-style:solid;
+	border-color:black;
+}
+
 
 /*                                     Barras                                */
 /*****************************************************************************/

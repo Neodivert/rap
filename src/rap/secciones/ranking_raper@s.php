@@ -12,14 +12,19 @@
 
 	foreach( $tops as $top ){
 		echo "<h2>{$top[0]}</h2>";
-		echo '<ul>';
+		//echo '<ul>';
+		echo '<div class="galeria">';
 		$usuarios = call_user_func_array( $top[1], $top[2] );
 		while( $usuario = $usuarios->fetch_assoc() ){
-			echo '<li>';
-			echo "<strong>{$usuario['nombre']}</strong> ({$usuario['n']})";
-			echo '</li>';
+			MostrarAvatar( $usuario['nombre'], $usuario['n'] );
+			
+			//echo '<li>';
+			//echo "<strong>{$usuario['nombre']}</strong> ({$usuario['n']})";
+			//echo '</li>';
+			
 		}
-		echo '</ul>';
+		echo '</div>';
+		//echo '</ul>';
 	}
 
 
@@ -50,14 +55,19 @@
 		echo "</tr><tr>";
 		foreach( $tops as $top ){
 			echo "<td>";
+
+			//echo '<div class="galeria">';
 			echo '<ul>';
 			$usuarios = call_user_func_array( $top[1], array( 5, $mes, $anno ) );
 			while( $usuario = $usuarios->fetch_assoc() ){
+				//MostrarAvatar( $usuario['nombre'], $usuario['n'] );
+				
 				echo '<li>';
 				echo "<strong>{$usuario['nombre']}</strong> ({$usuario['n']})";
 				echo '</li>';
 			}
 			echo '</ul>';
+			//echo '</div>';
 			echo '</td>';
 		}
 		echo "</tr>";

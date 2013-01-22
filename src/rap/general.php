@@ -44,6 +44,7 @@
 		<script type="text/javascript" src="js/md5.js"></script> 
 		<script type="text/javascript" src="js/usuarios.js"></script> 
 		<script type="text/javascript" src="js/perlas.js"></script> 
+		<script type="text/javascript" src="js/utilidades.js"></script> 
 		<link rel="stylesheet" type="text/css" href="css/general.css" />
 		<link rel="stylesheet" type="text/css" href="css/perlas.css" />
 		<link rel="stylesheet" type="text/css" href="css/comentarios.css" />

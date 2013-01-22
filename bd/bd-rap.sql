@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 192.168.3.47
--- Tiempo de generación: 25-12-2012 a las 01:00:16
+-- Tiempo de generación: 22-01-2013 a las 20:15:10
 -- Versión del servidor: 5.1.54-log
 -- Versión de PHP: 5.3.3-7+squeeze13
 
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `categorias` (
   `num_perlas` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nombre` (`nombre`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=19 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=20 ;
 
 -- --------------------------------------------------------
 
@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS `perlas` (
   KEY `subidor` (`subidor`),
   KEY `modificador` (`modificador`),
   KEY `nota_acumulada` (`nota_acumulada`,`num_comentarios`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=149 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=150 ;
 
 --
 -- Disparadores `perlas`
@@ -143,6 +143,16 @@ DELIMITER //
 CREATE TRIGGER `nueva_perla` AFTER INSERT ON `perlas`
  FOR EACH ROW BEGIN
     INSERT INTO logros (usuario, mes, anno, num_perlas) VALUES( NEW.subidor, MONTH( NEW.fecha_subida ), YEAR( NEW.fecha_subida ), 1 ) ON DUPLICATE KEY UPDATE num_perlas = num_perlas + 1;
+	 UPDATE categorias SET num_perlas = num_perlas + 1 WHERE categorias.id = NEW.categoria;
+  END
+//
+DELIMITER ;
+DROP TRIGGER IF EXISTS `perla_actualizada`;
+DELIMITER //
+CREATE TRIGGER `perla_actualizada` AFTER UPDATE ON `perlas`
+ FOR EACH ROW BEGIN
+	 UPDATE categorias SET num_perlas = num_perlas - 1 WHERE categorias.id = OLD.categoria;
+	 UPDATE categorias SET num_perlas = num_perlas + 1 WHERE categorias.id = NEW.categoria;
   END
 //
 DELIMITER ;
@@ -151,6 +161,7 @@ DELIMITER //
 CREATE TRIGGER `perla_borrada` AFTER DELETE ON `perlas`
  FOR EACH ROW BEGIN
     UPDATE logros SET num_perlas = num_perlas - 1 WHERE logros.usuario = OLD.subidor AND logros.mes = MONTH( OLD.fecha_subida ) AND logros.anno = YEAR( OLD.fecha_subida );
+	 UPDATE categorias SET num_perlas = num_perlas - 1 WHERE categorias.id = OLD.categoria;
   END
 //
 DELIMITER ;

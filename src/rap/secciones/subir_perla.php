@@ -33,11 +33,14 @@
 				&& !isset( $_POST['borrar_imagen'] )
 				&& file_exists( 'media/perlas/' . $_POST['modificar'] )
 			)
-		)
+		){
 			$perla['perla_visual'] = true;
-		else
+		}else{
 			$perla['perla_visual'] = false;
-		
+		}
+
+		// Nueva categoria.
+		$perla['nueva_categoria'] = $_POST['nueva_categoria'];
 		
 		// Fecha de subida.
 		$perla['fecha_subida'] = date("Y/m/d");
@@ -78,7 +81,7 @@
 			// Vamos a insertar una perla nueva.
 			try{
 				InsertarPerla( $perla );
-				SumarPerla( $perla['categoria'] );
+				//SumarPerla( $perla['categoria'] );
 				die( 'Perla subida correctamente' );
 			}catch( Exception $e ){
 				die( $e->getMessage() );
@@ -172,8 +175,13 @@
 		$categorias->close();
 	?>
 	</select>
-	</p>
+	
 
+	<!-- <p id="p_nueva_categoria"> -->
+	<label for="nueva_categoria">---> O introduce una nueva categor&iacute;a: </label>
+	<input type="text" name="nueva_categoria" id="nueva_categoria" value="" />
+	<!-- </p> -->
+	</p>
 	<!-- Imagen (solo perlas visuales) -->
 	<?php
 		if( $perla['perla_visual'] ){
@@ -181,7 +189,7 @@
 			echo '<input type="checkbox" name="borrar_imagen" value="" />Borrar imagen<br />';
 		}
 	?>
-	<label for="imagen">Imagen (s&oacute;olo perlas visuales): </label>
+	<label for="imagen">Imagen (s&oacute;lo perlas visuales): </label>
 	<input type="file" name="imagen" id="imagen" />
 	<!-- <a href="Javascript:void(0)" onclick="VaciarElemento('imagen')">Resetear campo de fichero</a> -->
 

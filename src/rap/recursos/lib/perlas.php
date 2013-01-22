@@ -9,6 +9,20 @@
 		return ConsultarBD( "SELECT * from categorias ORDER BY nombre ASC" );
 	}
 
+	function CrearCategoria( $nombre )
+	{
+		$bd = ConectarBD();
+
+		$res = $bd->query( "INSERT INTO categorias (nombre, num_perlas) VALUES ('$nombre', 0) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)" );
+
+		if( !$res ){
+			throw new Exception( 'ERROR creando nueva categoria: ' . $bd->error );
+		}
+
+		return $bd->insert_id;
+
+		$bd->close();
+	}
 
 	// Inserta la perla definida por el array asociativo '$perla' en la BD.
 	// Devuelve null en caso de éxito o una string explicativa en caso de 
@@ -17,8 +31,15 @@
 	{
 		$bd = ConectarBD();
 
+		if( $perla['nueva_categoria'] ){
+			// Obtiene la id de la categoria.
+			$id_categoria = CrearCategoria( $perla['nueva_categoria'] );
+		}else{
+			$id_categoria = $perla['categoria'];
+		}
+
 		// Inserta la perla en la BD.
-		$res = $bd->query( "INSERT INTO perlas (titulo, texto, fecha_subida, fecha, contenido_informatico, humor_negro, perla_visual, categoria, subidor, fecha_modificacion, modificador) VALUES( '{$perla['titulo']}', '{$perla['texto']}', NOW(), '{$perla['fecha']}', '{$perla['contenido_informatico']}', '{$perla['humor_negro']}', '{$perla['perla_visual']}', '{$perla['categoria']}', '{$perla['subidor']}', NOW(), '{$perla['subidor']}' )" );
+		$res = $bd->query( "INSERT INTO perlas (titulo, texto, fecha_subida, fecha, contenido_informatico, humor_negro, perla_visual, categoria, subidor, fecha_modificacion, modificador) VALUES( '{$perla['titulo']}', '{$perla['texto']}', NOW(), '{$perla['fecha']}', '{$perla['contenido_informatico']}', '{$perla['humor_negro']}', '{$perla['perla_visual']}', '$id_categoria', '{$perla['subidor']}', NOW(), '{$perla['subidor']}' )" );
 
 		if( !$res ){
 			throw new Exception( 'ERROR subiendo perla: ' . $bd->error );
@@ -55,15 +76,25 @@
 	function ActualizarPerla( $id, $perla, $borrar_imagen = false )
 	{
 		$bd = ConectarBD();
+		/*
 		$res = $bd->query( "SELECT categoria FROM perlas WHERE id=$id" );
 		$res = $res->fetch_array();
 		$categoria_anterior = $res[0];
 
+	
 		echo 'Categoria anterior: (' . $categoria_anterior . ')';
 		RestarPerla( $categoria_anterior );
 		SumarPerla( $perla['categoria'] );
+		*/
 
-		$res = $bd->query( "UPDATE perlas SET titulo='{$perla['titulo']}', texto='{$perla['texto']}', fecha='{$perla['fecha']}', contenido_informatico='{$perla['contenido_informatico']}', humor_negro='{$perla['humor_negro']}', perla_visual='{$perla['perla_visual']}', categoria='{$perla['categoria']}', fecha_modificacion=NOW(), modificador='{$perla['subidor']}' WHERE id='{$id}' " );
+		if( $perla['nueva_categoria'] != "" ){
+			// Obtiene la id de la categoria.
+			$id_categoria = CrearCategoria( $perla['nueva_categoria'] );
+		}else{
+			$id_categoria = $perla['categoria'];
+		}
+
+		$res = $bd->query( "UPDATE perlas SET titulo='{$perla['titulo']}', texto='{$perla['texto']}', fecha='{$perla['fecha']}', contenido_informatico='{$perla['contenido_informatico']}', humor_negro='{$perla['humor_negro']}', perla_visual='{$perla['perla_visual']}', categoria='$id_categoria', fecha_modificacion=NOW(), modificador='{$perla['subidor']}' WHERE id='{$id}' " );
 
 		if( !$res ){
 			return $bd->error;
@@ -226,6 +257,7 @@
 
 
 	// En la BD, suma 1 al nº de perlas de la categoría $categoria.
+	/*
 	function SumarPerla( $categoria )
 	{
 		$res = ConsultarBD( "SELECT num_perlas FROM categorias WHERE id=$categoria" );
@@ -249,7 +281,7 @@
 
 		ConsultarBD( "UPDATE categorias SET num_perlas={$n} WHERE id=$categoria" );
 	}
-
+	*/
 	
 	// Obtiene los participantes de la perla cuya id es $id_perla.
 	function ObtenerParticipantes( $id_perla )
@@ -300,6 +332,7 @@
 
 		// Texto de la perla.
 		echo "<p>{$perla['texto']}</p>";
+		
 		echo "<span class=\"subtexto\">";
 		echo "Subida: {$perla['fecha_subida']} por {$usuarios[$perla['subidor']]}<br />";
 		echo "&Uacute;ltima modificaci&oacute;n: {$perla['fecha_modificacion']} por {$usuarios[$perla['modificador']]}<br />";
@@ -307,6 +340,7 @@
 		// Participantes.
 		echo "Participantes: ";
 
+		echo '<div class="galeria">';
 		$participantes = ObtenerParticipantes( $perla['id'] );
 
 		while( $participante = $participantes->fetch_object() ){
@@ -315,11 +349,12 @@
 				// (es participante de la misma)?
 				$modificable = true;
 			}
-			echo "{$usuarios[$participante->usuario]}, ";
+			MostrarAvatar( $usuarios[$participante->usuario] );
+			//echo "{$usuarios[$participante->usuario]}, ";
 		}
 
 		$participantes->close();
-
+		echo '</div>';
 		echo "</span>";
 
 		// Si el usuario actual puede modificar la perla actual, muéstrale el

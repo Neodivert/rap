@@ -26,8 +26,8 @@
 	<head>
 		<title>RAP: Real Academia de las Perlas - v2</title>
 		<meta charset="UTF-8" />
-		<link rel="stylesheet" type="text/css" href="./css/general.css" />
-		<link rel="stylesheet" type="text/css" href="./css/login.css" />
+		<link rel="stylesheet" type="text/css" href="css/general.css" />
+		<link rel="stylesheet" type="text/css" href="css/login.css" />
 		<script type="text/javascript" src="js/md5.js"></script> 
 		<script type="text/javascript" src="js/usuarios.js"></script> 
 	</head>

@@ -83,4 +83,42 @@
 			return ConsultarBD( "SELECT usuarios.nombre, 3*logros.num_perlas+2*logros.num_comentarios+logros.num_perlas_calificadas AS n FROM usuarios, logros WHERE usuarios.id = logros.usuario AND logros.mes = $mes AND logros.anno = $anno ORDER BY n DESC LIMIT $n" );
 		}
 	}
+
+	function MostrarAvatar( $usuario, $num = -1 )
+	{
+		 if( file_exists( 'media/avatares/' . $usuario ) ){
+			$ruta = 'media/avatares/' . $usuario;
+		 }else{
+			$ruta = 'media/avatares/_default_.png';
+		 }
+
+		 if( $num == -1 ){
+			$num = '';
+		 }else{
+			$num = ' (' . $num . ')';
+		 }
+		 echo "<div class=\"div_avatar\"><img class=\"avatar\" id=\"avatar\" width=\"100\" height=\"100\" src=\"$ruta\" /><br />$usuario$num</div>";
+	}
+
+
+	function InsertarAvatar( $imagen, $nombre )
+	{
+		if( $imagen['error'] == UPLOAD_ERR_NO_FILE ){
+			echo 'Sin avatar subido';
+			return;
+		}
+
+		try{
+			ComprobarImagen( "avatar" );
+
+			echo "Imagen: " . $imagen["name"] . "<br />";
+			echo "Tipo: " . $imagen["type"] . "<br />";
+			echo "Tamanno: " . ($imagen["size"] / 1024) . " Kb<br />";
+
+			if( !move_uploaded_file($imagen["tmp_name"], "media/avatares/" . $nombre ) ) throw new Exception( 'ERROR moviendo fichero' );
+			echo "Guardada en: " . $imagen["tmp_name"] . '<br />';
+		}catch( Exception $e ){
+			die( $e->getMessage() );
+		}
+	}
 ?>
