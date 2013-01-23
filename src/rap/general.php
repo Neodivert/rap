@@ -26,6 +26,8 @@
 		$_GET['seccion'] = 'lista_perlas';
 	}
 
+	date_default_timezone_set( 'Europe/London' );
+
 	// Funciones necesarias.
 	require_once 'recursos/config.php';
 	require_once DIR_LIB . 'usuarios.php';

@@ -158,10 +158,12 @@ CREATE TRIGGER `perla_actualizada` AFTER UPDATE ON `perlas`
 DELIMITER ;
 DROP TRIGGER IF EXISTS `perla_borrada`;
 DELIMITER //
-CREATE TRIGGER `perla_borrada` AFTER DELETE ON `perlas`
+CREATE TRIGGER `perla_borrada` BEFORE DELETE ON `perlas`
  FOR EACH ROW BEGIN
     UPDATE logros SET num_perlas = num_perlas - 1 WHERE logros.usuario = OLD.subidor AND logros.mes = MONTH( OLD.fecha_subida ) AND logros.anno = YEAR( OLD.fecha_subida );
 	 UPDATE categorias SET num_perlas = num_perlas - 1 WHERE categorias.id = OLD.categoria;
+	 DELETE FROM comentarios WHERE perla = OLD.id;
+	 DELETE FROM participantes WHERE perla = OLD.id;
   END
 //
 DELIMITER ;

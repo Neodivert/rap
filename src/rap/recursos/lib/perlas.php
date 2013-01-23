@@ -19,9 +19,9 @@
 			throw new Exception( 'ERROR creando nueva categoria: ' . $bd->error );
 		}
 
-		return $bd->insert_id;
-
 		$bd->close();
+
+		return $bd->insert_id;
 	}
 
 	// Inserta la perla definida por el array asociativo '$perla' en la BD.
@@ -170,7 +170,14 @@
 		if( $participante ){
 			$consulta .= "INNER JOIN participantes ON perlas.id=participantes.perla AND participantes.usuario='$participante' ";
 		}
-		
+
+		$consulta .= "LEFT JOIN (SELECT perla, COUNT(*) AS num_denuncias FROM denuncias_perlas GROUP BY perla) t2 ON id = t2.perla ";
+/*
+		SELECT * FROM perlas
+LEFT JOIN
+(SELECT perla, COUNT(*) AS num_denuncias FROM denuncias_perlas
+GROUP BY perla) t2 ON id = t2.perla;
+*/
 		//$consulta .= CrearSubCategoria( $categoria, $participante, $contenido_informatico, $humor_negro, $palabras );
 		//if( $offset ){
 		//	$consulta .= "LIMIT $offset, $n";
@@ -357,11 +364,36 @@
 		echo '</div>';
 		echo "</span>";
 
-		// Si el usuario actual puede modificar la perla actual, muéstrale el
-		// botón para hacerlo.
+		$hoy = date("Y-m-d H:i:s");
+		$t2 = strtotime( $hoy );
+		$t1 = strtotime( $perla['fecha_subida'] );
+		$minutos = ($t2 - $t1)/60;
+
+		// Si el usuario actual puede modificar/borrar la perla actual, muéstrale
+		// los botones para hacerlo.
 		if( $modificable ){
-			echo "<form><input type=\"button\" onclick=\"ModificarPerla('{$perla['id']}' )\" value=\"Modificar perla\" /></form>";
-		}	
+			echo "$hoy - {$perla['fecha_subida']}: $minutos<br />";
+				
+			//echo "<form 
+			echo "<form action=\"general.php?seccion=subir_perla&modificar={$perla['id']}\" method=\"post\">";
+			
+			echo "<input type=\"submit\" name=\"modificar_perla\" value=\"Modificar perla\" />";
+			if( $minutos <= 30 ){
+				echo "<input type=\"submit\" name=\"borrar_perla\" value=\"Borrar perla\" />";
+			}
+			echo '</form>';
+		}
+
+		if( !$modificable || ($minutos > 30) ){
+			echo '<form action="" method="POST">';
+			if( isset( $perla['num_denuncias'] ) ){
+				$n = 3 - $perla['num_denuncias'];
+				echo "<input type=\"submit\" name=\"denunciar_perla\" value=\"Votar para eliminar perla ($n votos restantes)\" />";
+			}else{
+				echo "<input type=\"submit\" name=\"denunciar_perla\" value=\"Votar para eliminar perla (3 votos restantes)\" />";
+			}
+			echo '</form>';
+		}
 
 		echo "<br /><a href=\"Javascript:void(0)\" onclick=\"MostrarPerla('{$perla['id']}')\">Comentar Perla (comentarios: {$perla['num_comentarios']})</a>";
 
@@ -467,5 +499,18 @@
 		}catch( Exception $e ){
 			die( $e->getMessage() );
 		}
+	}
+
+	function BorrarPerla( $id_perla )
+	{
+		$bd = ConectarBD();
+
+		$res = $bd->query( "DELETE FROM perlas WHERE id='$id_perla'" );
+
+		if( !$res ){
+			throw new Exception( 'ERROR borrando perla: ' . $bd->error );
+		}
+
+		$bd->close();
 	}
 ?>

@@ -140,7 +140,7 @@
 
 	// Genera un "libro" (mostrar las perlas por páginas) y muestra
 	// la página seleccionada.
-    // function ObtenerPerlas( $categoria = 0, $participante = 0, $contenido_informatico = 1, $humor_negro = 1, $palabras = null, $offset = 0, $n = 0 )
+   // function ObtenerPerlas( $categoria = 0, $participante = 0, $contenido_informatico = 1, $humor_negro = 1, $palabras = null, $offset = 0, $n = 0 )
 
 	//$rt = mysql_fetch_row(mysql_query("SELECT FOUND_ROWS()")); // Total de registros
 	GenerarLibro( $_GET['pagina'], array( 'ObtenerPerlas', $_GET['categoria'], $_GET['participante'], $_GET['contenido_informatico'], $_GET['humor_negro'], $_GET['palabras'] ), array( 'MostrarPerla', $usuarios, $categorias ) );
