@@ -18,10 +18,9 @@
 		$_GET['participante'] = 0;
 	}
 
-
     if( !isset( $_GET['contenido_informatico'] ) ){
 		$_GET['contenido_informatico'] = 1;
-	}
+	 }
 
     if( !isset( $_GET['humor_negro'] ) ){
 		$_GET['humor_negro'] = 1;

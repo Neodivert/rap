@@ -143,6 +143,20 @@
 		else return false;
 	}
 
+	function DenunciarPerla( $usuario, $perla )
+	{		
+		$bd = ConectarBD();
+
+		$res = $bd->query( "INSERT INTO denuncias_perlas (usuario, perla) VALUES ($usuario, $perla)" );
+
+		if( !$res ){
+			throw new Exception( 'ERROR denunciando perla: ' . $bd->error );
+		}
+
+		$bd->close();
+
+		return 0;
+	}
 
 	function ObtenerTop10Perlas()
 	{
@@ -385,12 +399,14 @@ GROUP BY perla) t2 ON id = t2.perla;
 		}
 
 		if( !$modificable || ($minutos > 30) ){
-			echo '<form action="" method="POST">';
+			echo '<form action="controlador.php" method="GET">';
+			echo '<input type="hidden" name="accion" value="denunciar_perla" />';
+			echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla['id']}\" />";
 			if( isset( $perla['num_denuncias'] ) ){
 				$n = 3 - $perla['num_denuncias'];
-				echo "<input type=\"submit\" name=\"denunciar_perla\" value=\"Votar para eliminar perla ($n votos restantes)\" />";
+				echo "<input type=\"submit\" value=\"Votar para eliminar perla ($n votos restantes)\" />";
 			}else{
-				echo "<input type=\"submit\" name=\"denunciar_perla\" value=\"Votar para eliminar perla (3 votos restantes)\" />";
+				echo "<input type=\"submit\" value=\"Votar para eliminar perla (3 votos restantes)\" />";
 			}
 			echo '</form>';
 		}
