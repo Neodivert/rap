@@ -5,6 +5,7 @@
 	// El usuario no está logueado. Échalo a la pantalla de login.
 	if( !isset( $_SESSION['nombre'] ) ){
 		header( 'Location: index.php' );
+		exit();
 	}
 
 	// El usuario intenta desconectarse. Destruye la sesión y ve a la pantalla de login.
@@ -13,11 +14,13 @@
 		unset( $_SESSION['id'] );
 
 		header( 'Location: index.php' );
+		exit();
 	}
 
 	// El usuario quiere ver el perfil.
 	if( isset( $_POST['perfil'] ) ){
 		header( 'Location: general.php?seccion=perfil' );
+		exit();
 	}
 
 	// La seccion actual se encuentra en $_GET['seccion']. Si no hay ninguna 
@@ -56,23 +59,23 @@
 	<body>
 		<div id="contenedor">
 			<a href="general.php?seccion=lista_perlas"> 
-				<img id="logo_index" width="339" height="179" src="media/logo.png" />
+				<img id="logo_index" width="339" height="179" src="media/logo.png" alt="Logo de la RAP" />
 			</a>
 			<div id="contenedor_menus">
 				<ul id="menu_perlas" class="menu">
-					<lh>Perlas</lh>
+					<li class="titulo_submenu">Perlas</li>
 					<li><a href="general.php?seccion=lista_perlas">Lista de Perlas</a></li>
 					<li><a href="general.php?seccion=top10">Top 10</a></li>
 					<li><a href="general.php?seccion=subir_perla">Subir Perla</a></li>
 					
 				</ul>
 				<ul id="menu_usuarios" class="menu">
-					<lh>Usuarios</lh>
+					<li class="titulo_submenu">Usuarios</li>
 					<li><a href="general.php?seccion=lista_usuarios">Lista de usuarios</a></li>
 					<li><a href="general.php?seccion=ranking_raper@s">Ranking de raper@s</a></li>
 				</ul>
 				<ul id="menu_usuario" class="menu">
-					<lh><?php echo $_SESSION['nombre']; ?></lh>
+					<li class="titulo_submenu"><?php echo $_SESSION['nombre']; ?></li>
 					<li><a href="general.php?seccion=notificaciones">Notificaciones</a></li>
 					<li><a href="general.php?seccion=perfil">Perfil</a></li>
 					<li>

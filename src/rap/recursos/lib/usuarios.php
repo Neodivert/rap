@@ -97,7 +97,7 @@
 		 }else{
 			$num = ' (' . $num . ')';
 		 }
-		 echo "<div class=\"div_avatar\"><img class=\"avatar\" id=\"avatar\" width=\"100\" height=\"100\" src=\"$ruta\" /><br />$usuario$num</div>";
+		 echo "<div class=\"div_avatar\"><img class=\"avatar\" width=\"100\" height=\"100\" src=\"$ruta\" alt=\"Avatar del usuario [$usuario]\" /><br />$usuario$num</div>";
 	}
 
 

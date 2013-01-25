@@ -57,7 +57,7 @@ body
 	border-color:#000000;
 }
 
-.menu lh
+.menu .titulo_submenu
 {
 	text-align:center;
 
@@ -103,7 +103,7 @@ body
 
 .div_avatar {
 	margin-left:5px;
-	display: inline-block
+	display: inline-block;
 	text-align:center;
 	float:left;
 }

@@ -143,6 +143,7 @@
 		else return false;
 	}
 
+
 	function DenunciarPerla( $usuario, $perla )
 	{		
 		$bd = ConectarBD();
@@ -158,18 +159,26 @@
 		return 0;
 	}
 
+
+	function CancelarDenunciaPerla( $usuario, $perla )
+	{
+		$bd = ConectarBD();
+
+		$res = $bd->query( "DELETE FROM denuncias_perlas WHERE usuario='$usuario' AND perla='$perla'" );
+
+		if( !$res ){
+			throw new Exception( 'ERROR denunciando perla: ' . $bd->error );
+		}
+
+		$bd->close();
+
+		return 0;
+	}
+
+
 	function ObtenerTop10Perlas()
 	{
-		return ConsultarBD( "SELECT * FROM perlas ORDER BY nota_acumulada DESC LIMIT 10" );
-
-		/*
-		return $res;
-		
-		$aux = $res->fetch_all( MYSQLI_ASSOC );
-		$res->close();
-
-		return $aux;
-		*/
+		return ConsultarBD( "SELECT * FROM perlas LEFT JOIN (SELECT perla, COUNT(*) AS num_denuncias FROM denuncias_perlas GROUP BY perla) t2 ON id = t2.perla LEFT JOIN (SELECT perla AS denunciada FROM denuncias_perlas WHERE usuario = {$_SESSION['id']}) denuncias ON id = denunciada ORDER BY nota_acumulada DESC LIMIT 10" );
 	}
 
 	// Obtiene de la BD las perlas de la categoría '$categoria'. En caso de
@@ -186,16 +195,9 @@
 		}
 
 		$consulta .= "LEFT JOIN (SELECT perla, COUNT(*) AS num_denuncias FROM denuncias_perlas GROUP BY perla) t2 ON id = t2.perla ";
-/*
-		SELECT * FROM perlas
-LEFT JOIN
-(SELECT perla, COUNT(*) AS num_denuncias FROM denuncias_perlas
-GROUP BY perla) t2 ON id = t2.perla;
-*/
-		//$consulta .= CrearSubCategoria( $categoria, $participante, $contenido_informatico, $humor_negro, $palabras );
-		//if( $offset ){
-		//	$consulta .= "LIMIT $offset, $n";
-		//}
+
+		$consulta .= "LEFT JOIN (SELECT perla AS denunciada FROM denuncias_perlas WHERE usuario = {$_SESSION['id']}) denuncias ON id = denunciada ";
+
 		if( $categoria || !$contenido_informatico || !$humor_negro ){
 			$consulta .= 'WHERE ';
 			if( $categoria ){
@@ -226,13 +228,6 @@ GROUP BY perla) t2 ON id = t2.perla;
 
 		if( !$res ) return null;
 		return $res;
-
-		/*
-		$aux = $res->fetch_all( MYSQLI_ASSOC );
-		$res->close();
-
-		return $aux;
-		*/
 	}
 
 
@@ -275,41 +270,12 @@ GROUP BY perla) t2 ON id = t2.perla;
 			return null;
 		}
 	}
-
-
-	// En la BD, suma 1 al nº de perlas de la categoría $categoria.
-	/*
-	function SumarPerla( $categoria )
-	{
-		$res = ConsultarBD( "SELECT num_perlas FROM categorias WHERE id=$categoria" );
-		$n = $res->fetch_array();
-		$res->close();
-
-		$n = $n[0]+1;
-
-		ConsultarBD( "UPDATE categorias SET num_perlas={$n} WHERE id=$categoria" );
-	}
-
-
-	// En la BD, resta 1 al nº de perlas de la categoría $categoria.
-	function RestarPerla( $categoria )
-	{
-		$res = ConsultarBD( "SELECT num_perlas FROM categorias WHERE id=$categoria" );
-		$n = $res->fetch_array();
-		$res->close();
-
-		$n = $n[0]-1;
-
-		ConsultarBD( "UPDATE categorias SET num_perlas={$n} WHERE id=$categoria" );
-	}
-	*/
 	
 	// Obtiene los participantes de la perla cuya id es $id_perla.
 	function ObtenerParticipantes( $id_perla )
 	{
 		return ConsultarBD( "SELECT usuario FROM participantes WHERE perla=$id_perla" );
 	}
-
 	
 	// Muestra (en la web) la perla '$perla'. Usa los arrays auxiliares 
 	// $usuarios y $categorias para mostrar, respectivamente, los nombres de 
@@ -320,6 +286,7 @@ GROUP BY perla) t2 ON id = t2.perla;
 
 		// Título.
 		echo '<div class="perla">';
+
 		echo "<h1>{$perla['titulo']}</h1>";
 		
 		// Categorías.
@@ -348,7 +315,7 @@ GROUP BY perla) t2 ON id = t2.perla;
 		// ¿Perla visual? Muestra la imagen
 		if( $perla['perla_visual'] ){
 			//die( getcwd() . " - media/perlas/{$perla['id']}" );
-			echo "<img src=\"media/perlas/{$perla['id']}\" alt=\"*** ERROR: no se encuentra la imagen ***\" width=\"100%\" >";
+			echo "<img src=\"media/perlas/{$perla['id']}\" alt=\"*** ERROR: no se encuentra la imagen ***\" width=\"100%\" alt=\"perla visual - {$perla['titulo']}\" >";
 		}
 
 		// Texto de la perla.
@@ -357,7 +324,8 @@ GROUP BY perla) t2 ON id = t2.perla;
 		echo "<span class=\"subtexto\">";
 		echo "Subida: {$perla['fecha_subida']} por {$usuarios[$perla['subidor']]}<br />";
 		echo "&Uacute;ltima modificaci&oacute;n: {$perla['fecha_modificacion']} por {$usuarios[$perla['modificador']]}<br />";
-	
+		echo "</span>";
+
 		// Participantes.
 		echo "Participantes: ";
 
@@ -376,41 +344,49 @@ GROUP BY perla) t2 ON id = t2.perla;
 
 		$participantes->close();
 		echo '</div>';
-		echo "</span>";
-
+		
+		
 		$hoy = date("Y-m-d H:i:s");
 		$t2 = strtotime( $hoy );
 		$t1 = strtotime( $perla['fecha_subida'] );
 		$minutos = ($t2 - $t1)/60;
-
+		
 		// Si el usuario actual puede modificar/borrar la perla actual, muéstrale
 		// los botones para hacerlo.
+		
 		if( $modificable ){
-			echo "$hoy - {$perla['fecha_subida']}: $minutos<br />";
-				
-			//echo "<form 
-			echo "<form action=\"general.php?seccion=subir_perla&modificar={$perla['id']}\" method=\"post\">";
-			
-			echo "<input type=\"submit\" name=\"modificar_perla\" value=\"Modificar perla\" />";
-			if( $minutos <= 30 ){
-				echo "<input type=\"submit\" name=\"borrar_perla\" value=\"Borrar perla\" />";
-			}
+			echo '<form action="controlador.php" method="POST" >';
+			echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla['id']}\" />";
+			echo '<input type="submit" name="accion" value="Modificar perla" />';
 			echo '</form>';
 		}
-
-		if( !$modificable || ($minutos > 30) ){
-			echo '<form action="controlador.php" method="GET">';
-			echo '<input type="hidden" name="accion" value="denunciar_perla" />';
-			echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla['id']}\" />";
+		
+		echo '<form action="controlador.php" method="POST" onsubmit="return confirm(\'Estas segur@?\')" >';
+		echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla['id']}\" />";
+		if( $modificable && ($minutos < 30) ){
+			echo '<input type="submit" name="accion" value="Borrar perla" />';
+		}else{
 			if( isset( $perla['num_denuncias'] ) ){
 				$n = 3 - $perla['num_denuncias'];
-				echo "<input type=\"submit\" value=\"Votar para eliminar perla ($n votos restantes)\" />";
 			}else{
-				echo "<input type=\"submit\" value=\"Votar para eliminar perla (3 votos restantes)\" />";
+				$n = 3;
 			}
-			echo '</form>';
+			if( $perla['num_denuncias'] ){
+				echo "({$perla['num_denuncias']} persona(s) ha(n) votado para eliminar esta perla - $n votos restantes)<br/>";
+			}else{
+				echo "(0 persona(s) ha(n) votado para eliminar esta perla - $n votos restantes)<br/>";
+			}
+			if( isset( $perla['denunciada'] ) ){
+				echo 'Has votado para borrar esta perla: ';
+				echo '<input type="submit" name="accion" value="Cancelar voto borrado" />';
+			}else{
+				$denuncias = $perla['num_denuncias'] + 1;
+				echo "<input type=\"hidden\" name=\"num_denuncias\" value=\"$denuncias\" />";
+				echo '<input type="submit" name="accion" value="Denunciar perla" />';
+				//echo '<input type="submit" name="accion" value="Denunciar perla 2" />';
+			}
 		}
-
+		echo '</form>';
 		echo "<br /><a href=\"Javascript:void(0)\" onclick=\"MostrarPerla('{$perla['id']}')\">Comentar Perla (comentarios: {$perla['num_comentarios']})</a>";
 
 		echo '<br />';

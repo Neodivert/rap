@@ -42,10 +42,10 @@
 <!-- La barra de búsqueda consiste en un formulario con un único select para
      elegir la categoría de perlas que se desea ver. -->
 <div id="barra_busqueda" class="barra">
-	<form id="form_busqueda" methor="get">
+	<form id="form_busqueda" method="get">
         <h2>Buscar perlas</h2>
-		<label for="categoria_perla">Categor&iacute;a: </label>
-  		<select name="categoria" id="categoria" />
+		<label for="categoria">Categor&iacute;a: </label>
+  		<select name="categoria" id="categoria" >
 		<?php
 			$categorias = ObtenerCategorias();
 			$total_perlas = 0;
@@ -120,6 +120,7 @@
 		?>
 		<br />
         <input type="submit" value="Buscar Perlas" />
+		</form>
 </div>
 
 <?php 
