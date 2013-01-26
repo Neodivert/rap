@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.5.2.1
+-- version 3.5.2.2
 -- http://www.phpmyadmin.net
 --
--- Servidor: 192.168.3.47
--- Tiempo de generación: 22-01-2013 a las 20:15:10
--- Versión del servidor: 5.1.54-log
--- Versión de PHP: 5.3.3-7+squeeze13
+-- Servidor: localhost
+-- Tiempo de generación: 25-01-2013 a las 13:54:06
+-- Versión del servidor: 5.5.27
+-- Versión de PHP: 5.4.7
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -29,10 +29,10 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS `categorias` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) CHARACTER SET utf8 NOT NULL,
-  `num_perlas` int(11) NOT NULL,
+  `num_perlas` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `nombre` (`nombre`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=20 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=9 ;
 
 -- --------------------------------------------------------
 
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `comentarios` (
   PRIMARY KEY (`id`),
   KEY `perla` (`perla`,`usuario`),
   KEY `usuario` (`usuario`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
 -- Disparadores `comentarios`
@@ -73,6 +73,19 @@ CREATE TRIGGER `nuevo_comentario` AFTER INSERT ON `comentarios`
   END
 //
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `denuncias_perlas`
+--
+
+CREATE TABLE IF NOT EXISTS `denuncias_perlas` (
+  `usuario` int(11) NOT NULL,
+  `perla` int(11) NOT NULL,
+  PRIMARY KEY (`usuario`,`perla`),
+  KEY `perla` (`perla`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -133,7 +146,7 @@ CREATE TABLE IF NOT EXISTS `perlas` (
   KEY `subidor` (`subidor`),
   KEY `modificador` (`modificador`),
   KEY `nota_acumulada` (`nota_acumulada`,`num_comentarios`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=150 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=12 ;
 
 --
 -- Disparadores `perlas`
@@ -178,7 +191,7 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `contrasenna` varchar(32) CHARACTER SET ascii NOT NULL,
   `fecha_registro` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
 
 -- --------------------------------------------------------
 
@@ -233,8 +246,15 @@ DELIMITER ;
 -- Filtros para la tabla `comentarios`
 --
 ALTER TABLE `comentarios`
-  ADD CONSTRAINT `comentarios_ibfk_1` FOREIGN KEY (`perla`) REFERENCES `perlas` (`id`),
+  ADD CONSTRAINT `comentarios_ibfk_3` FOREIGN KEY (`perla`) REFERENCES `perlas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `comentarios_ibfk_2` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`);
+
+--
+-- Filtros para la tabla `denuncias_perlas`
+--
+ALTER TABLE `denuncias_perlas`
+  ADD CONSTRAINT `denuncias_perlas_ibfk_3` FOREIGN KEY (`perla`) REFERENCES `perlas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `denuncias_perlas_ibfk_1` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`);
 
 --
 -- Filtros para la tabla `logros`
@@ -246,7 +266,7 @@ ALTER TABLE `logros`
 -- Filtros para la tabla `participantes`
 --
 ALTER TABLE `participantes`
-  ADD CONSTRAINT `participantes_ibfk_1` FOREIGN KEY (`perla`) REFERENCES `perlas` (`id`),
+  ADD CONSTRAINT `participantes_ibfk_3` FOREIGN KEY (`perla`) REFERENCES `perlas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `participantes_ibfk_2` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`);
 
 --
@@ -261,7 +281,7 @@ ALTER TABLE `perlas`
 -- Filtros para la tabla `votos`
 --
 ALTER TABLE `votos`
-  ADD CONSTRAINT `votos_ibfk_1` FOREIGN KEY (`perla`) REFERENCES `perlas` (`id`),
+  ADD CONSTRAINT `votos_ibfk_3` FOREIGN KEY (`perla`) REFERENCES `perlas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `votos_ibfk_2` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

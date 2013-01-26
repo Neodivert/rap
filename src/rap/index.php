@@ -7,6 +7,7 @@
 	// El usuario ya estaba logueado. Salta a php/general.php.
 	if( isset( $_SESSION['nombre'] ) ){
 		header( 'Location: general.php' );
+		exit();
 	}
 
 	// El usuario intenta loguearse.
@@ -15,6 +16,7 @@
 		if( LogearUsuario( $_POST['nombre'], $_POST['contrasenna'] ) ){
 			$_SESSION['nombre'] = $_POST['nombre'];
 			header( 'Location: general.php' );
+			exit();
 		}
 	}
 ?>

@@ -97,10 +97,18 @@
 			}
 		}		
 	}else{
-		// El usuario no ha enviado nada, sólo acaba de entrar ne esta sección.
+		// El usuario no ha enviado nada, sólo acaba de entrar en esta sección.
 		// ¿Quiere subir una perla nueva o modificar una existente?
 
 		if( isset( $_GET['modificar'] ) ){
+			echo "Aqui<br/>";
+			print_r( $_POST );
+			if( isset( $_POST['borrar_perla'] ) ){
+				echo "Aqui 2<br/>";
+				BorrarPerla( $_GET['modificar'] );
+				die( "Perla {$_GET['modificar']} borrada\n" );
+				//header( 'Location: general.php?seccion=lista_perlas' );
+			}
 			// El usuario quiere modificar una perla existente. La variable
 			// $_GET['modificar'] contiene La id de la perla en cuestión.
 
