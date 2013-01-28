@@ -32,11 +32,12 @@
 	date_default_timezone_set( 'Europe/London' );
 
 	// Funciones necesarias.
-	require_once 'recursos/config.php';
+	require_once 'php/config/rutas.php';
 	require_once DIR_LIB . 'usuarios.php';
 	require_once DIR_LIB . 'perlas.php';
 	require_once DIR_LIB . 'comentarios.php';
 	require_once DIR_LIB . 'notificaciones.php';
+	require_once DIR_CONFIG . 'parametros.php';
 ?>
 
 <!DOCTYPE html>
@@ -90,16 +91,9 @@
 			     Dicho contenido se guarda en un fichero del mismo nombre de la sección. -->
 			<div id="visor">
 				<?php
-					require_once 'secciones/' . $_GET['seccion'] . '.php';
+					require_once 'php/secciones/' . $_GET['seccion'] . '.php';
 				?>
 			</div>
-
 		</div>
 	</body>
 </html>
-
-<?php
-/*
-			
-*/
-?>

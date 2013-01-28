@@ -121,4 +121,96 @@
 			die( $e->getMessage() );
 		}
 	}
+
+	function ObtenerEmail( $usuario )
+	{
+		$bd = ConectarBD();
+
+		$res = $bd->query( "SELECT email, cod_validacion_email FROM usuarios WHERE id='$usuario'" ) or die( $bd->error );
+
+		$bd->close();
+
+		$res = $res->fetch_array();
+		return $res;
+	}
+
+	function EstablecerEmail( $usuario, $email )
+	{
+		$bd = ConectarBD();
+
+		$res = $bd->query( "UPDATE usuarios SET email='$email' WHERE id='$usuario'" ) or die( $bd->error );
+		$cod_validacion_email = $random_hash = md5(uniqid(rand(), true));
+		$res = $bd->query( "UPDATE usuarios SET cod_validacion_email='$cod_validacion_email' WHERE id='$usuario'" ) or die( $bd->error );
+
+		$bd->close();
+
+		// Generar email de confirmacion
+		$titulo = 'RAP - Validar email';
+		$cuerpo = "Este es un mensaje para validar el email indicado en la RAP \r\n";
+		$cuerpo .= "Entra en tu perfil e introduce el siguiente \r\n";
+		$cuerpo .= "codigo de validacion en la seccion de email: \r\n";
+		$cuerpo .= "$cod_validacion_email";
+		$cuerpo .= "\r\n";
+		$cuerpo = wordwrap($cuerpo, 70, "\r\n");
+
+		ini_set('sendmail_from', 'neodivert@gmail.com' );
+		if( !mail( $email, $titulo, $cuerpo ) ){
+			die( 'Error enviando el email' );
+		}
+	}
+
+	function ValidarEmail( $usuario, $cod_validacion_email )
+	{
+		$bd = ConectarBD();
+
+		$res = $bd->query( "SELECT id, cod_validacion_email FROM usuarios WHERE id=$usuario AND cod_validacion_email='$cod_validacion_email'" ) or die( $bd->error );
+	
+		//die( "SELECT id, cod_validacion_email FROM usuarios WHERE id=$usuario AND cod_validacion_email='$cod_validacion_email'" );
+
+		if( $res->fetch_array() ){
+			$res = $bd->query( "UPDATE usuarios SET cod_validacion_email=NULL WHERE id=$usuario" ) or die( $bd->error );
+			$bd->close();
+			return true;
+		}else{ 
+			$bd->close();
+			return false;
+		}
+	}
+
+	function ObtenerNotificacionesEmail( $usuario )
+	{
+		$notificaciones = array(
+			'nueva_perla' => 'nunca',
+			'nuevo_comentario' => 'nunca',
+			'cambio_nota' => 'nunca',
+			'nuevo_usuario' => 'nunca'
+		);
+	
+		$bd = ConectarBD();
+		$notificaciones_ = $bd->query( "SELECT * FROM notificaciones_email WHERE usuario='$usuario'" ) or die( $bd->error );
+		$bd->close();
+
+		while( $notificacion_ = $notificaciones_->fetch_array() ){
+			$notificaciones[$notificacion_['tipo']] = $notificacion_['frecuencia'];
+		}	
+
+		return $notificaciones;
+	}
+
+	function EstablecerNotificacionesEmail( $usuario, $notificaciones )
+	{
+		$bd = ConectarBD();
+		
+		foreach( $notificaciones as $tipo => $frecuencia ){
+			if( $tipo != 'accion' ){
+				if( $frecuencia != 'nunca' ){
+					$res = $bd->query( "INSERT INTO notificaciones_email (usuario, tipo, frecuencia) VALUES ($usuario, '$tipo', '$frecuencia') ON DUPLICATE KEY UPDATE frecuencia='$frecuencia'" ) or die( $bd->error );
+				}else{
+					$res = $bd->query( "DELETE FROM notificaciones_email WHERE usuario='$usuario' AND tipo='$tipo'" ) or die( $bd->error );
+				}
+			}
+		}
+		
+		$bd->close();
+	}
 ?>

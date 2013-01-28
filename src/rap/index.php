@@ -1,7 +1,7 @@
 <?php
 	session_start();
 
-	require_once 'recursos/config.php';
+	require_once 'php/config/rutas.php';
 	require_once DIR_LIB . 'usuarios.php';
 
 	// El usuario ya estaba logueado. Salta a php/general.php.
@@ -12,7 +12,6 @@
 
 	// El usuario intenta loguearse.
 	if( isset( $_POST['nombre'] ) ){
-		
 		if( LogearUsuario( $_POST['nombre'], $_POST['contrasenna'] ) ){
 			$_SESSION['nombre'] = $_POST['nombre'];
 			header( 'Location: general.php' );

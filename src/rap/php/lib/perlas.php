@@ -58,6 +58,9 @@
 
 		$bd->close();
 
+		// Notifica por email.
+		NotificarPorEmail( 'nueva_perla', $id_perla );
+
 		// Trata de subir la imagen (sólo perlas visuales).
 		if( $perla['perla_visual'] ){
 			try{
@@ -355,13 +358,15 @@
 		// los botones para hacerlo.
 		
 		if( $modificable ){
-			echo '<form action="controlador.php" method="POST" >';
+			CrearCabeceraFormulario( DIR_LIB . 'usuarios.php', 'post' );
 			echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla['id']}\" />";
 			echo '<input type="submit" name="accion" value="Modificar perla" />';
 			echo '</form>';
+			echo '<p>' . getcwd() . '</p>';
 		}
 		
-		echo '<form action="controlador.php" method="POST" onsubmit="return confirm(\'Estas segur@?\')" >';
+		
+		CrearCabeceraFormulario( 'controlador.php', 'post', 1 );
 		echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla['id']}\" />";
 		if( $modificable && ($minutos < 30) ){
 			echo '<input type="submit" name="accion" value="Borrar perla" />';
