@@ -29,11 +29,6 @@
     if( !isset( $_GET['palabras'] ) ){
 		$_GET['palabras'] = null;
 	}
-	
-	// El usuario quiere puntuar una perla.
-	if( isset( $_POST['nota'] ) ){
-		PuntuarPerla( $_POST['id_perla'], $_POST['nota'] );
-	}
 ?>
 
 <!-- TÍTULO -->

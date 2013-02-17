@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.5.2.2
+-- version 3.5.2.1
 -- http://www.phpmyadmin.net
 --
--- Servidor: localhost
--- Tiempo de generación: 25-01-2013 a las 13:54:06
--- Versión del servidor: 5.5.27
--- Versión de PHP: 5.4.7
+-- Servidor: 192.168.3.47
+-- Tiempo de generación: 15-02-2013 a las 20:37:58
+-- Versión del servidor: 5.1.54-log
+-- Versión de PHP: 5.3.3-7+squeeze14
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -29,10 +29,17 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS `categorias` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) CHARACTER SET utf8 NOT NULL,
-  `num_perlas` int(11) NOT NULL DEFAULT '0',
+  `num_perlas` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nombre` (`nombre`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=20 ;
+
+--
+-- Volcado de datos para la tabla `categorias`
+--
+
+INSERT INTO `categorias` (`id`, `nombre`, `num_perlas`) VALUES
+(13, 'Sin categoría', 0);
 
 -- --------------------------------------------------------
 
@@ -50,7 +57,8 @@ CREATE TABLE IF NOT EXISTS `comentarios` (
   PRIMARY KEY (`id`),
   KEY `perla` (`perla`,`usuario`),
   KEY `usuario` (`usuario`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
+
 
 --
 -- Disparadores `comentarios`
@@ -103,6 +111,28 @@ CREATE TABLE IF NOT EXISTS `logros` (
   PRIMARY KEY (`usuario`,`mes`,`anno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `notificaciones_email`
+--
+
+CREATE TABLE IF NOT EXISTS `notificaciones_email` (
+  `usuario` int(11) NOT NULL,
+  `tipo` enum('nueva_perla','nuevo_comentario','cambio_nota','nuevo_usuario') NOT NULL,
+  `frecuencia` enum('siempre','participante') NOT NULL,
+  PRIMARY KEY (`usuario`,`tipo`),
+  KEY `usuario` (`usuario`,`tipo`,`frecuencia`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Volcado de datos para la tabla `notificaciones_email`
+--
+
+INSERT INTO `notificaciones_email` (`usuario`, `tipo`, `frecuencia`) VALUES
+(1, 'nueva_perla', 'siempre');
+
 -- --------------------------------------------------------
 
 --
@@ -116,6 +146,7 @@ CREATE TABLE IF NOT EXISTS `participantes` (
   KEY `perla` (`perla`,`usuario`),
   KEY `usuario` (`usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
 
 -- --------------------------------------------------------
 
@@ -146,7 +177,7 @@ CREATE TABLE IF NOT EXISTS `perlas` (
   KEY `subidor` (`subidor`),
   KEY `modificador` (`modificador`),
   KEY `nota_acumulada` (`nota_acumulada`,`num_comentarios`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=12 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=157 ;
 
 --
 -- Disparadores `perlas`
@@ -189,9 +220,19 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(30) CHARACTER SET utf8 NOT NULL,
   `contrasenna` varchar(32) CHARACTER SET ascii NOT NULL,
+  `email` varchar(32) DEFAULT NULL,
+  `cod_validacion_email` varchar(32) DEFAULT NULL,
   `fecha_registro` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
+  PRIMARY KEY (`id`),
+  KEY `email` (`email`,`cod_validacion_email`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`id`, `nombre`, `contrasenna`, `email`, `cod_validacion_email`, `fecha_registro`) VALUES
+(1, 'Neodivert', '7a0a468aed0c63530bdf7d0b9e91c554', 'neodivert@gmail.com', NULL, '2012-09-12 22:00:00');
 
 -- --------------------------------------------------------
 
@@ -207,6 +248,7 @@ CREATE TABLE IF NOT EXISTS `votos` (
   PRIMARY KEY (`perla`,`usuario`),
   KEY `usuario` (`usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
+
 
 --
 -- Disparadores `votos`
@@ -261,6 +303,12 @@ ALTER TABLE `denuncias_perlas`
 --
 ALTER TABLE `logros`
   ADD CONSTRAINT `logros_ibfk_1` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`);
+
+--
+-- Filtros para la tabla `notificaciones_email`
+--
+ALTER TABLE `notificaciones_email`
+  ADD CONSTRAINT `notificaciones_email_ibfk_1` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`);
 
 --
 -- Filtros para la tabla `participantes`

@@ -262,7 +262,11 @@
 	// o como un objeto ($tipo_objeto = true).
 	function ObtenerPerla( $id_perla, $tipo_objeto = false )
 	{
-		$res = ConsultarBD( "SELECT * from perlas WHERE id='$id_perla'" );
+		$consulta = "SELECT * from perlas ";
+		$consulta .= 'LEFT JOIN (SELECT perla, COUNT(*) AS num_denuncias FROM denuncias_perlas GROUP BY perla) t2 ON id = t2.perla ';
+		$consulta .= "LEFT JOIN (SELECT perla AS denunciada FROM denuncias_perlas WHERE usuario = {$_SESSION['id']}) denuncias ON id = denunciada WHERE id='$id_perla'";
+
+		$res = ConsultarBD( $consulta );
 
 		if( $res->num_rows > 0 ){
 			if( !$tipo_objeto )
@@ -358,15 +362,14 @@
 		// los botones para hacerlo.
 		
 		if( $modificable ){
-			CrearCabeceraFormulario( DIR_LIB . 'usuarios.php', 'post' );
+			CrearCabeceraFormulario( 'php/controladores/controlador.php', 'post' );
 			echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla['id']}\" />";
 			echo '<input type="submit" name="accion" value="Modificar perla" />';
 			echo '</form>';
-			echo '<p>' . getcwd() . '</p>';
 		}
 		
-		
-		CrearCabeceraFormulario( 'controlador.php', 'post', 1 );
+
+		CrearCabeceraFormulario( 'php/controladores/controlador.php', 'post', 1 );
 		echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla['id']}\" />";
 		if( $modificable && ($minutos < 30) ){
 			echo '<input type="submit" name="accion" value="Borrar perla" />';
@@ -407,14 +410,14 @@
 	// la perla cuya id es $id_perla.
 	function GenerarFormularioVoto( $id_perla )
 	{
-		echo '<form method="post">';
+		CrearCabeceraFormulario( 'php/controladores/controlador.php', 'post' );
 		echo "<input type=\"hidden\" name=\"id_perla\" value=\"$id_perla\" />";
 		echo '<select name="nota">';
 		for( $i=0; $i<=10; $i++ ){
 			echo "<option value=\"$i\">$i</option>";
 		}
 		echo '</select>';
-		echo '<input type="submit" value="Puntuar">'; 
+		echo '<input type="submit" name="accion" value="Puntuar Perla">'; 
 		echo '</form>';
 	}
 

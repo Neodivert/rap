@@ -1,5 +1,5 @@
 <?php
-	require_once 'recursos/config.php';
+	require_once 'php/config/parametros.php';
 
 	if( isset( $_GET['aviso'] ) ){
 		echo "{$avisos[$_GET['aviso']]}<br/>";
