@@ -362,14 +362,14 @@
 		// los botones para hacerlo.
 		
 		if( $modificable ){
-			CrearCabeceraFormulario( 'php/controladores/controlador.php', 'post' );
+			CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post' );
 			echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla['id']}\" />";
 			echo '<input type="submit" name="accion" value="Modificar perla" />';
 			echo '</form>';
 		}
 		
 
-		CrearCabeceraFormulario( 'php/controladores/controlador.php', 'post', 1 );
+		CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post', 1 );
 		echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla['id']}\" />";
 		if( $modificable && ($minutos < 30) ){
 			echo '<input type="submit" name="accion" value="Borrar perla" />';
@@ -410,7 +410,7 @@
 	// la perla cuya id es $id_perla.
 	function GenerarFormularioVoto( $id_perla )
 	{
-		CrearCabeceraFormulario( 'php/controladores/controlador.php', 'post' );
+		CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post' );
 		echo "<input type=\"hidden\" name=\"id_perla\" value=\"$id_perla\" />";
 		echo '<select name="nota">';
 		for( $i=0; $i<=10; $i++ ){

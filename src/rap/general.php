@@ -18,10 +18,10 @@
 	}
 
 	// El usuario quiere ver el perfil.
-	if( isset( $_POST['perfil'] ) ){
+	/*if( isset( $_POST['perfil'] ) ){
 		header( 'Location: general.php?seccion=perfil' );
 		exit();
-	}
+	}*/
 
 	// La seccion actual se encuentra en $_GET['seccion']. Si no hay ninguna 
 	// definida, se toma por defecto la sección 'lista_perlas'.
