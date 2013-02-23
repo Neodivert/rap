@@ -37,7 +37,10 @@
 	require_once DIR_LIB . 'perlas.php';
 	require_once DIR_LIB . 'comentarios.php';
 	require_once DIR_LIB . 'notificaciones.php';
+	require_once DIR_CLASES . 'rap.php';
 	require_once DIR_CONFIG . 'parametros.php';
+
+	$rap = RAP::ObtenerInstancia();
 ?>
 
 <!DOCTYPE html>

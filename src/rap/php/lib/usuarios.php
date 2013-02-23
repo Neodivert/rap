@@ -1,6 +1,7 @@
 <?php
 	// Conjunto de funciones relacionadas con los usuarios.
 	require_once DIR_LIB . 'utilidades.php';
+	require_once DIR_CLASES . 'bd.php';
 
 	// Intenta logear al usuario cuyos nombre y contraseña son,
 	// respectivamente, $nombre y $contrasenna. Devuelve true en caso de
@@ -28,12 +29,7 @@
 	}
 
 
-	// Recupera de la BD el id y el nombre de los usuarios ordenados 
-	// alfabéticamente por el nombre.
-	function ObtenerUsuarios()
-	{
-		return ConsultarBD( "SELECT * from usuarios ORDER BY nombre ASC" );
-	}
+	
 
 
 	// Actualiza en la BD la contraseña del usuario actual con la nueva 

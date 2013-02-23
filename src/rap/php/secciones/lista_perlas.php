@@ -42,7 +42,7 @@
 		<label for="categoria">Categor&iacute;a: </label>
   		<select name="categoria" id="categoria" >
 		<?php
-			$categorias = ObtenerCategorias();
+			$categorias = $rap->ObtenerCategorias();
 			$total_perlas = 0;
 		
 			// Bucle que itera a lo largo de las categorías y va creando las
@@ -77,7 +77,7 @@
 	<label for="participante">Participante</label>
         <select name="participante" id="participante">
         <?php
-            $usuarios = ObtenerUsuarios();
+            $usuarios = $rap->ObtenerUsuarios();
             while( $usuario = $usuarios->fetch_object() ){
                 echo '<option ';
                 if( $usuario->id == $_GET['participante'] ){
@@ -120,14 +120,14 @@
 
 <?php 
 	// Obtiene los nombres de los usuarios y los mete en un array.
-	$rUsuarios = ObtenerUsuarios();
+	$rUsuarios = $rap->ObtenerUsuarios();
 	$usuarios = array();
 	while( $rUsuario = $rUsuarios->fetch_object() ){
 		$usuarios[$rUsuario->id] = $rUsuario->nombre;
 	}
 
 	// Obtiene los nombres de las categorias y las mete en un array.
-	$rCategorias = ObtenerCategorias();
+	$rCategorias = $rap->ObtenerCategorias();
 	$categorias = array();
 	while( $rCategoria = $rCategorias->fetch_object() ){
 		$categorias[$rCategoria->id] = $rCategoria->nombre;
@@ -136,9 +136,13 @@
 	// Genera un "libro" (mostrar las perlas por páginas) y muestra
 	// la página seleccionada.
    // function ObtenerPerlas( $categoria = 0, $participante = 0, $contenido_informatico = 1, $humor_negro = 1, $palabras = null, $offset = 0, $n = 0 )
+	//$res = $rap->ObtenerPerlas( $_GET['categoria'], $_GET['participante'], $_GET['contenido_informatico'], $_GET['humor_negro'] );
+
+	$bd = BD::ObtenerInstancia();
+	//echo "Filas encontradas: " . $bd->ObtenerNumFilasEncontradas();
 
 	//$rt = mysql_fetch_row(mysql_query("SELECT FOUND_ROWS()")); // Total de registros
-	GenerarLibro( $_GET['pagina'], array( 'ObtenerPerlas', $_GET['categoria'], $_GET['participante'], $_GET['contenido_informatico'], $_GET['humor_negro'], $_GET['palabras'] ), array( 'MostrarPerla', $usuarios, $categorias ) );
+	GenerarLibro( $_GET['pagina'], array( array( $rap, 'ObtenerPerlas'), $_GET['categoria'], $_GET['participante'], $_GET['contenido_informatico'], $_GET['humor_negro'], $_GET['palabras'] ), array( $bd, 'ObtenerNumFilasEncontradas'), array( 'Mostrar', $usuarios, $categorias ) );
 
 	// Libera los recursos.
 	$rUsuarios->close();
