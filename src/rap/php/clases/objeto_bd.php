@@ -21,24 +21,9 @@
 
 	require_once 'bd.php';
 
-	abstract class ObjetoBD {
-		protected $info;
+	interface ObjetoBD {
 
-		public function EstablecerAtributo( $atributo, $valor )
-		{
-			return $this->info[$atributo];
-		}
-
-		public function OBtenerAtributo( $atributo, $valor )
-		{
-			$this->info[$atributo] = $valor;
-		}
-
-		public function CargarDatos( $info )
-		{
-			$this->info = $info;
-		}
-
-		abstract public function InsertarBD( $bd );
+		//public function CargarDatos( $info );
+		public function InsertarBD( $bd );
 	} // Final de la definicion de la clase BD.
 ?>

@@ -1,6 +1,18 @@
 <?php
+	ini_set("default_charset", "UTF-8");
 	// Elementos comunes a todas las secciones una vez el usuario ha iniciado sesión
 	session_start();
+
+	// Funciones necesarias.
+	require_once 'php/config/rutas.php';
+	require_once DIR_CLASES . 'usuario.php';
+	require_once DIR_CLASES . 'perla.php';
+	require_once DIR_LIB . 'comentarios.php';
+	require_once DIR_LIB . 'notificaciones.php';
+	require_once DIR_CLASES . 'rap.php';
+	require_once DIR_CONFIG . 'parametros.php';
+
+	$usuario = new Usuario( $_SESSION['id'], $_SESSION['nombre'] );
 
 	// El usuario no está logueado. Échalo a la pantalla de login.
 	if( !isset( $_SESSION['nombre'] ) ){
@@ -30,15 +42,7 @@
 	}
 
 	date_default_timezone_set( 'Europe/London' );
-
-	// Funciones necesarias.
-	require_once 'php/config/rutas.php';
-	require_once DIR_LIB . 'usuarios.php';
-	require_once DIR_LIB . 'perlas.php';
-	require_once DIR_LIB . 'comentarios.php';
-	require_once DIR_LIB . 'notificaciones.php';
-	require_once DIR_CLASES . 'rap.php';
-	require_once DIR_CONFIG . 'parametros.php';
+	
 
 	$rap = RAP::ObtenerInstancia();
 ?>
@@ -79,7 +83,7 @@
 					<li><a href="general.php?seccion=ranking_raper@s">Ranking de raper@s</a></li>
 				</ul>
 				<ul id="menu_usuario" class="menu">
-					<li class="titulo_submenu"><?php echo $_SESSION['nombre']; ?></li>
+					<li class="titulo_submenu"><?php echo $usuario->ObtenerNombre(); ?></li>
 					<li><a href="general.php?seccion=notificaciones">Notificaciones</a></li>
 					<li><a href="general.php?seccion=perfil">Perfil</a></li>
 					<li>

@@ -1,8 +1,13 @@
 <?php
+	ini_set("default_charset", "UTF-8");
 	session_start();
 
 	require_once 'php/config/rutas.php';
-	require_once DIR_LIB . 'usuarios.php';
+	require_once DIR_CLASES . 'rap.php';
+	require_once DIR_CLASES . 'usuario.php';
+
+	$rap = RAP::ObtenerInstancia();
+	$bd = BD::ObtenerInstancia();
 
 	// El usuario ya estaba logueado. Salta a php/general.php.
 	if( isset( $_SESSION['nombre'] ) ){
@@ -12,8 +17,10 @@
 
 	// El usuario intenta loguearse.
 	if( isset( $_POST['nombre'] ) ){
-		if( LogearUsuario( $_POST['nombre'], $_POST['contrasenna'] ) ){
+		$usuario = new Usuario;
+		if( !$usuario->Logear( $_POST['nombre'], $_POST['contrasenna'] ) ){
 			$_SESSION['nombre'] = $_POST['nombre'];
+			$_SESSION['id'] = $usuario->ObtenerId();
 			header( 'Location: general.php' );
 			exit();
 		}

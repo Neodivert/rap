@@ -16,10 +16,103 @@
     You should have received a copy of the GNU General Public License
     along with RAP.  If not, see <http://www.gnu.org/licenses/>.
 	*/
-	require_once 'utilidades.php';
+	require_once DIR_LIB . 'utilidades.php';
 	require_once DIR_CLASES . 'objeto_bd.php';
 
-	class Perla extends ObjetoBD {
+	class Perla implements ObjetoBD {
+		protected $id;
+		protected $titulo;
+		protected $categoria;
+		protected $nota_acumulada;
+		protected $num_votos;
+		protected $texto;
+		protected $contenido_informatico;
+		protected $humor_negro;
+		protected $perla_visual;
+		protected $subidor;
+		protected $fecha_subida;
+		protected $modificador;
+		protected $fecha_modificacion;
+		protected $num_denuncias;
+		protected $denunciada;
+		protected $num_comentarios;
+	
+		function ObtenerId(){ return $this->id; }
+		function EstablecerId( $id ){ $this->id = $id; }
+
+		function ObtenerTitulo(){ return $this->titulo; }
+		function EstablecerTitulo( $titulo ){ $this->titulo = $titulo; }
+
+		function ObtenerCategoria(){ return $this->categoria; }
+		function EstablecerCategoria( $categoria ){ $this->categoria = $categoria; }
+
+		function ObtenerNumVotos(){ return $this->num_votos; }
+		function EstablecerNumVotos( $num_votos ){ $this->num_votos = $num_votos; }
+
+		function ObtenerNotaMedia(){ return $this->nota_acumulada/$this->num_votos; }
+
+		function ObtenerContenidoInformatico(){ return $this->contenido_informatico; }
+		function EstablecerContenidoInformatico( $contenido_informatico ){ $this->contenido_informatico = $contenido_informatico; }
+
+		function ObtenerHumorNegro(){ return $this->humor_negro; }
+		function EstablecerObtenerHumorNegro( $humor_negro ){ $this->humor_negro = $humor_negro; }
+
+		function ObtenerTexto(){ return $this->texto; }
+		function EstablecerTexto( $texto ){ $this->texto = $texto; }
+
+		function ObtenerPerlaVisual(){ return $this->perla_visual; }
+		function EstablecerPerlaVisual( $perla_visual ){ $this->perla_visual = $perla_visual; }
+
+		function ObtenerSubidor(){ return $this->subidor; }
+		function EstablecerSubidor( $subidor ){ $this->subidor = $subidor; }
+		
+		function ObtenerFechaSubida(){ return $this->fecha_subida; }
+		function EstablecerFechaSubida( $fecha_subida ){ $this->fecha_subida = $fecha_subida; }
+		
+		function ObtenerModificador(){ return $this->modificador; }
+		function EstablecerModificador( $modificador ){ $this->modificador = $modificador; }
+		
+		function ObtenerFechaModificacion(){ return $this->fecha_modificacion; }
+		function EstablecerFechaModificacion( $fecha_modificacion ){ $this->fecha_modificacion = $fecha_modificacion; }
+
+		function ObtenerNumDenuncias(){ return $this->num_denuncias; }
+		function EstablecerNumDenuncias( $num_denuncias ){ $this->num_denuncias = $num_denuncias; }
+		
+		function ObtenerDenunciada(){ return $this->denunciada; }
+		function EstablecerDenunciada( $denunciada ){ $this->denunciada = $denunciada; }
+
+		function ObtenerNumComentarios(){ return $this->num_comentarios; }
+		function EstablecerNumComentarios( $num_comentarios ){ $this->num_comentarios = $num_comentarios; }
+
+		public function CargarDatos( $info, $categorias, $usuarios ){
+			$this->id = $info['id'];
+			$this->titulo = $info['titulo'];
+			$this->categoria = $categorias[$info['categoria']];
+			$this->nota_acumulada = $info['nota_acumulada'];
+			$this->num_votos = $info['num_votos'];
+			$this->texto = $info['texto'];
+			$this->contenido_informatico = $info['contenido_informatico'];
+			$this->humor_negro = $info['humor_negro'];
+			$this->perla_visual = $info['perla_visual'];
+
+			$this->subidor = $info['subidor'];
+			$this->fecha_subida = $info['fecha_subida'];
+			$this->modificador = $info['modificador'];
+			$this->fecha_modificacion = $info['fecha_modificacion'];
+
+			if( isset( $info['num_denuncias'] ) ){
+				$this->num_denuncias = $info['num_denuncias'];
+			}else{
+				$this->num_denuncias = 0;
+			}
+			if( isset( $info['denunciada'] ) ){
+				$this->denunciada = $info['denunciada'];
+			}else{
+				$this->denunciada = false;
+			}
+
+			$this->num_comentarios = $info['num_comentarios'];
+		}
 
 		// Inserta la perla en la BD.
 		public function InsertarBD( $bd ){
@@ -50,6 +143,8 @@
 					throw $e;
 				}
 			}
+
+			
 		}
 
 		
@@ -117,16 +212,17 @@
 			ConsultarBD( "DELETE FROM denuncias_perlas WHERE usuario='$usuario' AND perla='{$this->info['id']}'" );
 		}
 
-		// Obtiene los participantes de la perla cuya id es $id_perla.
-		function ObtenerParticipantes( $id_perla )
+		// Obtiene los participantes de la perla.
+		function ObtenerParticipantes( $bd )
 		{
-			return $this->bd->Consultar( "SELECT usuario FROM participantes WHERE perla=$id_perla" );
+			return $bd->Consultar( "SELECT usuario FROM participantes WHERE perla={$this->id}" );
 		}
 
 
 		// Muestra (en la web) la perla actual. Usa los arrays auxiliares 
 		// $usuarios y $categorias para mostrar, respectivamente, los nombres de 
 		// los participantes y de la categoría de la perla.
+		/*
 		function Mostrar( $usuarios, $categorias )
 		{
 			$modificable = false;
@@ -244,7 +340,10 @@
 			echo '</div>';
 			echo '</div>';
 		}
+		*/
 
+		// TODO: Completar
+		
 
 	} // Fin de la clase Perla.
 	

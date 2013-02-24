@@ -39,7 +39,7 @@
 		}
 
 		// Obtiene la instancia unica.
-   	public static function ObtenerInstancia()
+   	static function ObtenerInstancia()
 		{
       	if( !self::$instancia instanceof self ){
 				self::$instancia = new self;
@@ -69,7 +69,7 @@
 		// Los argumentos $offset y $n indican, respectivamente, el nº de registro
 		// a partir del cual se recuperaran las perlas, y el nº de perlas que se
 		// recuperaran (se usa cuando se paginan los resultados).
-		function ObtenerPerlas( $categoria = 0, $participante = 0, $contenido_informatico = 1, $humor_negro = 1, $palabras = null, $offset = 0, $n = 0 )
+		function ObtenerPerlas( $id_usuario, $categoria = 0, $participante = 0, $contenido_informatico = 1, $humor_negro = 1, $palabras = null, $offset = 0, $n = 0 )
 		{
 			// Comienza a construir la consulta a la BD segun el valor de los 
 			// distintos argumentos suministrados.
@@ -82,7 +82,7 @@
 
 			$consulta .= "LEFT JOIN (SELECT perla, COUNT(*) AS num_denuncias FROM denuncias_perlas GROUP BY perla) t2 ON id = t2.perla ";
 
-			$consulta .= "LEFT JOIN (SELECT perla AS denunciada FROM denuncias_perlas WHERE usuario = {$_SESSION['id']}) denuncias ON id = denunciada ";
+			$consulta .= "LEFT JOIN (SELECT perla AS denunciada FROM denuncias_perlas WHERE usuario = {$id_usuario}) denuncias ON id = denunciada ";
 
 			if( $categoria || !$contenido_informatico || !$humor_negro ){
 				$consulta .= 'WHERE ';
@@ -111,6 +111,16 @@
 			}
 
 			$res = $this->bd->Consultar( $consulta );
+
+			
+			/*
+			$i = 0;
+			while( $regPerla = $res->fetch_array() ){
+				$perlas[$i] = new Perla;
+				$perlas[$i]->CargarDatos( $regPerla );
+				$i++;
+			}
+			*/
 
 			if( !$res ) return null;
 			return $res;

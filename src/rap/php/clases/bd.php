@@ -53,9 +53,6 @@
 			$this->usuario = $usuario;
 			$this->contrasenna = $contrasenna;
 			$this->bd = $bd;
-
-			$this->Consultar( "SET NAMES 'utf8'" );
-			//$bd->query("SET NAMES 'utf8'");
 		}
 
 		// Conecta a la BD y devuelve el objeto de la conexion (mysqli).
@@ -66,6 +63,10 @@
 
 			if( $bd->connect_errno ){
 				die( "Error conectando a BD (".$bd->connect_errno.") - ".$bd->connect_error );
+			}
+
+			if( !$bd->set_charset( 'utf8' ) ){
+				die( $bd->error );
 			}
 
 			return $bd;

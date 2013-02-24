@@ -73,7 +73,7 @@
 
 		//die( print_r( $datos ) );
 		while( $dato = $datos->fetch_assoc() ){
-			call_user_func_array( $fMostrarDato[0], array_merge( array( $dato ), array_slice( $fMostrarDato, 1 )  ) );
+			call_user_func_array( array( $claseDato, 'Mostrar'), array_merge( array( $dato ), array_slice( $fMostrarDato, 1 )  ) );
 		}
 
 		$datos->close();

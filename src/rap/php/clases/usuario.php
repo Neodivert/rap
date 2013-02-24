@@ -1,32 +1,58 @@
 <?php
 	// Conjunto de funciones relacionadas con los usuarios.
 	require_once DIR_LIB . 'utilidades.php';
-	require_once DIR_CLASES . 'bd.php';
+	require_once DIR_CLASES . 'objeto_bd.php';
 
-	// Intenta logear al usuario cuyos nombre y contraseña son,
-	// respectivamente, $nombre y $contrasenna. Devuelve true en caso de
-	// éxito, o finaliza la ejecución con un mensaje en caso de error.
-	function LogearUsuario( $nombre, $contrasenna )	
-	{
-		$bd = ConectarBD();
 
-		$res = $bd->query( "SELECT id, contrasenna from usuarios WHERE nombre='$nombre'" ) or die( $bd->error );
+	class Usuario implements ObjetoBD {
+		protected $id;
+		protected $nombre;
+		
+		public function ObtenerId(){ return $this->id; }
+		public function EstablecerId( $id ){ $this->id = $id; }
 
-		$bd->close();
+		public function ObtenerNombre(){ return $this->nombre; }
+		public function EstablecerNombre( $nombre ){ $this->nombre = $nombre; }
 
-		$usuario = $res->fetch_object();
+		// TODO: Completar.
+		public function InsertarBD( $bd ){}
+		//public function CargarDatos( $info ){}
 
-		if( !$usuario ){
-			die( "ERROR: No se encontro ningun usuario [$nombre]" );
+		function Usuario( $id, $nombre )
+		{
+			$this->id = $id;
+			$this->nombre = $nombre;
 		}
 
-		if( $usuario->contrasenna != $contrasenna ){
-			die( "ERROR: Contrasenna incorrecta" );
+		// Intenta logear al usuario cuyos nombre y contraseña son,
+		// respectivamente, $nombre y $contrasenna. Devuelve true en caso de
+		// éxito, o finaliza la ejecución con un mensaje en caso de error.
+		public function Logear( $nombre, $contrasenna )	
+		{	
+			$bd = BD::ObtenerInstancia();
+
+			$res = $bd->Consultar( "SELECT id, contrasenna from usuarios WHERE nombre='$nombre'" );
+			$usuario = $res->fetch_object();
+
+			if( !$usuario ){
+				die( "ERROR: No se encontro ningun usuario [$nombre]" );
+			}
+
+			if( $usuario->contrasenna != $contrasenna ){
+				die( "ERROR: Contrasenna incorrecta" );
+			}
+
+			$this->id = $usuario->id;
+			$this->nombre = $nombre;			
+			
+			//$_SESSION['id'] = $usuario->id;
+			return NULL;
 		}
 
-		$_SESSION['id'] = $usuario->id;
-		return true;
-	}
+
+	} // Fin de la clase Usuario.
+
+	
 
 
 	
