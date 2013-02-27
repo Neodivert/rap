@@ -69,11 +69,15 @@
 		// Los argumentos $offset y $n indican, respectivamente, el nº de registro
 		// a partir del cual se recuperaran las perlas, y el nº de perlas que se
 		// recuperaran (se usa cuando se paginan los resultados).
-		function ObtenerPerlas( $id_usuario, $categoria = 0, $participante = 0, $contenido_informatico = 1, $humor_negro = 1, $palabras = null, $offset = 0, $n = 0 )
+		function ObtenerPerlas( $id_usuario, $etiquetas = '', $participante = 0, $offset = 0, $n = 0 )
 		{
 			// Comienza a construir la consulta a la BD segun el valor de los 
 			// distintos argumentos suministrados.
+
+			
+			
 			$consulta = 'SELECT SQL_CALC_FOUND_ROWS * from perlas ';
+			/*
 			$and = false;
 
 			if( $participante ){
@@ -103,7 +107,7 @@
 					$and = true;
 				}			
 			}
-
+			*/
 			$consulta .= 'ORDER BY id DESC ';
 
 			if( $n != 0 ){
@@ -112,7 +116,9 @@
 
 			$res = $this->bd->Consultar( $consulta );
 
-			
+			//$perlas = Array();
+			//while( $regPerla = $res->fetch){
+			//}
 			/*
 			$i = 0;
 			while( $regPerla = $res->fetch_array() ){

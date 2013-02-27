@@ -38,7 +38,7 @@
 /*                Formulario de subida/actualización de perlas               */
 /*****************************************************************************/
 
-textarea, #titulo_perla, #fecha_perla
+textarea, #titulo, #fecha, #etiquetas
 {
 	width:100%;
 }
@@ -47,6 +47,13 @@ textarea
 {
 	resize:none;
 	height:400px;
+}
+
+input.radio
+{
+	display:inline;
+	border-style:solid;
+	border-width:2px;
 }
 
 

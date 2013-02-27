@@ -24,6 +24,6 @@
 	interface ObjetoBD {
 
 		//public function CargarDatos( $info );
-		public function InsertarBD( $bd );
+		public function InsertarBD( $bd, $id_usuario );
 	} // Final de la definicion de la clase BD.
 ?>

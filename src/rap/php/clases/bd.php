@@ -82,7 +82,7 @@
 			$res = $bd->query( $consulta ) 
 				or die( "Error con consulta [$consulta]: {$bd->error}" );
 
-			if( strpos($consulta, 'SQL_CALC_FOUND_ROWS') ){
+			if( strpos($consulta, 'SQL_CALC_FOUND_ROWS') !== false ){
 				$res1 = $bd->query( 'SELECT FOUND_ROWS()' );
 				$this->numFilas = $res1->fetch_row();
 				$this->numFilas = $this->numFilas[0];
@@ -91,8 +91,7 @@
 
 			// Si la consulta es de tipo INSERT y fue bien, devuelve el id
 			// del objeto insertado.
-			if( strpos($consulta, 'INSERT') && ($res == true) ){
-				echo 'Devolviendo insert_id<br/>';
+			if( (strpos($consulta, 'INSERT') !== false) && ($res == true) ){
 				$res = $bd->insert_id;
 			}
 		

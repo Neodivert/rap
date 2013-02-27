@@ -4,7 +4,7 @@
 	require_once DIR_CLASES . 'objeto_bd.php';
 
 
-	class Usuario implements ObjetoBD {
+	class Usuario {
 		protected $id;
 		protected $nombre;
 		
@@ -15,7 +15,7 @@
 		public function EstablecerNombre( $nombre ){ $this->nombre = $nombre; }
 
 		// TODO: Completar.
-		public function InsertarBD( $bd ){}
+		//public function InsertarBD( $bd, $id_usuario ){}
 		//public function CargarDatos( $info ){}
 
 		function Usuario( $id, $nombre )

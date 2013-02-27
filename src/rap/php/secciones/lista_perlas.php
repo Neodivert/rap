@@ -19,32 +19,14 @@
 
 	// Las perlas se muestran por categorías. Categoria por defecto: 0 
 	// (cualquier categoría).
-	if( !isset( $_GET['categoria'] ) ){
-		$_GET['categoria'] = 0;
-	}
+	$etiquetas = isset( $_GET['etiquetas'] ) ? $_GET['etiquetas'] : '';
 
 	// Las perlas se muestran por páginas. Página por defecto: 0.
-	if( !isset( $_GET['pagina'] ) ){
-		$_GET['pagina'] = 0;
-	}
+	$pagina_actual = isset( $_GET['pagina'] ) ? $_GET['pagina'] : 0;
     
-    // Las perlas se pueden mostrar por participantes. Participante por 
-    // defecto: 0 (cualquier participante).
-    if( !isset( $_GET['participante'] ) ){
-		$_GET['participante'] = 0;
-	}
-
-    if( !isset( $_GET['contenido_informatico'] ) ){
-		$_GET['contenido_informatico'] = 1;
-	 }
-
-    if( !isset( $_GET['humor_negro'] ) ){
-		$_GET['humor_negro'] = 1;
-	}
-
-    if( !isset( $_GET['palabras'] ) ){
-		$_GET['palabras'] = null;
-	}
+	// Las perlas se pueden mostrar por participantes. Participante por 
+  	// defecto: 0 (cualquier participante).
+	$participante = isset( $_GET['participante'] ) ? $_GET['participante'] : 0;
 ?>
 
 <!-- TÍTULO -->
@@ -52,10 +34,12 @@
 
 <!--                           Barra de busqueda                            -->
 <h2>Buscar perlas</h2>
-<div id="barra_busqueda" class="barra">
-	<form id="form_busqueda" method="get">
+<div id="barra_busqueda" class="barra">	
 
-		<!-- Busqueda. Seleccion de categoria -->
+	<?php /*
+	<!-- <form id="form_busqueda" method="get">
+
+		<!-- Busqueda. Seleccion de categoria 
 		<label for="categoria">Categor&iacute;a: </label>
   		<select name="categoria" id="categoria" >
 		<?php
@@ -87,9 +71,9 @@
 			}
 			echo "value=\"0\">Cualquiera ($total_perlas)</option>";
 		?>
-		</select>
+		</select> -->
 
-		<!-- Busqueda. Seleccion de participante -->
+		<!-- Busqueda. Seleccion de participante 
 		<label for="participante">Participante</label>
 		<select name="participante" id="participante">
       	<?php
@@ -113,9 +97,9 @@
 				}
 				echo "value=\"0\">Cualquiera</option>";
         		?>
-     	</select>
+     	</select> -->
 
-		<!-- Busqueda. Seleccion de flags -->
+		<!-- Busqueda. Seleccion de flags 
 		<?php
 			echo '<br /><input type="checkbox" name="contenido_informatico" value="0" ';
 			if( $_GET['contenido_informatico'] == 0 ){
@@ -131,7 +115,7 @@
 		?>
 		<br />
       <input type="submit" value="Buscar Perlas" />
-	</form>
+	</form> --> */ ?>
 </div>
 
 
@@ -144,18 +128,10 @@
 		$usuarios[$rUsuario->id] = $rUsuario->nombre;
 	}
 
-	// Obtiene los nombres de las categorias y las mete en un array.
-	$rCategorias = $rap->ObtenerCategorias();
-	$categorias = array();
-	while( $rCategoria = $rCategorias->fetch_object() ){
-		$categorias[$rCategoria->id] = $rCategoria->nombre;
-	}
-
 	$bd = BD::ObtenerInstancia();
 
 	// Obtiene las perlas de la pagina actual.
-	$pagina_actual = $_GET['pagina'];
-	$perlas = $rap->ObtenerPerlas( $_SESSION['id'], $_GET['categoria'], $_GET['participante'], $_GET['contenido_informatico'], $_GET['humor_negro'], null, $pagina_actual*5, 5 );	
+	$perlas = $rap->ObtenerPerlas( $_SESSION['id'], '', $participante, $pagina_actual*5, 5 );
 
 	// Obtiene el numero de perlas.
 	$nPerlas = $bd->ObtenerNumFilasEncontradas();
@@ -164,7 +140,7 @@
 
 	while( $regPerla = $perlas->fetch_assoc() ){
 		$perla = new Perla;
-		$perla->CargarDatos( $regPerla, $categorias, $usuarios );
+		$perla->CargarDesdeRegistro( $regPerla );
 
 		$modificable = false;
 ?>
@@ -173,9 +149,6 @@
 			<!-- Titulo -->
 			<h1><?php echo $perla->ObtenerTitulo(); ?></h1>
 	
-			<!-- Categoria -->
-			<span class="subtexto">Categor&iacute;a: <?php echo $perla->ObtenerCategoria(); ?></span><br/>
-
 			<!-- Nota media y nº de votos (si existen) -->
 			<?php if( $perla->ObtenerNumVotos() != 0 ){ ?>
 				<span class="subtexto">Nota media: <? echo $perla->ObtenerNotaMedia(); ?> - N&uacute;mero de votos: <?php echo $perla->ObtenerNumVotos(); ?></span>
@@ -263,10 +236,9 @@
 					}
 					echo '</form>';
 					echo "<br /><a href=\"Javascript:void(0)\" onclick=\"MostrarPerla('{$perla->ObtenerId()}')\">Comentar Perla (comentarios: {$perla->ObtenerNumComentarios()})</a>";
-
 					echo '<br />';
 					// Formulario (select + botón) para votar la perla.
-					GenerarFormularioVoto( $perla->ObtenerId() );	
+					GenerarFormularioVoto( $perla->ObtenerId() );
 				?>
 			</div> <!-- Fin del cuerpo de la perla -->
 		</div> <!-- Fin de la perla -->
@@ -274,7 +246,6 @@
 	} // Fin del while que recorre las perlas.
 	// Libera los recursos.
 	$rUsuarios->close();
-	$rCategorias->close();
 	
 	// Crea los enlaces a las otras páginas
 	$get = $_GET; ?>

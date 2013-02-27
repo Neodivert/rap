@@ -1,30 +1,22 @@
 <?php
 	// Sección para subir una perla (o actualizar una existente).
 	//die( phpinfo() );
+	//session_start();
 
-	require_once DIR_LIB . 'usuarios.php';
+	require_once 'php/config/rutas.php';
+	require_once DIR_CLASES . 'usuario.php';
 
+	$perla = new Perla;
 	if( isset( $_POST[ 'titulo_perla' ] ) ){
+		die( print_r( $_POST ) );
 		// El usuario ha enviado un formulario con una nueva perla. Rellena
-		// un array asociativo "$perla" con los datos.
+		// la perla.
 
 		// Titulo.
-		$perla['titulo'] = $_POST[ 'titulo_perla' ];
+		$perla->EstablecerTitulo( $_POST[ 'titulo_perla' ] );
 
-		// Texto de la perla. A éste texto se le da un formateo previo, 
-		// consistente en tomar las líneas de tipo 'participante: texto' y
-		// resaltar (poner en negrita) la parte de 'participante'.
-		$lineas = explode( "\n", $_POST[ 'texto_perla' ] );
-		$perla['texto'] = '';
-
-		foreach( $lineas as $linea ){
-			$tokens = explode( ': ', $linea, 2 );
-			if( count( $tokens ) == 2 ){
-				$perla['texto'] .= "<strong>{$tokens[0]}: </strong>{$tokens[1]}<br />";
-			}else{
-				$perla['texto'] .= $linea . '<br />';
-			}
-		}
+		// Texto.
+		$perla->EstablecerTexto( $_POST[ 'texto_perla' ] );
 
 		// Imagen.
 		if( $_FILES['imagen']['error'] != UPLOAD_ERR_NO_FILE ||
@@ -34,45 +26,41 @@
 				&& file_exists( 'media/perlas/' . $_POST['modificar'] )
 			)
 		){
-			$perla['perla_visual'] = true;
+			$perla->EstablecerPerlaVisual( true );
 		}else{
-			$perla['perla_visual'] = false;
+			$perla->EstablecerPerlaVisual( false );
 		}
 
-		// Nueva categoria.
-		$perla['nueva_categoria'] = $_POST['nueva_categoria'];
+		// Nueva categoria. TODO: Ver como manejaba lo de las nuevas categorias.
+		// $perla->EstablecerCategoria( $_POST['nueva_categoria'] );
 		
 		// Fecha de subida.
-		$perla['fecha_subida'] = date("Y/m/d");
+		$perla->EstablecerFecha( date("Y/m/d") );
 
 		// Fecha.
 		if( $_POST['fecha_perla'] != '' ){
-			$perla['fecha'] = "<i>{$_POST['fecha_perla']}</i>";
+			$perla->EstablecerFecha( "<i>{$_POST['fecha_perla']}</i>" );
 		}else{
-			$perla['fecha'] = '<i>No especificada</i>';
+			$perla->EstablecerFecha( '<i>No especificada</i>' );
 		}
 		
 		// Contenido informatico.
-		$perla['contenido_informatico'] = isset( $_POST['contenido_informatico'] );
+		$perla->EstablecerContenidoInformatico( isset( $_POST['contenido_informatico'] ) );
 
 		// Humor negro.
-		$perla['humor_negro'] = isset( $_POST['humor_negro'] );
+		$perla->EstablecerHumorNegro( isset( $_POST['humor_negro'] ) );
 
 		// Imagen.
-		$perla['imagen'] = false;
+		//$perla['imagen'] = false; // TODO: ?
 
 		// Categoria.
-		$perla['categoria'] = $_POST['categoria_perla'];
+		$perla->EstablecerCategoria( $_POST['categoria_perla'] );
 
 		// Participantes.
-		// Los participantes se guardan en una string de la forma 
-		// "p1,p2,...,pn,". Quitamos la última ',' y "rompemos" la string en
-		// un array de participantes.
-		$_POST['participantes'] = substr_replace( $_POST['participantes'], "", -1 );
-		$perla['participantes'] = explode( ',', $_POST['participantes'] );
+		$perla->EstablecerParticipantes( $_POST['participantes'] );
 
 		// Subidor. Se que suena mal, pero queria dejarlo todo en Español.
-		$perla['subidor'] = $_SESSION['id'];
+		$perla->EstablecerSubidor( $_SESSION['id'] );
 
 		// La estructura "$perla" está completa. Ahora diferenciamos entre dos
 		// casos, según si estamos subiendo una perla nueva o actualizando una
@@ -80,7 +68,7 @@
 		if( !isset( $_POST['modificar'] ) ){
 			// Vamos a insertar una perla nueva.
 			try{
-				InsertarPerla( $perla );
+				//InsertarPerla( $perla );
 				//SumarPerla( $perla['categoria'] );
 				die( 'Perla subida correctamente' );
 			}catch( Exception $e ){
@@ -89,7 +77,7 @@
 		}else{
 			// Estamos actualizando una perla existente. En $_POST['modificar']
 			// tenemos la id de la perla en cuestión.
-			$res = ActualizarPerla( $_POST['modificar'], $perla, isset( $_POST['borrar_imagen'] ) );
+			//$res = ActualizarPerla( $_POST['modificar'], $perla, isset( $_POST['borrar_imagen'] ) );
 			if( $res == null ){
 				die( 'Perla subida correctamente' );
 			}else{
@@ -101,6 +89,7 @@
 		// ¿Quiere subir una perla nueva o modificar una existente?
 
 		if( isset( $_GET['modificar'] ) ){
+			/* TODO: DESCOMENTAR.
 			// El usuario quiere modificar una perla existente. La variable
 			// $_GET['modificar'] contiene La id de la perla en cuestión.
 
@@ -128,158 +117,101 @@
 			while( $rParticipante = $rParticipantes->fetch_object() ){
 				$perla['participantes'][] = $rParticipante->usuario;
 			}
+			*/
 		}else{
 			// El usuario va a subir una perla nueva. Rellena sus campos con
 			// los valores por defecto.
-			$perla['titulo'] = $perla['texto'] = $perla['fecha'] = '';
+			$perla->EstablecerTitulo( '' );
+			$perla->EstablecerTexto( '' );
+			$perla->EstablecerFecha( '' );
 
-			$perla['contenido_informatico'] = $perla['humor_negro'] = $perla['perla_visual'] = false;
-
-			$perla['categoria'] = 13; // 13 - Sin categoria
+			$perla->EstablecerContenidoInformatico( false );
+			$perla->EstablecerHumorNegro( false );
+			$perla->EstablecerPerlaVisual( false );
 		
-			$perla['participantes'] = array( $_SESSION['id'] );
+			$perla->EstablecerEtiquetas( '' );
+
+			$perla->EstablecerParticipantes( "{$_SESSION['id']}" );
 		}
 	}
+	//die( 'Categoria: ' . $perla->ObtenerCategoria() );
 ?>
+
+
 
 <!-- TÍTULO -->
 <h1>Subir perla</h1>
 
 <!-- FORMULARIO PARA SUBIR/MODIFICAR UNA PERLA -->
-<form id="form_subir_perla" action="general.php?seccion=subir_perla" method="post" enctype="multipart/form-data">
+<form action="php/controladores/perlas.php" method="post" enctype="multipart/form-data">
 
 	<!-- ¿Título de la perla? (campo de texto) -->
+	<h2>T&iacute;tulo:</h2>
 	<p>
-	<label for="titulo_perla">T&iacute;tulo: </label>
 	<?php
-		echo "<input type=\"text\" name=\"titulo_perla\" id=\"titulo_perla\" value=\"{$perla['titulo']}\" />";
+		echo "<input type=\"text\" name=\"titulo\" id=\"titulo\" value=\"{$perla->ObtenerTitulo()}\" required />";
 	?>
 	</p>
 
-
-	<!-- ¿Categoría de la perla? (campo select) -->
-	<p>
-	<label for="categoria_perla">Categoria de la perla: </label>
-	<select name="categoria_perla" id="categoria_perla" />
-	<?php
-		$categorias = ObtenerCategorias();
-		
-		while( $categoria = $categorias->fetch_object() ){
-			echo "<option value=\"{$categoria->id}\")\" ";
-			if( $categoria->id == $perla['categoria'] ){
-				echo "selected=\"selected\" ";
-			}
-			echo ">{$categoria->nombre}</option>";
-		}
-
-		$categorias->close();
-	?>
-	</select>
-	
-
-	<!-- <p id="p_nueva_categoria"> -->
-	<label for="nueva_categoria">---> O introduce una nueva categor&iacute;a: </label>
-	<input type="text" name="nueva_categoria" id="nueva_categoria" value="" />
-	<!-- </p> -->
-	</p>
+	<?php /*
 	<!-- Imagen (solo perlas visuales) -->
+	<h2>Imagen (s&oacute;lo perlas visuales)</h2>
 	<?php
-		if( $perla['perla_visual'] ){
+		if( $perla->ObtenerPerlaVisual() ){
 			echo "<img src=\"../datos/img/perlas/{$_GET['modificar']}\" width=\"100%\" >";
 			echo '<input type="checkbox" name="borrar_imagen" value="" />Borrar imagen<br />';
 		}
 	?>
-	<label for="imagen">Imagen (s&oacute;lo perlas visuales): </label>
+	<label for="imagen">Cargar imagen: </label>
 	<input type="file" name="imagen" id="imagen" />
-	<!-- <a href="Javascript:void(0)" onclick="VaciarElemento('imagen')">Resetear campo de fichero</a> -->
+	<!-- <a href="Javascript:void(0)" onclick="VaciarElemento('imagen')">Resetear campo de fichero</a> --> */ ?>
 
 	<!-- ¿Texto de la perla? (textarea) --> 
-	<p>
-	<label for="texto_perla">Texto: </label>
-	
-	<textarea name="texto_perla" id="texto_perla"><?php echo $perla['texto']; ?></textarea>
-	</p>
+	<h2>Texto: </h2>
+	<textarea name="texto" id="texto"><?php echo $perla->ObtenerTexto(); ?></textarea>
 
-	<input type="hidden" id="participantes" name="participantes" value="" />
+	<!-- Etiquetas de la perla -->
+	<h2>Etiquetas: </h2>
+	<label for="etiquetas">Introduce las etiquetas separadas por comas. Por ejemplo: "pastelillo, g&eacute;minis, sub-woofer, napoleon":</label>
 	<?php
-		if( isset( $_GET['modificar'] ) ){
-			echo "<input type=\"hidden\" name=\"modificar\" value=\"{$_GET['modificar']}\" />";
-		}
+		echo "<input type=\"text\" name=\"etiquetas\" id=\"etiquetas\" value=\"{$perla->ObtenerEtiquetas()}\" required />";
 	?>
 
 	<!-- ¿Fecha de la perla (cuándo ocurrió)? (campo de texto) -->
-	<p>
-	<label for="fecha_perla">Fecha de la perla (Si sabes el d&iacute;a concreto, ponlo como dd/mm/aaaa. Si no, pues una frase o lo que sea (p.e. "el año pasado"). Tambi&eacute;n se puede dejar vac&iacute;a: </label>
+	<h2>Fecha de la perla (¿cu&aacute;ndo ocurri&oacute;?): </h2>
+	<label for="fecha">Fecha de la perla (Si sabes el d&iacute;a concreto, ponlo como dd/mm/aaaa. Si no, pues una frase o lo que sea (p.e. "el año pasado"). Tambi&eacute;n se puede dejar vac&iacute;a: </label>
 	<?php
-		echo "<input type=\"text\" name=\"fecha_perla\" id=\"fecha_perla\" value=\"{$perla['fecha']}\" />";
+		echo "<input type=\"text\" name=\"fecha\" id=\"fecha\" value=\"{$perla->ObtenerFecha()}\" />";
 	?>
-	</p>
 
-	<!-- ¿Contenido informático? / ¿Humor negro? (checkboxes) -->
-	<?php
-		echo '<input type="checkbox" name="contenido_informatico" value="" ';
-		if( $perla['contenido_informatico'] ){
-			echo 'checked';
-		}
-		echo '/>';
-		echo '<strong>Contenido Inform&aacute;tico</strong><br />';
-
-		echo '<input type="checkbox" name="humor_negro" value="" ';
-		if( $perla['humor_negro'] ){
-			echo 'checked';
-		}
-		echo '/><strong>Humor negro / salvajada</strong><br />';
-	?>
+	<!-- TODO: Meter lo del contenido informatico y el humor negro (mediante etiquetas) -->
 	
-	<!-- Obtiene un array con los nombres de los usuarios para luego mostrar 
-		 los participantes de la perla -->
-	<?php
-		$rUsuarios = ObtenerUsuarios();
-		$usuarios = array();
-		while( $rUsuario = $rUsuarios->fetch_object() ){
-			$usuarios[$rUsuario->id] = $rUsuario->nombre;
-		}
-		$rUsuarios->close();
-	?>
-
-	<!-- Participantes actuales de la perla. Al lado de cada participante
-		 se muestra una [x] para eliminar el participante (por javascript). -->
-	<p>Participantes en la perla: </p>
-	<ul id="lista_participantes">
+	<!-- Conjunto de campos "checkbox" para añadir participantes a la perla -->
+	<h2>Participantes en la perla:</h2>
+	<fieldset required>
 		<?php 
-			foreach( $perla['participantes'] as $participante ){
-				echo "<li id=\"p_{$participante}\" >{$usuarios[$participante]} ";
-				echo "<a href=\"javascript:void(0)\" onClick=\"EliminarParticipante('{$participante}')\">[x]</a>";
-				echo '</li>';
+			$usuarios = $rap->ObtenerUsuarios();
+
+			if( !$usuarios ) die( 'Error: no se obtuvieron usuarios de la base de datos' );
+
+			while( $usuario = $usuarios->fetch_object() ){
+				if( $usuario->nombre != $_SESSION['nombre'] ){
+					echo "<input type=\"checkbox\" name=\"participantes[]\" value=\"{$usuario->id}\" />{$usuario->nombre}<br />";
+				}
 			}
+			$usuarios->close();
 		?>
-	</ul>
+	</fieldset>
 
-	<!-- Campo select para añadir participantes a la perla. Cuando se eligue un
-		 participante, éste se añadi a la lista anterior por medio de javascript -->
+	<!--
 	<?php
-		$usuarios = ObtenerUsuarios();
-
-		if( !$usuarios ) die( 'Error: no se obtuvieron usuarios de la base de datos' );
-
-		echo '<p>';
-		echo '<label for="seleccion_usuarios">A&ntilde;adir participante: </label>';
-		echo '<select id="seleccion_usuarios">';
-		while( $usuario = $usuarios->fetch_object() ){
-			echo "<option value=\"{$usuario->id}\" onclick=\"AnnadirParticipante('{$usuario->id}', '{$usuario->nombre}')\">";
-			echo $usuario->nombre;
-			echo '</option>';
-		}
-		echo '</select>';
-		echo '</p>';
-
-		$usuarios->close();
-
 		// Botón de "submit". Se llama a una función javascript que haga 
 		// comprobaciones sobre el formulario antes de subir el formulario.
 		echo '<input type="button" value="Subir Perla" ';
 		echo "onclick=\"SubirPerla('{$_SESSION['id']}')\" ";
 		echo '/>';
-	?>
+	?> -->
+
+	<input type="submit" name="accion" value="Subir perla"/>
 	
 </form>

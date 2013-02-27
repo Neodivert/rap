@@ -22,13 +22,14 @@
 	class Perla implements ObjetoBD {
 		protected $id;
 		protected $titulo;
-		protected $categoria;
+		protected $etiquetas;
 		protected $nota_acumulada;
 		protected $num_votos;
 		protected $texto;
 		protected $contenido_informatico;
 		protected $humor_negro;
 		protected $perla_visual;
+		protected $fecha;
 		protected $subidor;
 		protected $fecha_subida;
 		protected $modificador;
@@ -36,6 +37,8 @@
 		protected $num_denuncias;
 		protected $denunciada;
 		protected $num_comentarios;
+		protected $participantes;
+		
 	
 		function ObtenerId(){ return $this->id; }
 		function EstablecerId( $id ){ $this->id = $id; }
@@ -43,8 +46,8 @@
 		function ObtenerTitulo(){ return $this->titulo; }
 		function EstablecerTitulo( $titulo ){ $this->titulo = $titulo; }
 
-		function ObtenerCategoria(){ return $this->categoria; }
-		function EstablecerCategoria( $categoria ){ $this->categoria = $categoria; }
+		function ObtenerEtiquetas(){ return $this->etiquetas; }
+		function EstablecerEtiquetas( $etiquetas ){ $this->etiquetas = $etiquetas; }
 
 		function ObtenerNumVotos(){ return $this->num_votos; }
 		function EstablecerNumVotos( $num_votos ){ $this->num_votos = $num_votos; }
@@ -55,13 +58,33 @@
 		function EstablecerContenidoInformatico( $contenido_informatico ){ $this->contenido_informatico = $contenido_informatico; }
 
 		function ObtenerHumorNegro(){ return $this->humor_negro; }
-		function EstablecerObtenerHumorNegro( $humor_negro ){ $this->humor_negro = $humor_negro; }
+		function EstablecerHumorNegro( $humor_negro ){ $this->humor_negro = $humor_negro; }
 
 		function ObtenerTexto(){ return $this->texto; }
-		function EstablecerTexto( $texto ){ $this->texto = $texto; }
+
+		// Texto de la perla. A éste texto se le da un formateo previo, 
+		// consistente en tomar las líneas de tipo 'participante: texto' y
+		// resaltar (poner en negrita) la parte de 'participante'.
+		function EstablecerTexto( $texto )
+		{ 	
+			$lineas = explode( "\n", $texto );
+			$this->texto = '';
+
+			foreach( $lineas as $linea ){
+				$tokens = explode( ': ', $linea, 2 );
+				if( count( $tokens ) == 2 ){
+					$this->texto .= "<strong>{$tokens[0]}: </strong>{$tokens[1]}<br />";
+				}else{
+					$this->texto .= $linea . '<br />';
+				}
+			}
+		}
 
 		function ObtenerPerlaVisual(){ return $this->perla_visual; }
 		function EstablecerPerlaVisual( $perla_visual ){ $this->perla_visual = $perla_visual; }
+
+		function ObtenerFecha(){ return $this->fecha; }
+		function EstablecerFecha( $fecha ){ $this->fecha = $fecha; }
 
 		function ObtenerSubidor(){ return $this->subidor; }
 		function EstablecerSubidor( $subidor ){ $this->subidor = $subidor; }
@@ -81,25 +104,41 @@
 		function ObtenerDenunciada(){ return $this->denunciada; }
 		function EstablecerDenunciada( $denunciada ){ $this->denunciada = $denunciada; }
 
+		function EstablecerParticipantes( $participantes ){
+			$this->participantes = $participantes;
+		}
+
 		function ObtenerNumComentarios(){ return $this->num_comentarios; }
 		function EstablecerNumComentarios( $num_comentarios ){ $this->num_comentarios = $num_comentarios; }
 
-		public function CargarDatos( $info, $categorias, $usuarios ){
-			$this->id = $info['id'];
+		public function CargarDesdeFormulario( $info ){
+			//die( print_r( $info ) );
+			if( isset( $info['id'] ) ){
+				$this->id = $info['id'];
+			}
 			$this->titulo = $info['titulo'];
-			$this->categoria = $categorias[$info['categoria']];
-			$this->nota_acumulada = $info['nota_acumulada'];
-			$this->num_votos = $info['num_votos'];
 			$this->texto = $info['texto'];
-			$this->contenido_informatico = $info['contenido_informatico'];
-			$this->humor_negro = $info['humor_negro'];
-			$this->perla_visual = $info['perla_visual'];
+			$this->etiquetas = explode( ', ', $info['etiquetas'] );
+			
+			//for
+			//$this->nota_acumulada = $info['nota_acumulada'];
+			//$this->num_votos = $info['num_votos'];
 
-			$this->subidor = $info['subidor'];
-			$this->fecha_subida = $info['fecha_subida'];
-			$this->modificador = $info['modificador'];
-			$this->fecha_modificacion = $info['fecha_modificacion'];
+			//die( print_r( $info ) );
+			if( isset( $info['participantes'] ) ){
+				$this->participantes = $info['participantes'];
+			}
 
+			//$this->contenido_informatico = $info['contenido_informatico'];
+			//$this->humor_negro = $info['humor_negro'];
+			//$this->perla_visual = $info['perla_visual'];
+
+			//$this->subidor = $info['subidor'];
+			//$this->fecha_subida = $info['fecha_subida'];
+			//$this->modificador = $info['modificador'];
+			//$this->fecha_modificacion = $info['fecha_modificacion'];
+
+			/*
 			if( isset( $info['num_denuncias'] ) ){
 				$this->num_denuncias = $info['num_denuncias'];
 			}else{
@@ -110,32 +149,72 @@
 			}else{
 				$this->denunciada = false;
 			}
+			*/
+			//$this->num_comentarios = $info['num_comentarios'];
+		}
 
-			$this->num_comentarios = $info['num_comentarios'];
+		public function CargarDesdeRegistro( $registro ){
+			// TODO: Faltan participantes y etiquetas.
+			if( isset( $registro['id'] ) ){			
+				$this->id = $registro['id'];
+			}
+			$this->titulo = $registro['titulo'];
+			// TODO: $this->etiquetas = $registro['etiquetas'];
+			//$this->nota_acumulada = $info['nota_acumulada'];
+			//$this->num_votos = $info['num_votos'];
+			$this->texto = $registro['texto'];
+			//$this->contenido_informatico = $info['contenido_informatico'];
+			//$this->humor_negro = $info['humor_negro'];
+			//$this->perla_visual = $info['perla_visual'];
+
+			$this->subidor = $registro['subidor'];
+			$this->fecha_subida = $registro['fecha_subida'];
+			$this->modificador = $registro['modificador'];
+			$this->fecha_modificacion = $registro['fecha_modificacion'];
+
+			if( isset( $registro['num_denuncias'] ) ){
+				$this->num_denuncias = $registro['num_denuncias'];
+			}else{
+				$this->num_denuncias = 0;
+			}
+			if( isset( $registro['denunciada'] ) ){
+				$this->denunciada = $registro['denunciada'];
+			}else{
+				$this->denunciada = false;
+			}
+
+			//$this->num_comentarios = $info['num_comentarios'];
 		}
 
 		// Inserta la perla en la BD.
-		public function InsertarBD( $bd ){
-			// Si con la perla se crea una nueva categoria, introduce la ultima
-			// en la BD. Tambien se obtiene la id de la categoria.
-			if( $perla['nueva_categoria'] ){
-				$id_categoria = CrearCategoria( $perla['nueva_categoria'] );
+		public function InsertarBD( $bd, $id_usuario, $borrar_imagen = false ){
+			//die( 'Participantes: ' .  print_r( $this->participantes ) );
+			if( !isset( $this->id ) ){
+				// La perla es nueva. Inserta la perla en la BD y obtiene su ID.
+				$this->id = $bd->Consultar( "INSERT INTO perlas (titulo, texto, fecha_subida, fecha, subidor, fecha_modificacion, modificador) VALUES( '{$this->titulo}', '{$this->texto}', NOW(), '{$this->fecha}', '$id_usuario', NOW(), '$id_usuario' )" );
+				// Añade al usuario actual como participante de la perla.
+				$this->participantes[] = $id_usuario;
 			}else{
-				$id_categoria = $perla['categoria'];
+				// La perla no es nueva. Actualiza los datos en la BD.
+				$bd->Consultar( "UPDATE perlas SET titulo='{$this->titulo}', texto='{$this->texto}', fecha='{$this->fecha}', fecha_modificacion=NOW(), modificador='{$id_usuario}' WHERE id='{$this->id}' " ) or die ($bd->error);
+				
+				$this->BorrarParticipantesBD( $bd );
+				$this->BorrarEtiquetasBD( $bd );
 			}
-
-			// Inserta la perla en la BD y obtiene su ID.
-			$id_perla = $bd->Consultar( "INSERT INTO perlas (titulo, texto, fecha_subida, fecha, contenido_informatico, humor_negro, perla_visual, categoria, subidor, fecha_modificacion, modificador) VALUES( '{$this->info['titulo']}', '{$this->info['texto']}', NOW(), '{$this->info['fecha']}', '{$this->info['contenido_informatico']}', '{$this->info['humor_negro']}', '{$this->info['perla_visual']}', '$id_categoria', '{$this->info['subidor']}', NOW(), '{$this->info['subidor']}' )" );
-		
+			
 			// TODO: Tener en cuenta si $id_perla == false (error al insertar).
-		
+			
 			// Inserta en la BD los participantes de la perla.
-			InsertarParticipantes( $id_perla, $perla['participantes'] );
+			$this->InsertarParticipantesBD( $bd );
+
+			// Inserta en la BD las etiquetas de la perla.
+			$this->InsertarEtiquetasBD( $bd );
 
 			// Notifica por email.
-			NotificarPorEmail( 'nueva_perla', $id_perla );
+			//NotificarPorEmail( 'nueva_perla', $id_perla );
 
 			// Trata de subir la imagen (sólo perlas visuales).
+			/*
 			if( $perla['perla_visual'] ){
 				try{
 					InsertarImagen( 'imagen', $id_perla );
@@ -143,12 +222,34 @@
 					throw $e;
 				}
 			}
-
-			
+			*/
 		}
 
+		private function InsertarParticipantesBD( $bd ){
+			foreach( $this->participantes as $participante ){
+				$bd->Consultar( "INSERT INTO participantes (perla, usuario) VALUES ('{$this->id}', '{$participante}' )" );
+			}
+		}
+
+		private function BorrarParticipantesBD( $bd ){
+			$bd->Consultar( "DELETE FROM participantes WHERE perla='{$this->id}'" );
+		}
+
+
+		private function InsertarEtiquetasBD( $bd ){
+			foreach( $this->etiquetas as $etiqueta ){
+				// TODO: Crear etiqueta si no existe. Obtener su id tanto si existe como si no.
+				//$bd->Consultar( "INSERT INTO 
+				$bd->Consultar( "INSERT INTO perlas_etiquetas (perla, etiqueta) VALUES ('{$this->id}', '{$etiqueta}' )" );
+			}
+		}
+
+		private function BorrarEtiquetasBD( $bd ){
+			$bd->Consultar( "DELETE FROM perlas_etiquetas WHERE perla='{$this->id}'" );
+		}
 		
 		// Actualiza en la BD la perla cuya id es '$id_perla'.
+		/*
 		function ActualizarBD( $id_perla, $borrar_imagen = false )
 		{
 			// Si con la perla se crea una nueva categoria, introduce esta en la BD.
@@ -185,7 +286,7 @@
 
 			$bd->close();
 		}
-
+		*/
 
 		// Determina si el usuario '$usuario' es participante de la perla.
 		function EsParticipante( $usuario )
@@ -358,15 +459,7 @@
 
 	// Inserta los participantes '$participantes' de la perla 'id_perla' en la 
 	// BD.
-	function InsertarParticipantes( $id_perla, $participantes ){
-		$bd = ConectarBD();
-
-		foreach( $participantes as $participante ){
-			$res = $bd->query( "INSERT INTO participantes (perla, usuario) VALUES ('{$id_perla}', '{$participante}' )" ) or die( $bd->error );
-		}
 	
-		$bd->close();
-	}
 
 	
 

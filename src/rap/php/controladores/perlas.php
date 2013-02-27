@@ -2,11 +2,23 @@
 	session_start();
 
 	require_once '../config/rutas.php';
-	require_once DIR_LIB . 'perlas.php';
+	require_once DIR_CLASES . 'perla.php';
+	require_once DIR_CLASES . 'rap.php';
 	//require_once DIR_LIB . 'usuarios.php';
+
+	$rap = RAP::ObtenerInstancia();
 
 	if( isset( $_POST['accion'] ) ){
 		switch( $_POST['accion'] ){
+			case 'Subir perla':
+				die( 'TODO: Crear etiqueta si no existe. Obtener su id tanto si existe como si no' );
+				$perla = new Perla;
+				$perla->CargarDesdeFormulario( $_POST );
+				$perla->InsertarBD( BD::ObtenerInstancia(), $_SESSION['id'] );
+				die( 'Insertada! :D' );
+				//header( "Location: ../../general.php?seccion=subir_perla&modificar={$_POST['perla']}" );
+				exit();
+			break;
 			case 'Modificar perla':
 				header( "Location: ../../general.php?seccion=subir_perla&modificar={$_POST['perla']}" );
 				exit();
@@ -42,5 +54,7 @@
 				die( 'Accion desconocida' );
 			break;
 		}
+	}else{
+		die( 'Accion desconocida (2)' );
 	}
 ?>

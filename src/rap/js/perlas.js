@@ -1,73 +1,5 @@
 // Funciones javascript relacionadas con las perlas.
 
-/*          Funciones relacionadas con los participantes de una perla        */
-/*****************************************************************************/
-
-// Las funciones siguientes trabajan con dos elementos principales del 
-// formulario para subir/actualizar una perla: la lista de participantes ya
-// añadidos (elemento ul) y el select con todos los usuarios para añadir 
-// nuevos participantes a la lista anterior.
-
-// Añade un participante (id, nombre) a la lista de participantes.
-function AnnadirParticipante( id, nombre )
-{
-	// Evita que el usuario introduzca dos veces el mismo participante.
-	if( document.getElementById( 'p_' + id ) ){
-		alert( 'El participante ya se ha annadido' );
-		return;
-	}
-
-	// Accede a la lista de participantes ya añadidos (elemento ul).
-	var lista_participantes = document.getElementById( 'lista_participantes' );
-
-	// Crea un elemento de la lista (li) con el nuevo participante y el enlace
-	// para eliminarlo.
-	var participante = document.createElement( 'li' );
-	participante.setAttribute( 'id', 'p_' + id );
-	participante.innerHTML = nombre + " <a href=\"javascript:void(0)\" onclick=\"EliminarParticipante('" + id + "', '" + nombre + "')\">[x]</a>";
-
-	// Añade el nuevo elemento a la lista de participantes.
-	lista_participantes.appendChild( participante );
-}
-
-
-// Elimina el participante cuya id de usuario es 'id' de la lista.
-function EliminarParticipante( id )
-{
-	// Acede a la lista de participantes actuales.
-	var lista_participantes = document.getElementById( 'lista_participantes' );
-
-	// Accede al elemento de la lista con el participante a eliminar.
-	var x = document.getElementById( 'p_' + id );
-
-	// Elimina el elemento.
-	lista_participantes.removeChild( x );
-}
-
-
-// Busca el siguiente hermano del nodo DOM 'nodo' que sea de tipo 1.
-function SiguienteHermano( nodo )
-{
-	do{
-		nodo = nodo.nextSibling;
-	}while( nodo && (nodo.nodeType != 1) );
-
-	return nodo;
-}
-
-
-// Busca el primer hijo del nodo DOM 'nodo' que sea de tipo 1.
-function PrimerHijo( nodo ){
-	nodo = nodo.firstChild;
-
-	while( nodo && (nodo.nodeType != 1) ){
-		nodo = nodo.nextSibling;
-	}
-
-	return nodo;
-}
-
-
 /*                     Funciones relacionadas con las perlas                 */
 /*****************************************************************************/
 
@@ -89,42 +21,6 @@ function SubirPerla( id_usuario )
 		}
 	}
 
-	// Obtiene el elemento 'ul' con la lista de participantes.
-	var lista_participantes = document.getElementById( 'lista_participantes' );
-
-	// Fuerza a que al menos se haya elegido un participante.
-	var aux = PrimerHijo( lista_participantes );
-	if( !aux ){
-		alert( 'Debes especificar al menos un participante' );
-		return;
-	}
-
-	// Si el usuario que sube la perla no se ha elegido como participante,
-	// muestra un aviso.
-	if( !document.getElementById( 'p_' + id_usuario ) ){
-		if( !confirm( "No estas en la lista de participantes, por lo que no podras modificar la perla en el futuro. Continuar?" ) ) return;
-	}
-
-
-	// El formulario tiene un campo oculto nombrado "participantes". Se
-	// rellena con un array de id's de participantes de la forma 
-	// p1,p2,p3, ...
-	var strParticipantes = document.getElementById( 'participantes' );
-	
-	var participante = PrimerHijo( lista_participantes );
-
-	// string de la forma p1,p2,p3 que se guardará en el campo oculto.
-	var str = '';
-	
-	while( participante ){
-		str += (participante.getAttribute( 'id' )).substring( 2 ) + ',';
-		participante = SiguienteHermano( participante );
-	}
-
-	// Ya se tiene la string de la forma p1,p2,p3. Se guarda en el campo
-	// oculto.
-	var participantes = document.getElementById( 'participantes' );
-	participantes.setAttribute( 'value',  str );
 
 	// Sube el formulario.
 	formulario.submit();
@@ -186,16 +82,4 @@ function MostrarPerla( id_perla )
 	window.location.href = 'general.php?seccion=mostrar_perla&perla=' + id_perla;
 }
 
-
-/*                               Otras funciones                             */
-/*****************************************************************************/
-/*
-function ResetearCampoFichero( nombre )
-{
-	var elemento = document.getElementById( nombre );
-	elemento.parent.innerHTML
-	alert( elemento.value );
-	elemento.reset();
-	alert( elemento.value );
-}*/
 
