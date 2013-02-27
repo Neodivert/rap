@@ -238,9 +238,11 @@
 
 		private function InsertarEtiquetasBD( $bd ){
 			foreach( $this->etiquetas as $etiqueta ){
-				// TODO: Crear etiqueta si no existe. Obtener su id tanto si existe como si no.
-				//$bd->Consultar( "INSERT INTO 
-				$bd->Consultar( "INSERT INTO perlas_etiquetas (perla, etiqueta) VALUES ('{$this->id}', '{$etiqueta}' )" );
+				$bd->Consultar( "INSERT IGNORE INTO etiquetas (nombre) VALUES( '$etiqueta' )" );
+				$res = $bd->Consultar( "SELECT id FROM etiquetas WHERE nombre = '$etiqueta'" );
+				$res = $res->fetch_array();
+				$id_etiqueta = $res[0];
+				$bd->Consultar( "INSERT INTO perlas_etiquetas (perla, etiqueta) VALUES ('{$this->id}', '{$id_etiqueta}' )" );
 			}
 		}
 

@@ -76,7 +76,18 @@
 
 			
 			
-			$consulta = 'SELECT SQL_CALC_FOUND_ROWS * from perlas ';
+			$consulta = 'SELECT SQL_CALC_FOUND_ROWS perlas.*, etiquetas.nombre FROM perlas ';
+			$consulta .= 'LEFT JOIN perlas_etiquetas ON perlas.id = perlas_etiquetas.perla ';
+			$consulta .= 'INNER JOIN etiquetas ON perlas_etiquetas.etiqueta = etiquetas.id ';
+	/*
+
+SELECT pm_info.is_read, sender.usrFirst + ' ' + sender.usrLast as sender_name, 
+    pm_data.date_sent, pm_data.title, pm_data.thread_id
+FROM pm_info
+INNER JOIN pm_data ON pm_info.thread_id = pm_data.thread_id
+INNER JOIN tblUsers AS sender ON pm_data.sender_id = tblUsers.usrID
+WHERE pm_info.receiver_id = @USER_ID /*in this case, 2*/
+//ORDER BY pm_data.date_sent DESC
 			/*
 			$and = false;
 

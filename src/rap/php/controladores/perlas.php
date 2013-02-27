@@ -11,7 +11,7 @@
 	if( isset( $_POST['accion'] ) ){
 		switch( $_POST['accion'] ){
 			case 'Subir perla':
-				die( 'TODO: Crear etiqueta si no existe. Obtener su id tanto si existe como si no' );
+				//die( 'TODO: Crear etiqueta si no existe. Obtener su id tanto si existe como si no' );
 				$perla = new Perla;
 				$perla->CargarDesdeFormulario( $_POST );
 				$perla->InsertarBD( BD::ObtenerInstancia(), $_SESSION['id'] );
