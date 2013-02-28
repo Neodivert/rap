@@ -72,75 +72,36 @@
 		function ObtenerPerlas( $id_usuario, $etiquetas = '', $participante = 0, $offset = 0, $n = 0 )
 		{
 			// Comienza a construir la consulta a la BD segun el valor de los 
-			// distintos argumentos suministrados.
-
-			
-			
+			// distintos argumentos suministrados.			
 			$consulta = 'SELECT SQL_CALC_FOUND_ROWS perlas.*, etiquetas.nombre FROM perlas ';
 			$consulta .= 'LEFT JOIN perlas_etiquetas ON perlas.id = perlas_etiquetas.perla ';
-			$consulta .= 'INNER JOIN etiquetas ON perlas_etiquetas.etiqueta = etiquetas.id ';
-	/*
+			$consulta .= 'LEFT JOIN etiquetas ON perlas_etiquetas.etiqueta = etiquetas.id ';
 
-SELECT pm_info.is_read, sender.usrFirst + ' ' + sender.usrLast as sender_name, 
-    pm_data.date_sent, pm_data.title, pm_data.thread_id
-FROM pm_info
-INNER JOIN pm_data ON pm_info.thread_id = pm_data.thread_id
-INNER JOIN tblUsers AS sender ON pm_data.sender_id = tblUsers.usrID
-WHERE pm_info.receiver_id = @USER_ID /*in this case, 2*/
-//ORDER BY pm_data.date_sent DESC
-			/*
-			$and = false;
-
-			if( $participante ){
-				$consulta .= "INNER JOIN participantes ON perlas.id=participantes.perla AND participantes.usuario='$participante' ";
+			// TODO: ¿Ampliar a busqueda por multiples etiquetas y ordenar por relevancia?.
+			if( $etiquetas != '' ){
+				$consulta .= "WHERE etiquetas.nombre = '$etiquetas' ";
 			}
 
-			$consulta .= "LEFT JOIN (SELECT perla, COUNT(*) AS num_denuncias FROM denuncias_perlas GROUP BY perla) t2 ON id = t2.perla ";
+			$consulta .= ' GROUP BY perlas.id ';
 
-			$consulta .= "LEFT JOIN (SELECT perla AS denunciada FROM denuncias_perlas WHERE usuario = {$id_usuario}) denuncias ON id = denunciada ";
-
-			if( $categoria || !$contenido_informatico || !$humor_negro ){
-				$consulta .= 'WHERE ';
-				if( $categoria ){
-					$consulta .= "categoria='$categoria' ";
-					$and = true;
-				}
-	
-				if( !$contenido_informatico ){
-					if( $and ) $consulta .= 'AND ';
-					$consulta .= 'contenido_informatico=0 ';
-					$and = true;
-				}
-			
-				if( !$humor_negro ){
-					if( $and ) $consulta .= 'AND ';
-					$consulta .= 'humor_negro=0 ';
-					$and = true;
-				}			
-			}
-			*/
 			$consulta .= 'ORDER BY id DESC ';
 
 			if( $n != 0 ){
 				$consulta .= "LIMIT $offset, $n";
 			}
 
-			$res = $this->bd->Consultar( $consulta );
-
-			//$perlas = Array();
-			//while( $regPerla = $res->fetch){
-			//}
-			/*
+			$regPerlas = $this->bd->Consultar( $consulta );
+				
+			$perlas = array();
 			$i = 0;
-			while( $regPerla = $res->fetch_array() ){
+			while( $regPerla = $regPerlas->fetch_assoc() ){
 				$perlas[$i] = new Perla;
-				$perlas[$i]->CargarDatos( $regPerla );
+				$perlas[$i]->CargarDesdeRegistro( $regPerla );
+				$perlas[$i]->CargarEtiquetasBD( $this->bd );
 				$i++;
 			}
-			*/
 
-			if( !$res ) return null;
-			return $res;
+			return $perlas;
 		}
 
 

@@ -89,12 +89,14 @@
 		// ¿Quiere subir una perla nueva o modificar una existente?
 
 		if( isset( $_GET['modificar'] ) ){
-			/* TODO: DESCOMENTAR.
+			/* TODO: DESCOMENTAR.*/
 			// El usuario quiere modificar una perla existente. La variable
 			// $_GET['modificar'] contiene La id de la perla en cuestión.
+			$perla->CargarDesdeBD( $_GET['modificar'], BD::ObtenerInstancia() );
 
 			// Comprueba que el usuario es participante de la perla (y por 
 			// tanto tiene permiso para modificarla).
+			/*
 			if( !EsParticipante( $_SESSION['id'], $_GET['modificar'] ) ){
 				die( 'No tienes permisos para modificar esta perla' );
 			}
@@ -145,6 +147,14 @@
 <!-- FORMULARIO PARA SUBIR/MODIFICAR UNA PERLA -->
 <form action="php/controladores/perlas.php" method="post" enctype="multipart/form-data">
 
+	<!-- Id de la perla (solo cuando se trata de una actualizacion) -->
+	<?php
+		if( $perla->ObtenerId() ){
+			echo "<input type=\"hidden\" name=\"id\" value=\"{$perla->ObtenerId()}\" />";
+		}
+	?>
+
+
 	<!-- ¿Título de la perla? (campo de texto) -->
 	<h2>T&iacute;tulo:</h2>
 	<p>
@@ -174,7 +184,7 @@
 	<h2>Etiquetas: </h2>
 	<label for="etiquetas">Introduce las etiquetas separadas por comas. Por ejemplo: "pastelillo, g&eacute;minis, sub-woofer, napoleon":</label>
 	<?php
-		echo "<input type=\"text\" name=\"etiquetas\" id=\"etiquetas\" value=\"{$perla->ObtenerEtiquetas()}\" required />";
+		echo "<input type=\"text\" name=\"etiquetas\" id=\"etiquetas\" value=\"{$perla->ObtenerEtiquetasStr()}\" required />";
 	?>
 
 	<!-- ¿Fecha de la perla (cuándo ocurrió)? (campo de texto) -->

@@ -34,7 +34,7 @@
 
 <!--                           Barra de busqueda                            -->
 <h2>Buscar perlas</h2>
-<div id="barra_busqueda" class="barra">	
+<div id="barra_busqueda" class="barra">
 
 	<?php /*
 	<!-- <form id="form_busqueda" method="get">
@@ -131,16 +131,16 @@
 	$bd = BD::ObtenerInstancia();
 
 	// Obtiene las perlas de la pagina actual.
-	$perlas = $rap->ObtenerPerlas( $_SESSION['id'], '', $participante, $pagina_actual*5, 5 );
+	$perlas = $rap->ObtenerPerlas( $_SESSION['id'], $etiquetas, $participante, $pagina_actual*5, 5 );
 
 	// Obtiene el numero de perlas.
 	$nPerlas = $bd->ObtenerNumFilasEncontradas();
 
 	echo "Filas encontradas: " . $bd->ObtenerNumFilasEncontradas();
 
-	while( $regPerla = $perlas->fetch_assoc() ){
-		$perla = new Perla;
-		$perla->CargarDesdeRegistro( $regPerla );
+	foreach( $perlas as $perla ){
+		//$perla = new Perla;
+		//$perla->CargarDesdeRegistro( $regPerla );
 
 		$modificable = false;
 ?>
@@ -197,6 +197,18 @@
 					$participantes->close();
 				?>
 				</div>
+
+
+				<!-- Etiquetas -->
+				Etiquetas: 
+				<?php 
+					$etiquetas = $perla->ObtenerEtiquetas();
+					foreach( $etiquetas as $etiqueta ){
+						echo $etiqueta . ', ';
+					}
+				?><br />
+
+					
 
 				<!-- Si el usuario actual puede modificar/borrar la perla actual se
 				le muestran los botones para hacerlo -->
