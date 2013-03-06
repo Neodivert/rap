@@ -1,19 +1,20 @@
 <?php	
 	define( 'TIEMPO_PUBLICACION', 24 );
 
-	$avisos = Array(
-		'AV_PERLA_BORRADA'	=> 'La perla ha sido correctamente borrada',
-		'AV_PERLA_DENUNCIADA'=> 'Tu voto para eliminar la perla se ha recibido correctamente',
-		'AV_DENUNCIA_ELIMINADA' => 'Tu voto para eliminar la perla se ha eliminado correctamente',
-		'AV_EMAIL_ESTABLECIDO' => 'Email establecido correctamente',
-		'AV_EMAIL_VALIDADO' => 'Email validado correctamente',
-		'AV_NOTIFICACIONES_ESTABLECIDAS' => 'Las notificaciones por email se han establecido correctamente',
-		'AV_COMENTARIO_BORRADO' => 'El comentario se ha borrado correctamente',
-		'AV_COMENTARIO_MODIFICADO' => 'El comentario ha sido modificado correctamente',
-		'AV_COMENTARIO_SUBIDO' => 'El comentario se ha subido correctamente'
+	$notificaciones_buenas = array(
+		'OK_PERLA_BORRADA'	=> 'La perla ha sido correctamente borrada',
+		'OK_PERLA_SUBIDA' => 'La perla se ha subido correctamente',
+		'OK_PERLA_DENUNCIADA'=> 'Tu voto para eliminar la perla se ha recibido correctamente',
+		'OK_DENUNCIA_ELIMINADA' => 'Tu voto para eliminar la perla se ha eliminado correctamente',
+		'OK_EMAIL_ESTABLECIDO' => 'Email establecido correctamente',
+		'OK_EMAIL_VALIDADO' => 'Email validado correctamente',
+		'OK_NOTIFICACIONES_ESTABLECIDAS' => 'Las notificaciones por email se han establecido correctamente',
+		'OK_COMENTARIO_BORRADO' => 'El comentario se ha borrado correctamente',
+		'OK_COMENTARIO_MODIFICADO' => 'El comentario ha sido modificado correctamente',
+		'OK_COMENTARIO_SUBIDO' => 'El comentario se ha subido correctamente',
 	);
 
-	$errores = Array(
+	$notificaciones_malas = array(
 		'ERROR_VALIDANDO_EMAIL' => 'Error validando el email'
 	);
 ?>

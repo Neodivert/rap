@@ -42,7 +42,10 @@
 	}
 
 	date_default_timezone_set( 'Europe/London' );
+
+	$_SESSION['ultima_dir'] = $_SERVER["REQUEST_URI"];
 	
+	//die( $_SERVER["REQUEST_URI"] );
 
 	$rap = RAP::ObtenerInstancia();
 ?>
@@ -98,6 +101,9 @@
 			     Dicho contenido se guarda en un fichero del mismo nombre de la sección. -->
 			<div id="visor">
 				<?php
+					if( isset( $_GET['notificacion'] ) ){
+						require_once DIR_PLANTILLAS . 'notificacion.php';
+					}
 					require_once 'php/secciones/' . $_GET['seccion'] . '.php';
 				?>
 			</div>

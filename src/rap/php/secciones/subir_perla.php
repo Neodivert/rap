@@ -89,37 +89,9 @@
 		// ¿Quiere subir una perla nueva o modificar una existente?
 
 		if( isset( $_GET['modificar'] ) ){
-			/* TODO: DESCOMENTAR.*/
 			// El usuario quiere modificar una perla existente. La variable
 			// $_GET['modificar'] contiene La id de la perla en cuestión.
 			$perla->CargarDesdeBD( $_GET['modificar'], BD::ObtenerInstancia() );
-
-			// Comprueba que el usuario es participante de la perla (y por 
-			// tanto tiene permiso para modificarla).
-			/*
-			if( !EsParticipante( $_SESSION['id'], $_GET['modificar'] ) ){
-				die( 'No tienes permisos para modificar esta perla' );
-			}
-
-			// Obtiene la perla de la base de datos. Algunos campos de la misma
-			// tienen un formato (tienen etiquetas html), conviértelos en
-			// texto plano.
-			$perla = ObtenerPerla( $_GET['modificar'] );
-
-			$v = array( "<strong>", "</strong>", "<br />" );
-			$perla['texto'] = str_replace( $v, "", $perla['texto'] );
-
-			$v = array( "<i>", "</i>" );
-			$perla['fecha'] = str_replace( $v, "", $perla['fecha'] );
-
-			// Rellena un array con los participantes de la perla.
-			$rParticipantes = ObtenerParticipantes( $perla['id'] );
-	
-			$perla['participantes'] = array();
-			while( $rParticipante = $rParticipantes->fetch_object() ){
-				$perla['participantes'][] = $rParticipante->usuario;
-			}
-			*/
 		}else{
 			// El usuario va a subir una perla nueva. Rellena sus campos con
 			// los valores por defecto.
@@ -178,7 +150,7 @@
 
 	<!-- ¿Texto de la perla? (textarea) --> 
 	<h2>Texto: </h2>
-	<textarea name="texto" id="texto"><?php echo $perla->ObtenerTexto(); ?></textarea>
+	<textarea name="texto" id="texto"><?php echo $perla->ObtenerTextoPlano(); ?></textarea>
 
 	<!-- Etiquetas de la perla -->
 	<h2>Etiquetas: </h2>
@@ -204,9 +176,21 @@
 
 			if( !$usuarios ) die( 'Error: no se obtuvieron usuarios de la base de datos' );
 
-			while( $usuario = $usuarios->fetch_object() ){
-				if( $usuario->nombre != $_SESSION['nombre'] ){
-					echo "<input type=\"checkbox\" name=\"participantes[]\" value=\"{$usuario->id}\" />{$usuario->nombre}<br />";
+			if( isset( $_GET['modificar'] ) ){
+				while( $usuario = $usuarios->fetch_object() ){
+					if( $usuario->nombre != $_SESSION['nombre'] ){
+						echo "<input type=\"checkbox\" name=\"participantes[]\" value=\"{$usuario->id}\" ";
+						if( $perla->EsParticipante( $usuario->id ) ){
+							echo 'checked';
+						}
+						echo " />{$usuario->nombre} ({$usuario->id})<br />";
+					}
+				}
+			}else{
+				while( $usuario = $usuarios->fetch_object() ){
+					if( $usuario->nombre != $_SESSION['nombre'] ){
+						echo "<input type=\"checkbox\" name=\"participantes[]\" value=\"{$usuario->id}\" />{$usuario->nombre}<br />";
+					}
 				}
 			}
 			$usuarios->close();

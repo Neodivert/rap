@@ -44,14 +44,14 @@
 			$res = $bd->Consultar( "SELECT * FROM perlas WHERE id='$id'" );
 			$this->CargarDesdeRegistro( $res->fetch_assoc() );
 			$this->CargarEtiquetasBD( $bd );
+			$this->CargarParticipantesBD( $bd );
 		}
-		
 	
 		function ObtenerId(){ return $this->id; }
 		function EstablecerId( $id ){ $this->id = $id; }
 
 		function ObtenerTitulo(){ return $this->titulo; }
-		function EstablecerTitulo( $titulo ){ $this->titulo = $titulo; }
+		function EstablecerTitulo( $titulo ){ $this->titulo = str_replace( '"', '&quot;', $titulo ); }
 
 		function ObtenerEtiquetas(){ return $this->etiquetas; }
 		function ObtenerEtiquetasStr()
@@ -76,7 +76,13 @@
 		function ObtenerHumorNegro(){ return $this->humor_negro; }
 		function EstablecerHumorNegro( $humor_negro ){ $this->humor_negro = $humor_negro; }
 
-		function ObtenerTexto(){ return $this->texto; }
+		function ObtenerTexto(){
+			return $this->texto;
+		}
+
+		function ObtenerTextoPlano(){ 
+			return str_replace( array( '<strong>', '</strong>', '<br />' ), '', $this->texto );
+		}
 
 		// Texto de la perla. A éste texto se le da un formateo previo, 
 		// consistente en tomar las líneas de tipo 'participante: texto' y
@@ -99,7 +105,10 @@
 		function ObtenerPerlaVisual(){ return $this->perla_visual; }
 		function EstablecerPerlaVisual( $perla_visual ){ $this->perla_visual = $perla_visual; }
 
-		function ObtenerFecha(){ return $this->fecha; }
+		function ObtenerFecha()
+		{ 
+			return str_replace( array( '<i>', '</i>' ), '', $this->fecha );
+		}
 		function EstablecerFecha( $fecha ){ $this->fecha = $fecha; }
 
 		function ObtenerSubidor(){ return $this->subidor; }
@@ -132,10 +141,11 @@
 			if( isset( $info['id'] ) ){
 				$this->id = $info['id'];
 			}
-			$this->titulo = $info['titulo'];
-			$this->texto = $info['texto'];
+			$this->EstablecerTitulo( $info['titulo'] );
+			$this->EstablecerTexto( $info['texto'] );
 			$this->etiquetas = explode( ', ', $info['etiquetas'] );
 			
+			$this->EstablecerFecha( $info['fecha'] );
 			//for
 			//$this->nota_acumulada = $info['nota_acumulada'];
 			//$this->num_votos = $info['num_votos'];
@@ -182,6 +192,7 @@
 			//$this->contenido_informatico = $info['contenido_informatico'];
 			//$this->humor_negro = $info['humor_negro'];
 			//$this->perla_visual = $info['perla_visual'];
+			$this->fecha = $registro['fecha'];
 
 			$this->subidor = $registro['subidor'];
 			$this->fecha_subida = $registro['fecha_subida'];
@@ -226,7 +237,7 @@
 			// Inserta en la BD las etiquetas de la perla.
 			$this->InsertarEtiquetasBD( $bd );
 
-			// Notifica por email.
+			// TODO: Notifica por email.
 			//NotificarPorEmail( 'nueva_perla', $id_perla );
 
 			// Trata de subir la imagen (sólo perlas visuales).
@@ -273,6 +284,14 @@
 				$this->etiquetas[] = $reg->nombre;
 			}
 		}
+
+		function CargarParticipantesBD( $bd ){
+			$res = $bd->Consultar( "SELECT id, nombre FROM usuarios JOIN participantes ON participantes.usuario = usuarios.id WHERE participantes.perla = {$this->id}" );
+			$this->participantes = array();
+			while( $reg = $res->fetch_object() ){
+				$this->participantes[$reg->id] = $reg->nombre;
+			}
+		}
 		
 		// Actualiza en la BD la perla cuya id es '$id_perla'.
 		/*
@@ -317,10 +336,16 @@
 		// Determina si el usuario '$usuario' es participante de la perla.
 		function EsParticipante( $usuario )
 		{
+			/*
 			$res = ConsultarBD( "SELECT * from participantes WHERE usuario='$usuario' AND perla='{$this->info['id']}'" );
 
 			if( $res->num_rows == 1 ) return true;
 			else return false;
+			*/
+			foreach( $this->participantes as $participante => $nombre_participante ){
+				if( $usuario == $participante ) return true;
+			}
+			return false;
 		}
 
 
