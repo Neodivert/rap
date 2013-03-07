@@ -14,28 +14,13 @@
 
 <!-- MUESTRA LA PERLA -->
 <?php
-	// Obtiene los nombres de los usuarios en un array.
-	$rUsuarios = ObtenerUsuarios();
-	$usuarios = array();
-	while( $rUsuario = $rUsuarios->fetch_object() ){
-		$usuarios[$rUsuario->id] = $rUsuario->nombre;
-	}
+	$perla = new Perla;
+	$perla->CargarDesdeBD( $_GET['perla'], BD::ObtenerInstancia() );
 
-	// Obtiene los nombres de las categorias en un array.
-	// ESTO SE PUEDE OPTIMIZAR, pidiendo solo el nombre
-	// de la categoría de la perla a la BD.
-	$rCategorias = ObtenerCategorias();
-	$categorias = array();
-	while( $rCategoria = $rCategorias->fetch_object() ){
-		$categorias[$rCategoria->id] = $rCategoria->nombre;
-	}
-
-	// Obtiene la perla de la BD y la muestra usando los arrays de usuarios
-	// y de categorias como apoyo.
-	$perla = ObtenerPerla( $_GET['perla'] );
-	MostrarPerla( $perla, $usuarios, $categorias );
+	require DIR_PLANTILLAS . 'perla.php';
 ?>
 
+<?php /*
 <!-- MUESTRA LOS COMENTARIOS -->
 <h1>Comentarios</h1>
 <?php
@@ -91,3 +76,4 @@
 	
 	<input type="submit" name="accion" value="Subir comentario" />
 </form>
+*/ ?>

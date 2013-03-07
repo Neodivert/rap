@@ -43,11 +43,20 @@
 
 	date_default_timezone_set( 'Europe/London' );
 
-	$_SESSION['ultima_dir'] = $_SERVER["REQUEST_URI"];
+	if( strpos( $_SERVER["REQUEST_URI"], 'subir_perla' ) == false ){
+		$_SESSION['ultima_dir'] = $_SERVER["REQUEST_URI"];
+	}
+
+	if( !isset( $_SESSION[''] ) ){
+		$_SESSION['ultima_dir'] = 'general.php';
+	}
+	
 	
 	//die( $_SERVER["REQUEST_URI"] );
 
 	$rap = RAP::ObtenerInstancia();
+
+	$rap->CargarUsuarios();
 ?>
 
 <!DOCTYPE html>

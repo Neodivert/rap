@@ -159,3 +159,19 @@ fieldset {
 }
 
 
+/* http://css-tricks.com/left-align-and-right-align-text-on-the-same-line/ */
+.div_cabecera_perla
+{
+	overflow:hidden;
+}
+
+.izquierda
+{
+	float:left;
+}
+
+.derecha
+{
+	float:right;
+}
+

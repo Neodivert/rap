@@ -113,6 +113,10 @@
 
 		function ObtenerSubidor(){ return $this->subidor; }
 		function EstablecerSubidor( $subidor ){ $this->subidor = $subidor; }
+
+		function ObtenerNombreSubidor(){ return $this->subidor; }
+		function EstablecerNombreSubidor( $subidor ){ $this->subidor = $subidor; }
+
 		
 		function ObtenerFechaSubida(){ return $this->fecha_subida; }
 		function EstablecerFechaSubida( $fecha_subida ){ $this->fecha_subida = $fecha_subida; }
@@ -286,10 +290,10 @@
 		}
 
 		function CargarParticipantesBD( $bd ){
-			$res = $bd->Consultar( "SELECT id, nombre FROM usuarios JOIN participantes ON participantes.usuario = usuarios.id WHERE participantes.perla = {$this->id}" );
+			$res = $bd->Consultar( "SELECT usuario FROM participantes WHERE perla = {$this->id}" );
 			$this->participantes = array();
 			while( $reg = $res->fetch_object() ){
-				$this->participantes[$reg->id] = $reg->nombre;
+				$this->participantes[] = $reg->usuario;
 			}
 		}
 		
@@ -342,7 +346,7 @@
 			if( $res->num_rows == 1 ) return true;
 			else return false;
 			*/
-			foreach( $this->participantes as $participante => $nombre_participante ){
+			foreach( $this->participantes as $participante ){
 				if( $usuario == $participante ) return true;
 			}
 			return false;
@@ -365,9 +369,10 @@
 		}
 
 		// Obtiene los participantes de la perla.
-		function ObtenerParticipantes( $bd )
+		function ObtenerParticipantes()
 		{
-			return $bd->Consultar( "SELECT usuario FROM participantes WHERE perla={$this->id}" );
+			//die( "Participantes({$this->participantes})" );
+			return $this->participantes;
 		}
 
 

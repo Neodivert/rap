@@ -121,13 +121,6 @@
 
 <!--                           Lista de perlas                              -->
 <?php 
-	// Obtiene los nombres de los usuarios y los mete en un array.
-	$rUsuarios = $rap->ObtenerUsuarios();
-	$usuarios = array();
-	while( $rUsuario = $rUsuarios->fetch_object() ){
-		$usuarios[$rUsuario->id] = $rUsuario->nombre;
-	}
-
 	$bd = BD::ObtenerInstancia();
 
 	// Obtiene las perlas de la pagina actual.
@@ -139,133 +132,24 @@
 	echo "Filas encontradas: " . $bd->ObtenerNumFilasEncontradas();
 
 	foreach( $perlas as $perla ){
-		//$perla = new Perla;
-		//$perla->CargarDesdeRegistro( $regPerla );
-
 		$modificable = false;
-?>
-		<!-- Perla -->
-		<div class="perla">
-			<!-- Titulo -->
-			<h1><?php echo $perla->ObtenerTitulo(); ?></h1>
-	
-			<!-- Nota media y nº de votos (si existen) -->
-			<?php if( $perla->ObtenerNumVotos() != 0 ){ ?>
-				<span class="subtexto">Nota media: <? echo $perla->ObtenerNotaMedia(); ?> - N&uacute;mero de votos: <?php echo $perla->ObtenerNumVotos(); ?></span>
-			<?php } ?>
-
-			<!-- Cuerpo -->
-			<div class="cuerpo_perla">
-				<!-- Aviso de contenido informatico (si procede) -->
-				<?php if( $perla->ObtenerContenidoInformatico() ){ ?>
-					<span class="subtexto"><strong>Nota: La perla tiene contenido inform&aacute;tico</strong></span>
-				<?php } ?>
-
-				<!-- Aviso de humor negro (si procede) -->
-				<?php if( $perla->ObtenerHumorNegro() ){ ?>
-					<span class="subtexto"><strong>Nota: La perla tiene humor negro y/o salvajadas</strong></span>
-				<?php } ?>
-
-				<!-- Texto -->
-				<p><?php echo $perla->ObtenerTexto(); ?></p>
-
-				<!-- Muestra la imagen (solo perlas visuales) -->
-				<?php if( $perla->ObtenerPerlaVisual() ){
-					echo "<img src=\"media/perlas/{$perla->ObtenerId()}\" width=\"100%\" alt=\"perla visual - {$perla->ObtenerTitulo()}\" >";
-				} ?>
-
-				<!-- Subidor y fecha de subida. Ultimo modificador y fecha de modificacion. -->
-				<span class="subtexto">
-					Subida: <?php echo $perla->ObtenerFechaSubida(); ?> por <?php echo $usuarios[$perla->ObtenerSubidor()]; ?><br />
-					&Uacute;ltima modificaci&oacute;n: <?php echo $perla->ObtenerFechaModificacion(); ?> por <?php echo $usuarios[$perla->ObtenerModificador()]; ?><br />
-				</span>
-
-				<!-- Participantes -->
-				Participantes: 
-				<div class="galeria">
-				<?php
-					$participantes = $perla->ObtenerParticipantes( BD::ObtenerInstancia() );
-					while( $participante = $participantes->fetch_object() ){
-						if( $participante->usuario == $_SESSION['id'] ){
-							// ¿El usuario actual tiene permisos para modificar la perla 
-							// (es participante de la misma)?
-							$modificable = true;
-						}
-						MostrarAvatar( $usuarios[$participante->usuario] );
-						//echo "{$usuarios[$participante->usuario]}, ";
-					}
-					$participantes->close();
-				?>
-				</div>
-
-
-				<!-- Etiquetas -->
-				Etiquetas: 
-				<?php 
-					$etiquetas = $perla->ObtenerEtiquetas();
-					foreach( $etiquetas as $etiqueta ){
-						echo $etiqueta . ', ';
-					}
-				?><br />
-
-					
-
-				<!-- Si el usuario actual puede modificar/borrar la perla actual se
-				le muestran los botones para hacerlo -->
-				<?php
-					$hoy = date("Y-m-d H:i:s");
-					$t2 = strtotime( $hoy );
-					$t1 = strtotime( $perla->ObtenerFechaSubida() );
-					$minutos = ($t2 - $t1)/60;
-
-					// Modificar la perla.
-					if( $modificable ){
-						CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post' );
-						echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla->ObtenerId()}\" />";
-						echo '<input type="submit" name="accion" value="Modificar perla" />';
-						echo '</form>';
-					}
-					CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post', 1 );
-					echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla->ObtenerId()}\" />";
-					if( $modificable && ($minutos < 30) ){
-						echo '<input type="submit" name="accion" value="Borrar perla" />';
-					}else{
-						$n = 3 - $perla->ObtenerNumDenuncias();
-						if( $perla->ObtenerNumDenuncias() ){
-							echo "({$perla->ObtenerNumDenuncias()} persona(s) ha(n) votado para eliminar esta perla - $n votos restantes)<br/>";
-						}else{
-							echo "(0 persona(s) ha(n) votado para eliminar esta perla - $n votos restantes)<br/>";
-						}
-						if( $perla->ObtenerDenunciada() ){
-							echo 'Has votado para borrar esta perla: ';
-							echo '<input type="submit" name="accion" value="Cancelar voto borrado" />';
-						}else{
-							$denuncias = $perla->ObtenerNumDenuncias();
-							echo "<input type=\"hidden\" name=\"num_denuncias\" value=\"$denuncias\" />";
-							echo '<input type="submit" name="accion" value="Denunciar perla" />';
-							//echo '<input type="submit" name="accion" value="Denunciar perla 2" />';
-						}
-					}
-					echo '</form>';
-					echo "<br /><a href=\"Javascript:void(0)\" onclick=\"MostrarPerla('{$perla->ObtenerId()}')\">Comentar Perla (comentarios: {$perla->ObtenerNumComentarios()})</a>";
-					echo '<br />';
-					// Formulario (select + botón) para votar la perla.
-					GenerarFormularioVoto( $perla->ObtenerId() );
-				?>
-			</div> <!-- Fin del cuerpo de la perla -->
-		</div> <!-- Fin de la perla -->
-<?php
+		require DIR_PLANTILLAS . 'perla.php';
 	} // Fin del while que recorre las perlas.
+
 	// Libera los recursos.
 	$rUsuarios->close();
 	
 	// Crea los enlaces a las otras páginas
+	if( isset( $_GET['notificacion'] ) ){
+		unset( $_GET['notificacion'] );
+	}
 	$get = $_GET; ?>
 	<div id="seleccion_paginas">
 		<?php
 			$nPaginas = $nPerlas / 5;
 		for( $pagina=0; $pagina<$nPaginas; $pagina++ ){
 			$get['pagina'] = $pagina;
+			
 			$getArray = http_build_query( $get );
 			if( $pagina != $pagina_actual ){
 				echo "<a href=\"" . $_SERVER["PHP_SELF"] . '?' . $getArray . "\" >";

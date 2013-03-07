@@ -29,6 +29,8 @@
 
 		private $bd;
 
+		protected $usuarios;
+
 		// Constructor privado.
    	private function __construct(){
 			$this->bd = BD::ObtenerInstancia();
@@ -55,11 +57,20 @@
 		}
 
 
-		// Recupera de la BD el id y el nombre de los usuarios ordenados 
-		// alfabéticamente por el nombre.
-		function ObtenerUsuarios()
+		// Recupera de la BD el id y el nombre de los usuarios.
+		function CargarUsuarios()
 		{
-			return $this->bd->Consultar( "SELECT * from usuarios ORDER BY nombre ASC" );
+			$rUsuarios = $this->bd->Consultar( "SELECT * from usuarios ORDER BY nombre ASC" );
+			$this->usuarios = array();
+			while( $rUsuario = $rUsuarios->fetch_object() ){
+				$this->usuarios[$rUsuario->id] = $rUsuario->nombre;
+			}
+		}
+
+
+		function ObtenerNombreUsuario( $id )
+		{
+			return $this->usuarios[$id];
 		}
 
 
@@ -98,6 +109,7 @@
 				$perlas[$i] = new Perla;
 				$perlas[$i]->CargarDesdeRegistro( $regPerla );
 				$perlas[$i]->CargarEtiquetasBD( $this->bd );
+				$perlas[$i]->CargarParticipantesBD( $this->bd );
 				$i++;
 			}
 

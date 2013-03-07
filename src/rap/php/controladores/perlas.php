@@ -15,6 +15,7 @@
 				$perla->InsertarBD( BD::ObtenerInstancia(), $_SESSION['id'] );
 
 				header( "Location: ../../general.php?seccion=lista_perlas&notificacion=OK_PERLA_SUBIDA" );
+				//header( "Location: {$_SESSION['ultima_dir']}../../general.php?seccion=lista_perlas&notificacion=OK_PERLA_SUBIDA" );
 				exit();
 			break;
 			case 'Modificar perla':
