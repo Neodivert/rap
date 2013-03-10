@@ -19,15 +19,37 @@
 					echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla->ObtenerId()}\" />";
 					echo '<input type="submit" name="accion" value="Modificar perla" />';
 					echo '</form>';
-				}
 
-				CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post', "Estas segur@ de querer BORRAR la perla [{$perla->ObtenerTitulo()}]?" );
-				echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla->ObtenerId()}\" />";
-				echo '<input type="submit" name="accion" value="Borrar perla" />';
-				echo '</form>';
+					CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post', "Estas segur@ de querer BORRAR la perla [{$perla->ObtenerTitulo()}]?" );
+					echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla->ObtenerId()}\" />";
+					echo '<input type="submit" name="accion" value="Borrar perla" />';
+					echo '</form>';
+				}
 			?>
 		</div>
-		<h1 class="derecha"><?php echo "{$perla->ObtenerNota()}/10 ({$perla->ObtenerNumVotosPositivos()} votos)"; ?></h1>
+
+		<div class="derecha">
+			<h1 class="derecha"><?php echo "{$perla->ObtenerNota()}/10 ({$perla->ObtenerNumVotosPositivos()} votos)"; ?></h1>
+				<?php 
+				CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post' );
+				echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla->ObtenerId()}\" />";
+			?>
+			<select name="nota">
+				<option value="0">0 (cancelar voto)</option>
+				<option value="1" >1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5" selected>5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+			</select>
+			<input type="submit" name="accion" value="Puntuar Perla"> 
+			</form>
+		</div>
 	</div>
 
 	<!-- Nota media y nº de votos (si existen) -->
@@ -123,25 +145,7 @@
 			//GenerarFormularioVoto( $perla->ObtenerId() );
 		?>
 
-		<?php 
-			CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post' );
-			echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla->ObtenerId()}\" />";
-		?>
-		<select name="nota">
-			<option value="0">0 (cancelar voto)</option>
-			<option value="1" selected >1</option>
-			<option value="2">2</option>
-			<option value="3">3</option>
-			<option value="4">4</option>
-			<option value="5">5</option>
-			<option value="6">6</option>
-			<option value="7">7</option>
-			<option value="8">8</option>
-			<option value="9">9</option>
-			<option value="10">10</option>
-		</select>
-		<input type="submit" name="accion" value="Puntuar Perla"> 
-		</form>
+		
 
 
 	</div> <!-- Fin del cuerpo de la perla -->

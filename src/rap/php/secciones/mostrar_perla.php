@@ -13,44 +13,46 @@
 ?>
 
 <!-- MUESTRA LA PERLA -->
+<br/><br/><br/><br/><br/><br/>
 <?php
 	$perla = new Perla;
-	$perla->CargarDesdeBD( BD::ObtenerInstancia(), $_GET['perla'] );
+	$perla->CargarDesdeBD( BD::ObtenerInstancia(), $_GET['perla'], $_SESSION['id'] );
 
 	require DIR_PLANTILLAS . 'perla.php';
 ?>
 
-<?php /*
 <!-- MUESTRA LOS COMENTARIOS -->
 <h1>Comentarios</h1>
 <?php
-	$comentarios = ObtenerComentarios( $_GET['perla'] );
+	$comentarios = $perla->ObtenerComentariosBD( BD::ObtenerInstancia() );
 
 	// La variable "$par" se usa para saber si el comentario actual es par o
 	// impar. El interés radica en dar a los comentarios pares e impares
 	// estilos distintos.
 	$par = true;
-	while( $comentario = $comentarios->fetch_object() ){
+	foreach( $comentarios as $comentario ){
 		if( $par )
-			echo "<div id=\"c_{$comentario->id}\" class=\"comentario_par\">";
+			echo "<div id=\"c_{$comentario->ObtenerId()}\" class=\"comentario_par\">";
 		else
-			echo "<div id=\"c_{$comentario->id}\" class=\"comentario_impar\">";
+			echo "<div id=\"c_{$comentario->ObtenerId()}\" class=\"comentario_impar\">";
 
-		echo "<p>{$comentario->texto}</p>";
+		echo "<p>{$comentario->ObtenerTexto()}</p>";
 		echo "<span class=\"fecha\">";
-		echo $usuarios[$comentario->usuario];
-		echo "<br /> subido: {$comentario->fecha_subida} - modificado: {$comentario->fecha_modificacion}";
+		echo $rap->ObtenerNombreUsuario( $comentario->ObtenerUsuario() );
+		echo "<br /> subido: {$comentario->ObtenerFechaSubida()} - modificado: {$comentario->ObtenerFechaModificacion()}";
 		echo '</span>';
 
-		if( $comentario->usuario == $_SESSION['id'] ){
+		if( $comentario->ObtenerUsuario() == $_SESSION['id'] ){
 			CrearCabeceraFormulario( 'php/controladores/comentarios.php', 'post', 1 );
 			//echo "<form action=\"general.php?seccion=mostrar_perla&perla={$perla->id}\" method=\"post\" onsubmit=\"return confirm('Esta seguro/a de querer borrar este comentario?');\" >";
-			echo "<input type=\"hidden\" name=\"comentario\" value=\"{$comentario->id}\" />";
+			echo "<input type=\"hidden\" name=\"comentario\" value=\"{$comentario->ObtenerId()}\" />";
+			echo "<input type=\"hidden\" name=\"perla\" value=\"{$comentario->ObtenerPerla()}\" />";
 			echo '<input type="submit" name="accion" value="Borrar comentario" />';
+			echo '</form>';
 
 			CrearCabeceraFormulario( 'php/controladores/comentarios.php', 'post' );
 			//echo "<form action=\"general.php?seccion=mostrar_perla&perla={$perla->id}\" method=\"post\" onsubmit=\"return confirm('Esta seguro/a de querer borrar este comentario?');\" >";
-			echo "<input type=\"hidden\" name=\"comentario\" value=\"{$comentario->id}\" />";
+			echo "<input type=\"hidden\" name=\"comentario\" value=\"{$comentario->ObtenerId()}\" />";
 			echo '<input type="submit" name="accion" value="Modificar comentario" />';
 
 			//echo "<input type=\"button\" value=\"Modificar comentario\" onclick=\"ModificarComentario('{$comentario->id}', '{$comentario->texto}')\" />";
@@ -67,8 +69,8 @@
 <!-- FORMULARIO PARA UN NUEVO COMENTARIO -->
 <h2>Nuevo comentario</h2>
 <?php CrearCabeceraFormulario( 'php/controladores/comentarios.php', 'post' ); ?>
-	<label for="texto_comentario">Texto: </label>
-	<textarea name="texto_comentario" id="texto_comentario"></textarea>
+	<label for="texto">Texto: </label>
+	<textarea name="texto" id="texto"></textarea>
 	<br />
 	<?php
 		echo "<input type=\"hidden\" name=\"perla\" value=\"{$_GET['perla']}\" />";
@@ -76,4 +78,4 @@
 	
 	<input type="submit" name="accion" value="Subir comentario" />
 </form>
-*/ ?>
+

@@ -462,6 +462,22 @@
 		}
 		
 
+		function ObtenerComentariosBD( $bd )
+		{
+			$registros = $bd->Consultar( "SELECT * from comentarios WHERE perla={$this->id} ORDER BY fecha_subida ASC" );
+			$comentarios = array();
+			$i = 0;
+			while( $registro = $registros->fetch_assoc() ){
+				$comentarios[$i] = new Comentario;
+				$comentarios[$i]->CargarDesdeRegistro( $registro );
+
+				$i++;
+			}
+
+			return $comentarios;
+		}
+
+
 	} // Fin de la clase Perla.
 	
 	// TODO: Completar

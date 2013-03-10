@@ -51,7 +51,7 @@
 	</datalist> -->
 
 	<?php 
-	/*die( '2. Puntuar perlas (positiva y negativamente) - QUITAR TABLA DENUNCIAS<br/>3. Comentar perlas (¿clase comentario?)<br />4. Buscar etiquetas (datalist con etiquetas mas populares)<br/>5. Buscar etiquetas (¿una o mas de una?) / incluir boton para buscar cualquiera<br />6. ¿Publicar?<br/>7. ¿Avisos? (humor negro, informatico, etc) ¿tabla BD (etiqueta, aviso)?' );*/
+	/*die( '3. Comentar perlas (¿clase comentario?)<br />4. Buscar etiquetas (datalist con etiquetas mas populares)<br/>5. Buscar etiquetas (¿una o mas de una?) / incluir boton para buscar cualquiera<br />5.5 RESTO DE SECCIONES<br/>6. ¿Publicar?<br/>6.5. Denunciar perlas<br/>7. ¿Avisos? (humor negro, informatico, etc) ¿tabla BD (etiqueta, aviso)?' );*/
 	/*
 	<!-- <form id="form_busqueda" method="get">
 
