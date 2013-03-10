@@ -67,6 +67,10 @@
 			}
 		}
 
+		function ObtenerUsuarios(){
+			return $this->usuarios;
+		}
+
 
 		function ObtenerNombreUsuario( $id )
 		{
@@ -107,15 +111,21 @@
 			$i = 0;
 			while( $regPerla = $regPerlas->fetch_assoc() ){
 				$perlas[$i] = new Perla;
-				$perlas[$i]->CargarDesdeRegistro( $regPerla );
-				$perlas[$i]->CargarEtiquetasBD( $this->bd );
-				$perlas[$i]->CargarParticipantesBD( $this->bd );
+				$perlas[$i]->CargarDesdeRegistro( $regPerla, $_SESSION['id'] );
+				$perlas[$i]->CargarInfoExtraBD( BD::ObtenerInstancia(), $_SESSION['id'] );
 				$i++;
 			}
 
 			return $perlas;
 		}
 
+		// Obtiene las 10 perlas con mejor nota en orden descendente.
+		/*
+		function ObtenerTop10Perlas()
+		{
+			return ConsultarBD( "SELECT * FROM perlas LEFT JOIN (SELECT perla, COUNT(*) AS num_denuncias FROM denuncias_perlas GROUP BY perla) t2 ON id = t2.perla LEFT JOIN (SELECT perla AS denunciada FROM denuncias_perlas WHERE usuario = {$_SESSION['id']}) denuncias ON id = denunciada ORDER BY nota_acumulada DESC LIMIT 10" );
+		}
+		*/
 
 	} // Final de la definicion de la clase RAP.
 ?>

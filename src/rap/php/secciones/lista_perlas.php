@@ -30,13 +30,29 @@
 ?>
 
 <!-- TÍTULO -->
+
+
+
 <h1>Lista de Perlas</h1>
 
 <!--                           Barra de busqueda                            -->
 <h2>Buscar perlas</h2>
 <div id="barra_busqueda" class="barra">
 
-	<?php /*
+	<!-- TODO: Completar 
+	<input list="browsers">
+
+	<datalist id="browsers">
+	  <option value="Internet Explorer">
+	  <option value="Firefox">
+	  <option value="Chrome">
+	  <option value="Opera">
+	  <option value="Safari">
+	</datalist> -->
+
+	<?php 
+	/*die( '2. Puntuar perlas (positiva y negativamente) - QUITAR TABLA DENUNCIAS<br/>3. Comentar perlas (¿clase comentario?)<br />4. Buscar etiquetas (datalist con etiquetas mas populares)<br/>5. Buscar etiquetas (¿una o mas de una?) / incluir boton para buscar cualquiera<br />6. ¿Publicar?<br/>7. ¿Avisos? (humor negro, informatico, etc) ¿tabla BD (etiqueta, aviso)?' );*/
+	/*
 	<!-- <form id="form_busqueda" method="get">
 
 		<!-- Busqueda. Seleccion de categoria 
@@ -129,15 +145,12 @@
 	// Obtiene el numero de perlas.
 	$nPerlas = $bd->ObtenerNumFilasEncontradas();
 
-	echo "Filas encontradas: " . $bd->ObtenerNumFilasEncontradas();
+	//echo "Filas encontradas: " . $bd->ObtenerNumFilasEncontradas();
 
 	foreach( $perlas as $perla ){
 		$modificable = false;
 		require DIR_PLANTILLAS . 'perla.php';
 	} // Fin del while que recorre las perlas.
-
-	// Libera los recursos.
-	$rUsuarios->close();
 	
 	// Crea los enlaces a las otras páginas
 	if( isset( $_GET['notificacion'] ) ){

@@ -4,6 +4,7 @@
 	$notificaciones_buenas = array(
 		'OK_PERLA_BORRADA'	=> 'La perla ha sido correctamente borrada',
 		'OK_PERLA_SUBIDA' => 'La perla se ha subido correctamente',
+		'OK_PERLA_PUNTUADA'=> 'La perla se ha puntuado correctamente',
 		'OK_PERLA_DENUNCIADA'=> 'Tu voto para eliminar la perla se ha recibido correctamente',
 		'OK_DENUNCIA_ELIMINADA' => 'Tu voto para eliminar la perla se ha eliminado correctamente',
 		'OK_EMAIL_ESTABLECIDO' => 'Email establecido correctamente',

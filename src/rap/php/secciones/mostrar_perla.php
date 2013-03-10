@@ -15,7 +15,7 @@
 <!-- MUESTRA LA PERLA -->
 <?php
 	$perla = new Perla;
-	$perla->CargarDesdeBD( $_GET['perla'], BD::ObtenerInstancia() );
+	$perla->CargarDesdeBD( BD::ObtenerInstancia(), $_GET['perla'] );
 
 	require DIR_PLANTILLAS . 'perla.php';
 ?>

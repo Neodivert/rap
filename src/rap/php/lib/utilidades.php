@@ -43,10 +43,10 @@
 		}
 	}
 
-	function CrearCabeceraFormulario( $controlador, $method, $confirmacion = NULL ){
+	function CrearCabeceraFormulario( $controlador, $method, $mensaje_confirmacion = NULL ){
 		echo "<form action=\"{$controlador}\" method=\"$method\" ";
-		if( $confirmacion != NULL ){
-			echo 'onsubmit="return confirm(\'Estas segur@?\')" ';
+		if( $mensaje_confirmacion != NULL ){
+			echo "onsubmit=\"return confirm('$mensaje_confirmacion')\" ";
 		}
 		echo '>';
 	}

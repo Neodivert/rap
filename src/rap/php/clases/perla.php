@@ -34,18 +34,15 @@
 		protected $fecha_subida;
 		protected $modificador;
 		protected $fecha_modificacion;
-		protected $num_denuncias;
-		protected $denunciada;
+
+		protected $num_votos_positivos;
+		protected $num_votos_negativos;
+		protected $nota;
+
+		protected $denunciada_por_usuario;
+
 		protected $num_comentarios;
 		protected $participantes;
-
-		function CargarDesdeBD( $id, $bd )
-		{
-			$res = $bd->Consultar( "SELECT * FROM perlas WHERE id='$id'" );
-			$this->CargarDesdeRegistro( $res->fetch_assoc() );
-			$this->CargarEtiquetasBD( $bd );
-			$this->CargarParticipantesBD( $bd );
-		}
 	
 		function ObtenerId(){ return $this->id; }
 		function EstablecerId( $id ){ $this->id = $id; }
@@ -68,7 +65,7 @@
 		function ObtenerNumVotos(){ return $this->num_votos; }
 		function EstablecerNumVotos( $num_votos ){ $this->num_votos = $num_votos; }
 
-		function ObtenerNotaMedia(){ return $this->nota_acumulada/$this->num_votos; }
+		//function ObtenerNotaMedia(){ return $this->nota_acumulada/$this->num_votos; }
 
 		function ObtenerContenidoInformatico(){ return $this->contenido_informatico; }
 		function EstablecerContenidoInformatico( $contenido_informatico ){ $this->contenido_informatico = $contenido_informatico; }
@@ -126,19 +123,18 @@
 		
 		function ObtenerFechaModificacion(){ return $this->fecha_modificacion; }
 		function EstablecerFechaModificacion( $fecha_modificacion ){ $this->fecha_modificacion = $fecha_modificacion; }
-
-		function ObtenerNumDenuncias(){ return $this->num_denuncias; }
-		function EstablecerNumDenuncias( $num_denuncias ){ $this->num_denuncias = $num_denuncias; }
 		
-		function ObtenerDenunciada(){ return $this->denunciada; }
-		function EstablecerDenunciada( $denunciada ){ $this->denunciada = $denunciada; }
-
 		function EstablecerParticipantes( $participantes ){
 			$this->participantes = $participantes;
 		}
 
 		function ObtenerNumComentarios(){ return $this->num_comentarios; }
 		function EstablecerNumComentarios( $num_comentarios ){ $this->num_comentarios = $num_comentarios; }
+
+		function ObtenerNota(){ return $this->nota; }
+		function ObtenerNumVotosPositivos(){ return $this->num_votos_positivos; }
+		function ObtenerNumVotosNegativos(){ return $this->num_votos_negativos; }
+		function DenunciadaPorUsuario(){ return $this->denunciada_por_usuario; }
 
 		public function CargarDesdeFormulario( $info ){
 			//die( print_r( $info ) );
@@ -183,7 +179,7 @@
 			//$this->num_comentarios = $info['num_comentarios'];
 		}
 
-		public function CargarDesdeRegistro( $registro ){
+		public function CargarDesdeRegistro( $registro, $id_usuario ){
 			// TODO: Faltan participantes y etiquetas.
 			if( isset( $registro['id'] ) ){			
 				$this->id = $registro['id'];
@@ -203,6 +199,7 @@
 			$this->modificador = $registro['modificador'];
 			$this->fecha_modificacion = $registro['fecha_modificacion'];
 
+			/*
 			if( isset( $registro['num_denuncias'] ) ){
 				$this->num_denuncias = $registro['num_denuncias'];
 			}else{
@@ -213,8 +210,25 @@
 			}else{
 				$this->denunciada = false;
 			}
-
+			*/
 			//$this->num_comentarios = $info['num_comentarios'];
+		}
+
+		function CargarDesdeBD( $bd, $id_perla, $id_usuario )
+		{
+			$res = $bd->Consultar( "SELECT * FROM perlas WHERE id='$id_perla'" );
+			$this->CargarDesdeRegistro( $res->fetch_assoc(), $id_usuario );
+			
+			$this->CargarInfoExtraBD( $bd, $id_usuario );
+		}
+
+		function CargarInfoExtraBD( $bd, $id_usuario )
+		{
+			$this->CargarEtiquetasBD( $bd );
+			$this->CargarParticipantesBD( $bd );
+			$this->CargarVotosBD( $bd, $id_usuario );
+
+			// TODO: Falta los comentarios.
 		}
 
 		// Inserta la perla en la BD.
@@ -279,6 +293,9 @@
 
 		private function BorrarEtiquetasBD( $bd ){
 			$bd->Consultar( "DELETE FROM perlas_etiquetas WHERE perla='{$this->id}'" );
+
+			// Consulta auxiliar: borra todas las etiquetas que se han podido quedar sin referenciar.
+			$bd->Consultar( 'DELETE FROM etiquetas WHERE id not IN (SELECT etiqueta FROM perlas_etiquetas)' );
 		}
 		
 		function CargarEtiquetasBD( $bd ){
@@ -297,6 +314,35 @@
 			}
 		}
 		
+
+		function CargarVotosBD( $bd, $id_usuario )
+		{
+			$this->denunciada_por_usuario = false;
+			$this->num_votos_positivos = 0;
+			$this->num_votos_negativos = 0;
+			$this->nota = 0;
+
+			$votos = $bd->Consultar( "SELECT usuario, nota FROM votos WHERE perla = {$this->id}" );
+			$nota_acumulada = 0;
+			while( $voto = $votos->fetch_object() ){
+				if( $voto->nota >= 0 ){
+					$nota_acumulada += $voto->nota;
+					$this->num_votos_positivos++;
+				}else{
+					$this->num_votos_negativos++;
+					if( $voto->usuario == $id_usuario ){
+						$this->denunciada_por_usuario = true;
+					}
+				}
+			}
+			
+			if( $this->num_votos_positivos > 0 ){
+				$this->nota = $nota_acumulada / $this->num_votos_positivos;
+			}else{
+				$this->nota = 0;
+			}
+		}
+
 		// Actualiza en la BD la perla cuya id es '$id_perla'.
 		/*
 		function ActualizarBD( $id_perla, $borrar_imagen = false )
@@ -318,7 +364,7 @@
 			// Introduce los nuevos participantes en la BD.
 			InsertarParticipantes( $id_perla, $perla['participantes'] );
 		
-			// Trata de subir la imagen (sólo perlas visuales).
+			// Trata de subir la imagen (sólo perlas visuales). // TODO: NO BORRAR HASTA QUE HAGA DE NUEVO LO DE LAS PERLAS VISUALES.
 			if( $_FILES['imagen']['error'] != UPLOAD_ERR_NO_FILE ){
 				try{
 					InsertarImagen( 'imagen', $id );
@@ -337,15 +383,38 @@
 		}
 		*/
 
+		function BorrarVotosBD( $bd )
+		{
+			$bd->Consultar( "DELETE FROM votos WHERE perla={$this->id}" );
+		}
+
+
+		function BorrarInfoExtraBD( $bd )
+		{
+			$this->BorrarVotosBD( $bd );
+			$this->BorrarParticipantesBD( $bd );
+			$this->BorrarEtiquetasBD( $bd );
+
+			// TODO: Borrar comentarios.
+		}
+
+		function BorrarBD( $bd )
+		{
+			if( !isset( $this->id ) ){ return 1; }
+
+			$this->BorrarVotosBD( $bd );
+			$this->BorrarParticipantesBD( $bd );
+			$this->BorrarEtiquetasBD( $bd );
+
+			$bd->Consultar( "DELETE FROM perlas WHERE id={$this->id}" );
+
+			return 0;
+		}
+
+
 		// Determina si el usuario '$usuario' es participante de la perla.
 		function EsParticipante( $usuario )
 		{
-			/*
-			$res = ConsultarBD( "SELECT * from participantes WHERE usuario='$usuario' AND perla='{$this->info['id']}'" );
-
-			if( $res->num_rows == 1 ) return true;
-			else return false;
-			*/
 			foreach( $this->participantes as $participante ){
 				if( $usuario == $participante ) return true;
 			}
@@ -375,215 +444,29 @@
 			return $this->participantes;
 		}
 
-
-		// Muestra (en la web) la perla actual. Usa los arrays auxiliares 
-		// $usuarios y $categorias para mostrar, respectivamente, los nombres de 
-		// los participantes y de la categoría de la perla.
-		/*
-		function Mostrar( $usuarios, $categorias )
+		// Inserta/actualiza en la BD la puntuación de la perla cuya id es $perla
+		// con la nota $nota.
+		function PuntuarBD( $bd, $nota, $usuario )
 		{
-			$modificable = false;
+			// Al puntuar una perla se disparan unos triggers en sql que 
+			// actualizan automaticamente la tabla "logros".
+			// Fuente: http://dev.mysql.com/doc/refman/5.0/es/create-trigger.html
 
-			// Título.
-			echo '<div class="perla">';
-
-			echo "<h1>{$this->info['titulo']}</h1>";
-		
-			// Categorías.
-			echo "<span class=\"subtexto\">Categor&iacute;a: {$categorias[$this->info['categoria']]}</span>";
-
-			// Si la perla tiene votos, muestra la nota media y el nº de votantes.
-			if( $this->info['num_votos'] != 0 ){
-				$nota_media = $this->info['nota_acumulada'] / $this->info['num_votos'];
-				echo "<br /><span class=\"subtexto\">Nota media: $nota_media / 10 - N&uacute;mero de votos: {$this->info['num_votos']}</span>";
-			}
-
-			// Cuerpo de la perla.
-			echo '<div class="cuerpo_perla">';
-
-			// ¿Tiene contenido informático?
-			if( $this->info['contenido_informatico'] ){
-				echo '<span class="subtexto"><strong>Nota: La perla tiene contenido inform&aacute;tico</strong></span>';
-			}
-
-			// ¿Contiene humor negro?
-			if( $this->info['humor_negro'] ){
-				if( $this->info['contenido_informatico'] ) echo '<br />';
-				echo '<span class="subtexto"><strong>Nota: La perla tiene humor negro y/o salvajadas</strong></span>';
-			}
-
-			// ¿Perla visual? Muestra la imagen
-			if( $this->info['perla_visual'] ){
-				//die( getcwd() . " - media/perlas/{$this->info['id']}" );
-				echo "<img src=\"media/perlas/{$this->info['id']}\" alt=\"*** ERROR: no se encuentra la imagen ***\" width=\"100%\" alt=\"perla visual - {$this->info['titulo']}\" >";
-			}
-
-			// Texto de la perla.
-			echo "<p>{$this->info['texto']}</p>";
-		
-			echo "<span class=\"subtexto\">";
-			echo "Subida: {$this->info['fecha_subida']} por {$usuarios[$this->info['subidor']]}<br />";
-			echo "&Uacute;ltima modificaci&oacute;n: {$this->info['fecha_modificacion']} por {$usuarios[$this->info['modificador']]}<br />";
-			echo "</span>";
-
-			// Participantes.
-			echo "Participantes: ";
-
-			echo '<div class="galeria">';
-			$participantes = ObtenerParticipantes( $this->info['id'] );
-
-			while( $participante = $participantes->fetch_object() ){
-				if( $participante->usuario == $_SESSION['id'] ){
-					// ¿El usuario actual tiene permisos para modificar la perla 
-					// (es participante de la misma)?
-					$modificable = true;
-				}
-				MostrarAvatar( $usuarios[$participante->usuario] );
-				//echo "{$usuarios[$participante->usuario]}, ";
-			}
-
-			$participantes->close();
-			echo '</div>';
-		
-		
-			$hoy = date("Y-m-d H:i:s");
-			$t2 = strtotime( $hoy );
-			$t1 = strtotime( $this->info['fecha_subida'] );
-			$minutos = ($t2 - $t1)/60;
-		
-			// Si el usuario actual puede modificar/borrar la perla actual, muéstrale
-			// los botones para hacerlo.
-		
-			if( $modificable ){
-				CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post' );
-				echo "<input type=\"hidden\" name=\"perla\" value=\"{$this->info['id']}\" />";
-				echo '<input type="submit" name="accion" value="Modificar perla" />';
-				echo '</form>';
-			}
-		
-
-			CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post', 1 );
-			echo "<input type=\"hidden\" name=\"perla\" value=\"{$this->info['id']}\" />";
-			if( $modificable && ($minutos < 30) ){
-				echo '<input type="submit" name="accion" value="Borrar perla" />';
+			// Insertar o actualizar si ya existe:
+			// http://mjcarrascosa.com/insertar-o-actualizar-registros-en-mysql/
+			if( $nota == 0 ){
+				$bd->Consultar( "DELETE FROM votos WHERE perla={$this->id} AND usuario=$usuario" );
 			}else{
-				if( isset( $this->info['num_denuncias'] ) ){
-					$n = 3 - $this->info['num_denuncias'];
-				}else{
-					$n = 3;
-				}
-				if( $this->info['num_denuncias'] ){
-					echo "({$this->info['num_denuncias']} persona(s) ha(n) votado para eliminar esta perla - $n votos restantes)<br/>";
-				}else{
-					echo "(0 persona(s) ha(n) votado para eliminar esta perla - $n votos restantes)<br/>";
-				}
-				if( isset( $this->info['denunciada'] ) ){
-					echo 'Has votado para borrar esta perla: ';
-					echo '<input type="submit" name="accion" value="Cancelar voto borrado" />';
-				}else{
-					$denuncias = $this->info['num_denuncias'] + 1;
-					echo "<input type=\"hidden\" name=\"num_denuncias\" value=\"$denuncias\" />";
-					echo '<input type="submit" name="accion" value="Denunciar perla" />';
-					//echo '<input type="submit" name="accion" value="Denunciar perla 2" />';
-				}
+				$bd->Consultar( "INSERT INTO votos (perla, usuario, nota, fecha) VALUES ({$this->id}, $usuario, $nota, NOW()) ON DUPLICATE KEY UPDATE nota=$nota, fecha=NOW()" );
 			}
-			echo '</form>';
-			echo "<br /><a href=\"Javascript:void(0)\" onclick=\"MostrarPerla('{$this->info['id']}')\">Comentar Perla (comentarios: {$this->info['num_comentarios']})</a>";
-
-			echo '<br />';
-			// Formulario (select + botón) para votar la perla.
-			GenerarFormularioVoto( $this->info['id'] );		
-
-			echo '</div>';
-			echo '</div>';
 		}
-		*/
-
-		// TODO: Completar
 		
 
 	} // Fin de la clase Perla.
 	
-
-
-	// Crea una categoria de nombre '$nombre' y la inserta en la BD.
-	// Valor devuelto: id de la nueva categoria en la BD.
-	function CrearCategoria( $nombre )
-	{
-		return $bd->Consultar( "INSERT INTO categorias (nombre, num_perlas) VALUES ('$nombre', 0) ON DUPLICATE KEY UPDATE id=LAST_INSERT_ID(id)" );
-	}
-
-	// Inserta los participantes '$participantes' de la perla 'id_perla' en la 
-	// BD.
-	
-
-	
-
-	// Obtiene las 10 perlas con mejor nota en orden descendente.
-	function ObtenerTop10Perlas()
-	{
-		return ConsultarBD( "SELECT * FROM perlas LEFT JOIN (SELECT perla, COUNT(*) AS num_denuncias FROM denuncias_perlas GROUP BY perla) t2 ON id = t2.perla LEFT JOIN (SELECT perla AS denunciada FROM denuncias_perlas WHERE usuario = {$_SESSION['id']}) denuncias ON id = denunciada ORDER BY nota_acumulada DESC LIMIT 10" );
-	}
-
-
-	
-
-
-	// Devuelve el nº de perlas de la categoría $categoria.
-	// $categoria = 0 -> cualquier categoría.
-	function ContarPerlas( $categoria )
-	{
-		return 50;
-		$n = 0;
-		if( $categoria == 0 ){
-			// Cualquier categoría.
-			// El nº de perlas totales no está precalculado. Se suma el nº de 
-			// perlas de cada categoría.
-			$categorias = ConsultarBD( "SELECT num_perlas FROM categorias" );
-			while( $categoria = $categorias->fetch_object() ){
-				$n += $categoria->num_perlas;
-			}
-		}else{
-			$categorias = ConsultarBD( "SELECT num_perlas FROM categorias WHERE id=$categoria" );
-			$categoria = $categorias->fetch_array();
-			$n = $categoria[0];
-		}
-		return $n;
-	}
-
-
+	// TODO: Completar
 	
 	
-
-	// Muestra (en la web) un formulario (select + botón) para votar por
-	// la perla cuya id es $id_perla.
-	function GenerarFormularioVoto( $id_perla )
-	{
-		CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post' );
-		echo "<input type=\"hidden\" name=\"id_perla\" value=\"$id_perla\" />";
-		echo '<select name="nota">';
-		for( $i=0; $i<=10; $i++ ){
-			echo "<option value=\"$i\">$i</option>";
-		}
-		echo '</select>';
-		echo '<input type="submit" name="accion" value="Puntuar Perla">'; 
-		echo '</form>';
-	}
-
-	
-	// Inserta/actualiza en la BD la puntuación de la perla cuya id es $perla
-	// con la nota $nota.
-	function PuntuarPerla( $perla, $nota )
-	{
-		// La nota acumulada y el numero de votos de una perla se
-		// actualizan automáticamente en la BD gracias a una serie de 
-		// disparadores creados en la misma.
-		// Fuente: http://dev.mysql.com/doc/refman/5.0/es/create-trigger.html
-
-		// Insertar o actualizar si ya existe:
-		// http://mjcarrascosa.com/insertar-o-actualizar-registros-en-mysql/
-		ConsultarBD( "INSERT INTO votos (perla, usuario, nota, fecha) VALUES ($perla, {$_SESSION['id']}, $nota, NOW()) ON DUPLICATE KEY UPDATE nota=$nota, fecha=NOW()" );
-	}
 
 	// Comprueba que el fichero que se ha subido es válido.
 	// En caso de éxito no devuelve nada, y si hay un error lanza una excepción.
@@ -648,18 +531,5 @@
 		}catch( Exception $e ){
 			die( $e->getMessage() );
 		}
-	}
-
-	function BorrarPerla( $id_perla )
-	{
-		$bd = ConectarBD();
-
-		$res = $bd->query( "DELETE FROM perlas WHERE id='$id_perla'" );
-
-		if( !$res ){
-			throw new Exception( 'ERROR borrando perla: ' . $bd->error );
-		}
-
-		$bd->close();
 	}
 ?>

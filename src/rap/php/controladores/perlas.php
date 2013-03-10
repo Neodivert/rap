@@ -34,8 +34,11 @@
 				}
 			break;
 			case 'Borrar perla':
-				BorrarPerla( $_POST['perla'] );
-				header( 'Location: ../../general.php?seccion=aviso&aviso=AV_PERLA_BORRADA' );
+				$perla = new Perla;
+				$perla->EstablecerId( $_POST['perla'] );
+				$perla->BorrarBD( BD::ObtenerInstancia() );
+				//BorrarPerla( $_POST['perla'] );
+				header( "Location: ../../general.php?seccion=lista_perlas&notificacion=OK_PERLA_BORRADA" );
 				exit();
 			break;
 			case 'Cancelar voto borrado':
@@ -45,8 +48,10 @@
 			break;
 			// El usuario quiere puntuar una perla.
 			case 'Puntuar Perla':
-				PuntuarPerla( $_POST['id_perla'], $_POST['nota'] );
-				header( 'Location: ../../general.php?seccion=lista_perlas' );
+				$perla = new Perla;
+				$perla->EstablecerId( $_POST['perla'] );
+				$perla->PuntuarBD( BD::ObtenerInstancia(), $_POST['nota'], $_SESSION['id'] );
+				header( "Location: ../../general.php?seccion=lista_perlas&notificacion=OK_PERLA_PUNTUADA" );
 				exit();
 			break;
 			default:

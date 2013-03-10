@@ -91,7 +91,7 @@
 		if( isset( $_GET['modificar'] ) ){
 			// El usuario quiere modificar una perla existente. La variable
 			// $_GET['modificar'] contiene La id de la perla en cuestión.
-			$perla->CargarDesdeBD( $_GET['modificar'], BD::ObtenerInstancia() );
+			$perla->CargarDesdeBD( BD::ObtenerInstancia(), $_GET['modificar'], $_SESSION['id'] );
 		}else{
 			// El usuario va a subir una perla nueva. Rellena sus campos con
 			// los valores por defecto.
@@ -103,7 +103,7 @@
 			$perla->EstablecerHumorNegro( false );
 			$perla->EstablecerPerlaVisual( false );
 		
-			$perla->EstablecerEtiquetas( '' );
+			$perla->EstablecerEtiquetas( array() );
 
 			$perla->EstablecerParticipantes( "{$_SESSION['id']}" );
 		}
@@ -177,23 +177,22 @@
 			if( !$usuarios ) die( 'Error: no se obtuvieron usuarios de la base de datos' );
 
 			if( isset( $_GET['modificar'] ) ){
-				while( $usuario = $usuarios->fetch_object() ){
-					if( $usuario->nombre != $_SESSION['nombre'] ){
-						echo "<input type=\"checkbox\" name=\"participantes[]\" value=\"{$usuario->id}\" ";
-						if( $perla->EsParticipante( $usuario->id ) ){
+				foreach( $usuarios as $id_usuario => $nombre_usuario ){
+					if( $id_usuario != $_SESSION['id'] ){
+						echo "<input type=\"checkbox\" name=\"participantes[]\" value=\"{$id_usuario}\" ";
+						if( $perla->EsParticipante( $id_usuario ) ){
 							echo 'checked';
 						}
-						echo " />{$usuario->nombre} ({$usuario->id})<br />";
+						echo " />{$nombre_usuario} ({$id_usuario})<br />";
 					}
 				}
 			}else{
-				while( $usuario = $usuarios->fetch_object() ){
-					if( $usuario->nombre != $_SESSION['nombre'] ){
-						echo "<input type=\"checkbox\" name=\"participantes[]\" value=\"{$usuario->id}\" />{$usuario->nombre}<br />";
+				foreach( $usuarios as $id_usuario => $nombre_usuario ){
+					if( $nombre_usuario != $_SESSION['id'] ){
+						echo "<input type=\"checkbox\" name=\"participantes[]\" value=\"{$id_usuario}\" />{$nombre_usuario}<br />";
 					}
 				}
 			}
-			$usuarios->close();
 		?>
 	</fieldset>
 
