@@ -24,7 +24,9 @@
 			if( isset( $registro['id'] ) ){
 				$this->id = $registro['id'];
 			}
-			$this->perla = $registro['perla'];
+			if( isset( $registro['perla'] ) ){
+				$this->perla = $registro['perla'];
+			}
 			$this->texto = $registro['texto'];
 
 			if( isset( $registro['usuario'] ) ){
@@ -41,8 +43,9 @@
 		function InsertarBD( $bd, $usuario )
 		{
 			if( !isset( $this->id ) ){ 
-				//die( "INSERT INTO comentarios (perla, usuario, texto, fecha_subida, fecha_modificacion) VALUES ('{$this->perla}', '$usuario', '{$this->texto}', NOW(), NOW() )" );
 				$bd->Consultar( "INSERT INTO comentarios (perla, usuario, texto, fecha_subida, fecha_modificacion) VALUES ('{$this->perla}', '$usuario', '{$this->texto}', NOW(), NOW() )" );
+			}else{
+				$bd->Consultar( "UPDATE comentarios SET texto='{$this->texto}', fecha_modificacion=NOW() WHERE id={$this->id}" );
 			}
 		}
 

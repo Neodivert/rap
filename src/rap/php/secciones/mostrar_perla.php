@@ -1,14 +1,7 @@
 <?php
-	// Sección para mostrar una perla y sus comentarios
-
 	// Comprueba que se ha elegido una perla para mostrar (variable GET).
 	if( !isset( $_GET['perla'] ) ){
 		die( 'No se ha seleccionado una perla' );
-	}
-
-	// El usuario quiere puntuar una perla (DUPLICADO).
-	if( isset( $_POST['nota'] ) ){
-		PuntuarPerla( $_POST['id_perla'], $_POST['nota'] );
 	}
 ?>
 
@@ -31,34 +24,46 @@
 	// estilos distintos.
 	$par = true;
 	foreach( $comentarios as $comentario ){
-		if( $par )
+		if( $par ){
 			echo "<div id=\"c_{$comentario->ObtenerId()}\" class=\"comentario_par\">";
-		else
+		}else{
 			echo "<div id=\"c_{$comentario->ObtenerId()}\" class=\"comentario_impar\">";
-
-		echo "<p>{$comentario->ObtenerTexto()}</p>";
-		echo "<span class=\"fecha\">";
-		echo $rap->ObtenerNombreUsuario( $comentario->ObtenerUsuario() );
-		echo "<br /> subido: {$comentario->ObtenerFechaSubida()} - modificado: {$comentario->ObtenerFechaModificacion()}";
-		echo '</span>';
-
-		if( $comentario->ObtenerUsuario() == $_SESSION['id'] ){
-			CrearCabeceraFormulario( 'php/controladores/comentarios.php', 'post', 1 );
-			//echo "<form action=\"general.php?seccion=mostrar_perla&perla={$perla->id}\" method=\"post\" onsubmit=\"return confirm('Esta seguro/a de querer borrar este comentario?');\" >";
-			echo "<input type=\"hidden\" name=\"comentario\" value=\"{$comentario->ObtenerId()}\" />";
-			echo "<input type=\"hidden\" name=\"perla\" value=\"{$comentario->ObtenerPerla()}\" />";
-			echo '<input type="submit" name="accion" value="Borrar comentario" />';
-			echo '</form>';
-
-			CrearCabeceraFormulario( 'php/controladores/comentarios.php', 'post' );
-			//echo "<form action=\"general.php?seccion=mostrar_perla&perla={$perla->id}\" method=\"post\" onsubmit=\"return confirm('Esta seguro/a de querer borrar este comentario?');\" >";
-			echo "<input type=\"hidden\" name=\"comentario\" value=\"{$comentario->ObtenerId()}\" />";
-			echo '<input type="submit" name="accion" value="Modificar comentario" />';
-
-			//echo "<input type=\"button\" value=\"Modificar comentario\" onclick=\"ModificarComentario('{$comentario->id}', '{$comentario->texto}')\" />";
-			echo '</form>';
 		}
+		if( isset( $_GET['comentario'] ) && ( $comentario->ObtenerId() == $_GET['comentario'] ) ){
+			CrearCabeceraFormulario( 'php/controladores/comentarios.php', 'post' );
+			echo "<input type=\"hidden\" name=\"id\" value=\"{$comentario->ObtenerId()}\" />";
+			echo "<input type=\"hidden\" name=\"perla\" value=\"{$comentario->ObtenerPerla()}\" />";
+			echo "<textarea name=\"texto\">{$comentario->ObtenerTexto()}</textarea>";
+			echo "<input type=\"submit\" name=\"accion\" value=\"Modificar comentario\" />";
+			echo '</form>';
+		}else{
+			echo "<p>{$comentario->ObtenerTexto()}</p>";
+			echo "<span class=\"fecha\">";
+			echo $rap->ObtenerNombreUsuario( $comentario->ObtenerUsuario() );
+			echo "<br /> subido: {$comentario->ObtenerFechaSubida()} - modificado: {$comentario->ObtenerFechaModificacion()}";
+			echo '</span>';
 
+			if( $comentario->ObtenerUsuario() == $_SESSION['id'] ){
+				CrearCabeceraFormulario( 'php/controladores/comentarios.php', 'post', 'Esta seguro/a de querer borrar este comentario?' );
+				//echo "<form action=\"general.php?seccion=mostrar_perla&perla={$perla->id}\" method=\"post\" onsubmit=\"return confirm('Esta seguro/a de querer borrar este comentario?');\" >";
+				echo "<input type=\"hidden\" name=\"comentario\" value=\"{$comentario->ObtenerId()}\" />";
+				echo "<input type=\"hidden\" name=\"perla\" value=\"{$comentario->ObtenerPerla()}\" />";
+				echo '<input type="submit" name="accion" value="Borrar comentario" />';
+				echo '</form>';
+				/*
+				CrearCabeceraFormulario( 'php/controladores/comentarios.php', 'post' );
+				echo "<input type=\"hidden\" name=\"comentario\" value=\"{$comentario->ObtenerId()}\" />";
+				echo '<input type="submit" name="accion" value="Modificar comentario" />';
+				echo '</form>';*/
+				echo "<form action=\"general.php\" >";
+				echo '<input type="hidden" name="seccion" value="mostrar_perla" />';
+				echo "<input type=\"hidden\" name=\"perla\" value=\"{$comentario->ObtenerPerla()}\" />";
+				echo "<input type=\"hidden\" name=\"comentario\" value=\"{$comentario->ObtenerId()}\" />";
+				echo '<input type="submit" value="Modificar comentario" />';
+				echo '</form>';
+
+			}
+		}
 		echo '</div>';
 		
 		// Alterna de un comentario par a uno impar o viceversa.
