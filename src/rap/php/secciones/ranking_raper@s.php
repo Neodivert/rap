@@ -1,13 +1,11 @@
+<h1>Rankings totales</h1>
+<strong>Nota: </strong> La puntuaci&oacute;n para los tops generales se calcula sumando 3 puntos por cada perla subida, 2 puntos por cada comentario subido y 1 punto por cada perla calificada.
 <?php
-	echo '<h1>Rankings totales</h1>';
-	echo '<strong>Nota: </strong> La puntuaci&oacute;n para los tops generales se calcula sumando 3 puntos por cada perla subida, 2 puntos por cada comentario subido y 1 punto por cada perla calificada.';
-
-
 	$tops = array( 
-		array( 'Top raper@s', 'ObtenerTopUsuarios', array( 5 ) ),
-		array( 'Perlas subidas', 'ObtenerTopSubidores', array( 5 ) ),
-		array( 'Comentarios realizados', 'ObtenerTopComentaristas', array( 5 ) ),
-		array( 'Perlas calificadas', 'ObtenerTopCalificadores', array( 5 ) )
+		array( 'Top raper@s', array( &$rap, 'ObtenerTopUsuarios' ), array( 5 ) ),
+		array( 'Perlas subidas', array( &$rap,'ObtenerTopSubidores' ), array( 5 ) ),
+		array( 'Comentarios realizados', array( &$rap,'ObtenerTopComentaristas' ), array( 5 ) ),
+		array( 'Perlas calificadas', array( &$rap,'ObtenerTopCalificadores' ), array( 5 ) )
 	);
 
 	foreach( $tops as $top ){
@@ -16,15 +14,9 @@
 		echo '<div class="galeria">';
 		$usuarios = call_user_func_array( $top[1], $top[2] );
 		while( $usuario = $usuarios->fetch_assoc() ){
-			MostrarAvatar( $usuario['nombre'], $usuario['n'] );
-			
-			//echo '<li>';
-			//echo "<strong>{$usuario['nombre']}</strong> ({$usuario['n']})";
-			//echo '</li>';
-			
+			$rap->MostrarAvatar( $usuario['nombre'], $usuario['n'] );
 		}
 		echo '</div>';
-		//echo '</ul>';
 	}
 
 
@@ -32,10 +24,10 @@
 	$annos = array( 2012 );
 
 	$tops = array( 
-		array( 'Top raper@s', 'ObtenerTopUsuarios' ),
-		array( 'Perlas subidas', 'ObtenerTopSubidores' ),
-		array( 'Comentarios realizados', 'ObtenerTopComentaristas' ),
-		array( 'Perlas calificadas', 'ObtenerTopCalificadores' )
+		array( 'Top raper@s', array( &$rap, 'ObtenerTopUsuarios' ) ),
+		array( 'Perlas subidas', array( &$rap, 'ObtenerTopSubidores' ) ),
+		array( 'Comentarios realizados', array( &$rap, 'ObtenerTopComentaristas' ) ),
+		array( 'Perlas calificadas', array( &$rap, 'ObtenerTopCalificadores' ) )
 	);
 
 
@@ -82,26 +74,6 @@
 	}
 	echo '</table>';
 
-	/*
-	$tops = array( 
-		//array( 'Top raper@s', 'ObtenerTopUsuarios', array( 5, $mes, $anno ) ),
-		array( 'Perlas subidas', 'ObtenerTopSubidores', array( 5, $mes, $anno ) ),
-		array( 'Comentarios realizados', 'ObtenerTopComentaristas', array( 5, $mes, $anno ) ),
-		array( 'Perlas calificadas', 'ObtenerTopCalificadores', array( 5, $mes, $anno ) )
-	);
-
-	foreach( $tops as $top ){
-		echo "<h2>{$top[0]}</h2>";
-		echo '<ul>';
-		$usuarios = call_user_func_array( $top[1], $top[2] );
-		while( $usuario = $usuarios->fetch_assoc() ){
-			echo '<li>';
-			echo "<strong>{$usuario['nombre']}</strong> ({$usuario['n']})";
-			echo '</li>';
-		}
-		echo '</ul>';
-	}
-	*/
 ?>
 
 

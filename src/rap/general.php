@@ -8,7 +8,7 @@
 	require_once DIR_CLASES . 'usuario.php';
 	require_once DIR_CLASES . 'perla.php';
 	require_once DIR_CLASES . 'comentario.php';
-	require_once DIR_LIB . 'notificaciones.php';
+	require_once DIR_CLASES . 'notificador.php';
 	require_once DIR_CLASES . 'rap.php';
 	require_once DIR_CONFIG . 'parametros.php';
 

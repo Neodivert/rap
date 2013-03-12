@@ -119,13 +119,96 @@
 			return $perlas;
 		}
 
+		function ObtenerEtiquetasMasPopulares()
+		{
+			// SELECT nombre, COUNT(*) AS n FROM etiquetas JOIN perlas_etiquetas ON etiquetas.id = perlas_etiquetas.etiqueta GROUP BY id ORDER BY n DESC, nombre ASC;
+
+			/*
+			SELECT nombre, SUBSTRING(nombre, 1, 1) as inicial, COUNT(*) AS n FROM etiquetas JOIN perlas_etiquetas ON etiquetas.id = perlas_etiquetas.etiqueta GROUP BY id ORDER BY n DESC, inicial ASC
+			*/
+
+			/* SELECT nombre, SUBSTRING( nombre, 1, 1 ) AS inicial, COUNT( * )
+FROM etiquetas
+GROUP BY SUBSTRING( nombre, 1, 1 )
+LIMIT 0 , 30*/
+
+			/* SELECT nombre, COUNT(*) AS n FROM etiquetas JOIN perlas_etiquetas ON etiquetas.id = perlas_etiquetas.etiqueta GROUP BY SUBSTRING(nombre,1,1) ORDER BY n DESC, nombre ASC; */
+			//$consulta = 
+			$this->bd->Consultar();
+		}
+
 		// Obtiene las 10 perlas con mejor nota en orden descendente.
-		/*
 		function ObtenerTop10Perlas()
 		{
-			return ConsultarBD( "SELECT * FROM perlas LEFT JOIN (SELECT perla, COUNT(*) AS num_denuncias FROM denuncias_perlas GROUP BY perla) t2 ON id = t2.perla LEFT JOIN (SELECT perla AS denunciada FROM denuncias_perlas WHERE usuario = {$_SESSION['id']}) denuncias ON id = denunciada ORDER BY nota_acumulada DESC LIMIT 10" );
+			$consulta = 'SELECT *, SUM(nota) as nota_acumulada, COUNT(*) FROM perlas JOIN votos ON perlas.id = votos.perla GROUP BY perla ORDER BY nota_acumulada DESC, id ASC LIMIT 10';	
+/* ConsultarBD( "SELECT * FROM perlas LEFT JOIN (SELECT perla, COUNT(*) AS num_denuncias FROM denuncias_perlas GROUP BY perla) t2 ON id = t2.perla LEFT JOIN (SELECT perla AS denunciada FROM denuncias_perlas WHERE usuario = {$_SESSION['id']}) denuncias ON id = denunciada ORDER BY nota_acumulada DESC LIMIT 10" ); */
+
+			$regPerlas = $this->bd->Consultar( $consulta );
+				
+			$perlas = array();
+			$i = 0;
+			while( $regPerla = $regPerlas->fetch_assoc() ){
+				$perlas[$i] = new Perla;
+				$perlas[$i]->CargarDesdeRegistro( $regPerla, $_SESSION['id'] );
+				$perlas[$i]->CargarInfoExtraBD( BD::ObtenerInstancia(), $_SESSION['id'] );
+				$i++;
+			}
+
+			return $perlas;
 		}
-		*/
+
+		function MostrarAvatar( $usuario, $num = -1 )
+		{
+			 if( file_exists( 'media/avatares/' . $usuario ) ){
+				$ruta = 'media/avatares/' . $usuario;
+			 }else{
+				$ruta = 'media/avatares/_default_.png';
+			 }
+
+			 if( $num == -1 ){
+				$num = '';
+			 }else{
+				$num = ' (' . $num . ')';
+			 }
+			 echo "<div class=\"div_avatar\"><img class=\"avatar\" width=\"100\" height=\"100\" src=\"$ruta\" alt=\"Avatar del usuario [$usuario]\" /><br />$usuario$num</div>";
+		}
+
+
+		function ObtenerTopSubidores( $n = 3, $mes=0, $anno=0 )
+		{
+			if( $mes == 0 ){
+				return $this->bd->Consultar( "SELECT usuarios.nombre, SUM(logros.num_perlas) AS n FROM usuarios, logros WHERE usuarios.id = logros.usuario AND logros.num_perlas <> 0 GROUP BY usuarios.id ORDER BY n DESC LIMIT $n" );
+			}else{
+				return $this->bd->Consultar( "SELECT usuarios.nombre, logros.num_perlas AS n FROM usuarios, logros WHERE usuarios.id = logros.usuario AND logros.mes = $mes AND logros.anno = $anno AND logros.num_perlas <> 0 ORDER BY n DESC LIMIT $n" );
+			}
+		}
+
+		function ObtenerTopComentaristas( $n = 3, $mes=0, $anno=0 )
+		{
+			if( $mes == 0 ){
+				return $this->bd->Consultar( "SELECT usuarios.nombre, SUM(logros.num_comentarios) AS n FROM usuarios, logros WHERE usuarios.id = logros.usuario AND logros.num_comentarios <> 0 GROUP BY usuarios.id ORDER BY n DESC LIMIT $n" );
+			}else{
+				return $this->bd->Consultar( "SELECT usuarios.nombre, logros.num_comentarios AS n FROM usuarios, logros WHERE usuarios.id = logros.usuario AND logros.mes = $mes AND logros.anno = $anno AND logros.num_comentarios <> 0 ORDER BY n DESC LIMIT $n" );
+			}
+		}
+
+		function ObtenerTopCalificadores( $n = 3, $mes=0, $anno=0 )
+		{
+			if( $mes == 0 ){
+				return $this->bd->Consultar( "SELECT usuarios.nombre, SUM(logros.num_perlas_calificadas) AS n FROM usuarios, logros WHERE usuarios.id = logros.usuario AND logros.num_perlas_calificadas <> 0 GROUP BY usuarios.id ORDER BY n DESC LIMIT $n" );
+			}else{
+				return $this->bd->Consultar( "SELECT usuarios.nombre, logros.num_perlas_calificadas AS n FROM usuarios, logros WHERE usuarios.id = logros.usuario AND logros.mes = $mes AND logros.anno = $anno AND logros.num_perlas_calificadas <> 0 ORDER BY n DESC LIMIT $n" );
+			}
+		}
+
+		function ObtenerTopUsuarios( $n = 3, $mes=0, $anno=0 )
+		{
+			if( $mes == 0 ){
+				return $this->bd->Consultar( "SELECT usuarios.nombre, 3*SUM(logros.num_perlas)+2*SUM(logros.num_comentarios)+SUM(logros.num_perlas_calificadas) AS n FROM usuarios, logros WHERE usuarios.id = logros.usuario GROUP BY usuarios.id ORDER BY n DESC LIMIT $n" );
+			}else{
+				return $this->bd->Consultar( "SELECT usuarios.nombre, 3*logros.num_perlas+2*logros.num_comentarios+logros.num_perlas_calificadas AS n FROM usuarios, logros WHERE usuarios.id = logros.usuario AND logros.mes = $mes AND logros.anno = $anno ORDER BY n DESC LIMIT $n" );
+			}
+		}
 
 	} // Final de la definicion de la clase RAP.
 ?>

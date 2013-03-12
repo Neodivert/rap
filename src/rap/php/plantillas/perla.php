@@ -94,7 +94,7 @@
 					// (es participante de la misma)?
 					$modificable = true;
 				}
-				MostrarAvatar( $rap->ObtenerNombreUsuario( $participante ) );
+				$rap->MostrarAvatar( $rap->ObtenerNombreUsuario( $participante ) );
 			}
 		?>
 		</div>

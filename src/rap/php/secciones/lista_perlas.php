@@ -17,8 +17,7 @@
     along with RAP.  If not, see <http://www.gnu.org/licenses/>.
 	*/
 
-	// Las perlas se muestran por categorías. Categoria por defecto: 0 
-	// (cualquier categoría).
+	// Las perlas se muestran por etiquetas.
 	$etiquetas = isset( $_GET['etiquetas'] ) ? $_GET['etiquetas'] : '';
 
 	// Las perlas se muestran por páginas. Página por defecto: 0.
@@ -49,11 +48,17 @@
 	  <option value="Opera">
 	  <option value="Safari">
 	</datalist> -->
+	
+	<p>Introduce una palabra o una frase sencilla</p>
+	<form action="general.php" method="get">
+		<input list="etiquetas" name="etiquetas">
+		<input type="submit" value="Buscar perlas" />
+	</form>
 
-	<?php 
+	<?php
 	/*die( '3. Comentar perlas (¿clase comentario?)<br />4. Buscar etiquetas (datalist con etiquetas mas populares)<br/>5. Buscar etiquetas (¿una o mas de una?) / incluir boton para buscar cualquiera<br />5.5 RESTO DE SECCIONES<br/>6. ¿Publicar?<br/>6.5. Denunciar perlas<br/>7. ¿Avisos? (humor negro, informatico, etc) ¿tabla BD (etiqueta, aviso)?' );*/
-	/*
-	<!-- <form id="form_busqueda" method="get">
+	
+	/*<form id="form_busqueda" method="get">
 
 		<!-- Busqueda. Seleccion de categoria 
 		<label for="categoria">Categor&iacute;a: </label>
@@ -143,10 +148,12 @@
 	$perlas = $rap->ObtenerPerlas( $_SESSION['id'], $etiquetas, $participante, $pagina_actual*5, 5 );
 
 	// Obtiene el numero de perlas.
-	$nPerlas = $bd->ObtenerNumFilasEncontradas();
+	$nElementos = $bd->ObtenerNumFilasEncontradas();
+	
+	$nElementosPorPagina = 5;
 
 	//echo "Filas encontradas: " . $bd->ObtenerNumFilasEncontradas();
-
+	
 	foreach( $perlas as $perla ){
 		$modificable = false;
 		require DIR_PLANTILLAS . 'perla.php';
@@ -156,21 +163,6 @@
 	if( isset( $_GET['notificacion'] ) ){
 		unset( $_GET['notificacion'] );
 	}
-	$get = $_GET; ?>
-	<div id="seleccion_paginas">
-		<?php
-			$nPaginas = $nPerlas / 5;
-		for( $pagina=0; $pagina<$nPaginas; $pagina++ ){
-			$get['pagina'] = $pagina;
-			
-			$getArray = http_build_query( $get );
-			if( $pagina != $pagina_actual ){
-				echo "<a href=\"" . $_SERVER["PHP_SELF"] . '?' . $getArray . "\" >";
-				echo "$pagina</a> ";
-			}else{
-				echo $pagina . ' ';
-			}
-		}
-		?>
-	</div>
-
+	
+	require DIR_PLANTILLAS . 'selector_paginas.php';
+?>
