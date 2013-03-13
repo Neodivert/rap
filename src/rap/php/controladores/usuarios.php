@@ -31,6 +31,7 @@
 			break;
 			*/
 			case 'Cambiar contraseña':
+				$usuario = Usuario::ObtenerInstancia( $_SESSION['id'] );
 				$usuario->CambiarContrasennaBD( BD::ObtenerInstancia(), $_POST['contrasenna'] );
 
 				RedirigirUltimaDireccion( 'OK_CONTRASENNA_CAMBIADA' );
@@ -41,6 +42,7 @@
 			break;
 			/*
 			case 'Validar email':
+				$usuario = Usuario::ObtenerInstancia( $_SESSION['id'] );
 				if( ValidarEmail( $_SESSION['id'], $_POST['cod_validacion_email'] ) ){
 					header( 'Location: ../../general.php?seccion=aviso&aviso=AV_EMAIL_VALIDADO' );
 				}else{
@@ -49,6 +51,7 @@
 				exit();
 			break;
 			case 'Establecer notificaciones':
+				$usuario = Usuario::ObtenerInstancia( $_SESSION['id'] );
 				EstablecerNotificacionesEmail( $_SESSION['id'], $_POST );
 				header( 'Location: ../../general.php?seccion=aviso&aviso=AV_NOTIFICACIONES_ESTABLECIDAS' );
 				exit();
