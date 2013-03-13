@@ -10,14 +10,15 @@
 	$bd = BD::ObtenerInstancia();
 
 	// El usuario ya estaba logueado. Salta a php/general.php.
-	if( isset( $_SESSION['nombre'] ) ){
+	if( isset( $_SESSION['id'] ) ){
 		header( 'Location: general.php' );
 		exit();
 	}
 
 	// El usuario intenta loguearse.
+	/*
 	if( isset( $_POST['nombre'] ) ){
-		$usuario = new Usuario;
+		
 		if( !$usuario->Logear( $_POST['nombre'], $_POST['contrasenna'] ) ){
 			$_SESSION['nombre'] = $_POST['nombre'];
 			$_SESSION['id'] = $usuario->ObtenerId();
@@ -25,6 +26,7 @@
 			exit();
 		}
 	}
+	*/
 ?>
 
 <!DOCTYPE html>
@@ -45,10 +47,10 @@
 		<img id="logo_index" width="339" height="179" src="media/logo.png" />
 		<div id="panel_login">
 			<h2>Login:</h2>
-			<form id="form_login" action="index.php" method="post" onSubmit="return ValidarLogin();" >
+			<form id="form_login" action="php/controladores/usuarios.php" method="post" onSubmit="return ValidarLogin();" >
 					<p>Nombre: <input type="text" id="nombre" name="nombre" /></p>
 					<p>Contrase&ntilde;a: <input type="password" id="contrasenna" name="contrasenna" /></p>
-					<input type="submit" value="login" />
+					<input type="submit" name="accion" value="Entrar" />
 			</form>
 		</div>
 	</body>

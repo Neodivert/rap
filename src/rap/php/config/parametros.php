@@ -13,6 +13,7 @@
 		'OK_COMENTARIO_BORRADO' => 'El comentario se ha borrado correctamente',
 		'OK_COMENTARIO_MODIFICADO' => 'El comentario ha sido modificado correctamente',
 		'OK_COMENTARIO_SUBIDO' => 'El comentario se ha subido correctamente',
+		'OK_CONTRASENNA_CAMBIADA' => 'La contraseña se ha cambiado correctamente'
 	);
 
 	$notificaciones_malas = array(

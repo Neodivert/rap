@@ -99,6 +99,14 @@
 			$bd->close();
 			return $res;
 		}
+
+		function EscaparString( $string ){
+			$bd = $this->Conectar();
+			$res = $bd->real_escape_string( $string );
+			$bd->close();
+
+			return $res;
+		}
 		
 		// Devuelve el numero de filas encontradas en la ultima consulta SELECT.
 		// Fuente: http://quenerapu.com/mysql/me-encanta-select-found_rows/

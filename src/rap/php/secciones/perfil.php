@@ -1,25 +1,15 @@
 <?php
 	// Página de perfil. La única funcionalidad actual es poder cambiar la contraseña.
-
-	// El usuario pide cambiar su contraseña.
-	if( isset( $_POST['contrasenna'] ) ){
-		CambiarContrasenna( $_POST['contrasenna'] );
-
-		// Si la contraseña pudo cambiarse, muestra un aviso al usuario.
-		// CONFIRMAR QUE SE CAMBIA Y TENER EN CUENTA ERRORES.
-		MostrarAviso( 'Contrasenna cambiada!' );
-	}
-	
 	if( isset( $_FILES['avatar'] ) && ( $_FILES['avatar']['error'] != UPLOAD_ERR_NO_FILE ) ){
-		InsertarAvatar( $_FILES['avatar'], $_SESSION['nombre'] );
+		InsertarAvatar( $_FILES['avatar'], $usuario->ObtenerNombre() );
 	}
 ?>
 
 <!-- TÍTULO CON NOMBRE DEL USUARIO -->
-<h1><?php echo $_SESSION['nombre'] ?></h1>
+<h1><?php echo $usuario->ObtenerNombre(); ?></h1>
 
 <!-- FORMULARIO PARA CAMBIAR LA CONTRASEÑA -->
-<form id="form_perfil" action="general.php?seccion=perfil" method="post">
+<form id="form_perfil" action="php/controladores/usuarios.php" method="post">
 	<h2 class="titulo_seccion">Cambiar contrase&ntilde;a </h2>
 
 	<!-- Introducir contraseña -->
@@ -34,13 +24,15 @@
 	<input type="password" name="repetir_contrasenna" id="repetir_contrasenna" />
 	</p>
 
+	<input type="hidden" name="accion" value="Cambiar contrase&ntilde;a" />
+
 	<!-- Botón de submit -->
-	<input type="button" name="cambiar_contrasenna" value="Cambiar contrase&ntilde;a" onClick="CambiarContrasenna()" />
+	<input type="button" value="Cambiar contrase&ntilde;a" onClick="CambiarContrasenna()" />
 </form>
 
 <h2 class="titulo_seccion">Cambiar avatar </h2>
 <div class="galeria">	
-<?php MostrarAvatar( $_SESSION['nombre'] ); ?>
+<?php $rap->MostrarAvatar( $usuario->ObtenerNombre() ); ?>
 </div>
 <form class="enmarcado" id="form_avatar" action="general.php?seccion=perfil" method="post" enctype="multipart/form-data">
 	<p>

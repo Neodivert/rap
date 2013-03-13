@@ -3,6 +3,11 @@
 	// Elementos comunes a todas las secciones una vez el usuario ha iniciado sesión
 	session_start();
 
+	if( !isset( $_SESSION['id'] ) ){
+		header( 'Location: index.php' );
+		exit();
+	}
+
 	// Funciones necesarias.
 	require_once 'php/config/rutas.php';
 	require_once DIR_CLASES . 'usuario.php';
@@ -12,13 +17,16 @@
 	require_once DIR_CLASES . 'rap.php';
 	require_once DIR_CONFIG . 'parametros.php';
 
-	$usuario = new Usuario( $_SESSION['id'], $_SESSION['nombre'] );
+	
+
+	$rap = RAP::ObtenerInstancia();
+
+	$usuario = Usuario::ObtenerInstancia( $_SESSION['id'] );
+
+	//$usuario = new Usuario( $_SESSION['id'], $_SESSION['nombre'] );
 
 	// El usuario no está logueado. Échalo a la pantalla de login.
-	if( !isset( $_SESSION['nombre'] ) ){
-		header( 'Location: index.php' );
-		exit();
-	}
+	
 
 	// El usuario intenta desconectarse. Destruye la sesión y ve a la pantalla de login.
 	if( isset( $_POST['logout'] ) ){
@@ -43,18 +51,18 @@
 
 	date_default_timezone_set( 'Europe/London' );
 
-	if( strpos( $_SERVER["REQUEST_URI"], 'subir_perla' ) == false ){
+	// Se guarda la ultima direccion visitada por el usuario para volver a ella
+	// cuando se haga algun procesamiento. La direccion no se guarda si la 
+	// ultima seccion visitada es "subir_perla"
+	if( $_GET['seccion'] != 'subir_perla' ){
 		$_SESSION['ultima_dir'] = $_SERVER["REQUEST_URI"];
+	}else{
+		if( !isset( $_SESSION['ultima_dir'] ) ){
+			$_SESSION['ultima_dir'] = '/general.php';
+		}
 	}
 
-	if( !isset( $_SESSION[''] ) ){
-		$_SESSION['ultima_dir'] = 'general.php';
-	}
 	
-	
-	//die( $_SERVER["REQUEST_URI"] );
-
-	$rap = RAP::ObtenerInstancia();
 
 	$rap->CargarUsuarios();
 ?>

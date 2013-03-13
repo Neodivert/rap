@@ -5,33 +5,36 @@
 
 
 	class Usuario {
+   	private static $instancia;
+
 		protected $id;
 		protected $nombre;
-		
-		public function ObtenerId(){ return $this->id; }
-		public function EstablecerId( $id ){ $this->id = $id; }
+		protected $email;
+		protected $cod_validacion;
 
-		public function ObtenerNombre(){ return $this->nombre; }
-		public function EstablecerNombre( $nombre ){ $this->nombre = $nombre; }
-
-		// TODO: Completar.
-		//public function InsertarBD( $bd, $id_usuario ){}
-		//public function CargarDatos( $info ){}
-
-		function Usuario( $id, $nombre )
+		// Constructor privado.
+   	private function Usuario( $id )
 		{
-			$this->id = $id;
-			$this->nombre = $nombre;
+			$this->CargarDesdeBD( BD::ObtenerInstancia(), $id );
 		}
+
+		// Obtiene la instancia unica.
+   	public static function ObtenerInstancia( $id )
+		{
+      	if( !self::$instancia instanceof self ){
+				self::$instancia = new self( $id );
+			}
+			return self::$instancia;
+   	}
 
 		// Intenta logear al usuario cuyos nombre y contraseña son,
 		// respectivamente, $nombre y $contrasenna. Devuelve true en caso de
 		// éxito, o finaliza la ejecución con un mensaje en caso de error.
-		public function Logear( $nombre, $contrasenna )	
+		public static function Loguear( $nombre, $contrasenna )
 		{	
 			$bd = BD::ObtenerInstancia();
 
-			$res = $bd->Consultar( "SELECT id, contrasenna from usuarios WHERE nombre='$nombre'" );
+			$res = $bd->Consultar( "SELECT * from usuarios WHERE nombre='$nombre'" );
 			$usuario = $res->fetch_object();
 
 			if( !$usuario ){
@@ -42,32 +45,65 @@
 				die( "ERROR: Contrasenna incorrecta" );
 			}
 
+			/*
 			$this->id = $usuario->id;
-			$this->nombre = $nombre;			
-			
-			//$_SESSION['id'] = $usuario->id;
-			return NULL;
+			$this->nombre = $nombre;	
+			$this->email = $usuario->email;		
+			*/
+
+			$_SESSION['id'] = $usuario->id;
+
+			return 0;
 		}
 
+
+
+		public function ObtenerId(){ return $this->id; }
+		public function EstablecerId( $id ){ $this->id = $id; }
+
+		public function ObtenerNombre(){ return $this->nombre; }
+		public function EstablecerNombre( $nombre ){ $this->nombre = $nombre; }
+
+		public function ObtenerEmail(){ return $this->email; }
+
+
+		// Actualiza en la BD la contraseña del usuario actual con la nueva 
+		// contraseña $contrasenna.
+		function CambiarContrasennaBD( $bd, $contrasenna )
+		{
+			$bd->Consultar( "UPDATE usuarios SET contrasenna='$contrasenna' WHERE id='{$this->ObtenerId()}' " );
+
+			$this->contrasenna = $contrasenna;
+		}
+
+		function CargarDesdeBD( $bd, $id )
+		{
+			$this->id = $id;
+
+			$res = $bd->Consultar( "SELECT * from usuarios WHERE id='$id'" );
+
+			$registro = $res->fetch_assoc();
+		
+			$this->nombre = $registro['nombre'];
+			$this->email = $registro['nombre'];
+			if( isset( $registro['cod_validacion'] ) ){
+				$this->cod_validacion = $registro['cod_validacion'];
+			}else{
+				$registro['cod_validacion'] = null;
+			}
+		}
+
+		// TODO: Completar.
+		//public function InsertarBD( $bd, $id_usuario ){}
+		//public function CargarDatos( $info ){}
+
+		
+		
 
 	} // Fin de la clase Usuario.
 
 	
-
-
-	// Actualiza en la BD la contraseña del usuario actual con la nueva 
-	// contraseña $contrasenna.
-	function CambiarContrasenna( $contrasenna )
-	{
-		$bd = ConectarBD();
-
-		$res = $bd->query( "UPDATE usuarios SET contrasenna='$contrasenna' WHERE id='{$_SESSION['id']}' " ) or die( $bd->error );
-
-		$bd->close();
-	}
-
-
-
+	
 
 	function InsertarAvatar( $imagen, $nombre )
 	{

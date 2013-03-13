@@ -104,7 +104,7 @@
 		<?php 
 			$etiquetas = $perla->ObtenerEtiquetas();
 			foreach( $etiquetas as $etiqueta ){
-				echo $etiqueta . ', ';
+				echo "<a href=\"general.php?seccion=lista_perlas&etiquetas=$etiqueta\">$etiqueta</a>, ";
 			}
 		?><br />
 

@@ -33,4 +33,14 @@
 		}
 		echo '>';
 	}
+
+	function RedirigirUltimaDireccion( $notificacion = null ){
+		if( strrpos( $_SESSION['ultima_dir'], '?' ) == false ){
+			header( "Location: {$_SESSION['ultima_dir']}?notificacion=$notificacion" );
+		}else{
+			header( "Location: {$_SESSION['ultima_dir']}&notificacion=$notificacion" );
+		}
+		exit();
+	}
+
 ?>

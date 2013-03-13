@@ -234,12 +234,17 @@
 		// Inserta la perla en la BD.
 		function InsertarBD( $bd, $id_usuario, $borrar_imagen = false ){
 			//die( 'Participantes: ' .  print_r( $this->participantes ) );
+
+			$titulo = $bd->EscaparString( $this->titulo );
+			$texto = $bd->EscaparString( $this->texto );
+			$fecha = $bd->EscaparString( $this->fecha );
+
 			if( !isset( $this->id ) ){
 				// La perla es nueva. Inserta la perla en la BD y obtiene su ID.
-				$this->id = $bd->Consultar( "INSERT INTO perlas (titulo, texto, fecha_subida, fecha, subidor, fecha_modificacion, modificador) VALUES( '{$this->titulo}', '{$this->texto}', NOW(), '{$this->fecha}', '$id_usuario', NOW(), '$id_usuario' )" );
+				$this->id = $bd->Consultar( "INSERT INTO perlas (titulo, texto, fecha_subida, fecha, subidor, fecha_modificacion, modificador) VALUES( '$titulo', '$texto', NOW(), '$fecha', '$id_usuario', NOW(), '$id_usuario' )" );
 			}else{
 				// La perla no es nueva. Actualiza los datos en la BD.
-				$bd->Consultar( "UPDATE perlas SET titulo='{$this->titulo}', texto='{$this->texto}', fecha='{$this->fecha}', fecha_modificacion=NOW(), modificador='{$id_usuario}' WHERE id='{$this->id}' " ) or die ($bd->error);
+				$bd->Consultar( "UPDATE perlas SET titulo='$titulo', texto='$texto', fecha='$fecha', fecha_modificacion=NOW(), modificador='{$id_usuario}' WHERE id='{$this->id}' " ) or die ($bd->error);
 				
 				$this->BorrarParticipantesBD( $bd );
 				$this->BorrarEtiquetasBD( $bd );
