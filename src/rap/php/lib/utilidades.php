@@ -43,4 +43,19 @@
 		exit();
 	}
 
+	// Devuelve una string explicativa para el error de fichero con el código $codigo.
+	// El error 4 (No se subió fichero) no se contempla.
+	function MostrarErrorFichero( $codigo )
+	{
+		$max_tam_imagen = ini_get( 'upload_max_filesize' );
+		$mensajes_error = array(
+			UPLOAD_ERR_INI_SIZE => "El tama&ntilde;o del fichero sobrepasa el m&aacute;ximo definido ($max_tam_imagen)",
+			UPLOAD_ERR_FORM_SIZE => 'El tama&ntilde;o del fichero sobrepasa el m&aacute;ximo definido en el formulario HTML',
+			UPLOAD_ERR_PARTIAL => 'S&oacute;lo se carg&oacute; parte del archivo',
+			UPLOAD_ERR_NO_TMP_DIR => 'No se encuentra el directorio temporal',
+			UPLOAD_ERR_CANT_WRITE => 'No se puede escribir en disco',
+			UPLOAD_ERR_EXTENSION => 'Una extensi&oacute;n PHP par&oacute; la subida del fichero'
+		);
+		return 'ERROR SUBIENDO FICHERO: ' . $mensajes_error[$codigo] . '<br />';
+	}
 ?>

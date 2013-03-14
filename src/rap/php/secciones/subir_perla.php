@@ -7,108 +7,26 @@
 	require_once DIR_CLASES . 'usuario.php';
 
 	$perla = new Perla;
-	if( isset( $_POST[ 'titulo_perla' ] ) ){
-		die( print_r( $_POST ) );
-		// El usuario ha enviado un formulario con una nueva perla. Rellena
-		// la perla.
-
-		// Titulo.
-		$perla->EstablecerTitulo( $_POST[ 'titulo_perla' ] );
-
-		// Texto.
-		$perla->EstablecerTexto( $_POST[ 'texto_perla' ] );
-
-		// Imagen.
-		if( $_FILES['imagen']['error'] != UPLOAD_ERR_NO_FILE ||
-			(
-				isset( $_POST['modificar'] )
-				&& !isset( $_POST['borrar_imagen'] )
-				&& file_exists( 'media/perlas/' . $_POST['modificar'] )
-			)
-		){
-			$perla->EstablecerPerlaVisual( true );
-		}else{
-			$perla->EstablecerPerlaVisual( false );
-		}
-
-		// Nueva categoria. TODO: Ver como manejaba lo de las nuevas categorias.
-		// $perla->EstablecerCategoria( $_POST['nueva_categoria'] );
-		
-		// Fecha de subida.
-		$perla->EstablecerFecha( date("Y/m/d") );
-
-		// Fecha.
-		if( $_POST['fecha_perla'] != '' ){
-			$perla->EstablecerFecha( "<i>{$_POST['fecha_perla']}</i>" );
-		}else{
-			$perla->EstablecerFecha( '<i>No especificada</i>' );
-		}
-		
-		// Contenido informatico.
-		$perla->EstablecerContenidoInformatico( isset( $_POST['contenido_informatico'] ) );
-
-		// Humor negro.
-		$perla->EstablecerHumorNegro( isset( $_POST['humor_negro'] ) );
-
-		// Imagen.
-		//$perla['imagen'] = false; // TODO: ?
-
-		// Categoria.
-		$perla->EstablecerCategoria( $_POST['categoria_perla'] );
-
-		// Participantes.
-		$perla->EstablecerParticipantes( $_POST['participantes'] );
-
-		// Subidor. Se que suena mal, pero queria dejarlo todo en Español.
-		$perla->EstablecerSubidor( $_SESSION['id'] );
-
-		// La estructura "$perla" está completa. Ahora diferenciamos entre dos
-		// casos, según si estamos subiendo una perla nueva o actualizando una
-		// existente.
-		if( !isset( $_POST['modificar'] ) ){
-			// Vamos a insertar una perla nueva.
-			try{
-				//InsertarPerla( $perla );
-				//SumarPerla( $perla['categoria'] );
-				die( 'Perla subida correctamente' );
-			}catch( Exception $e ){
-				die( $e->getMessage() );
-			}
-		}else{
-			// Estamos actualizando una perla existente. En $_POST['modificar']
-			// tenemos la id de la perla en cuestión.
-			//$res = ActualizarPerla( $_POST['modificar'], $perla, isset( $_POST['borrar_imagen'] ) );
-			if( $res == null ){
-				die( 'Perla subida correctamente' );
-			}else{
-				die( $res );
-			}
-		}		
+	// ¿El usuaruaio quiere subir una perla nueva o modificar una existente?
+	if( isset( $_GET['modificar'] ) ){
+		// El usuario quiere modificar una perla existente. La variable
+		// $_GET['modificar'] contiene La id de la perla en cuestión.
+		$perla->CargarDesdeBD( BD::ObtenerInstancia(), $_GET['modificar'], $_SESSION['id'] );
 	}else{
-		// El usuario no ha enviado nada, sólo acaba de entrar en esta sección.
-		// ¿Quiere subir una perla nueva o modificar una existente?
+		// El usuario va a subir una perla nueva. Rellena sus campos con
+		// los valores por defecto.
+		$perla->EstablecerTitulo( '' );
+		$perla->EstablecerTexto( '' );
+		$perla->EstablecerFecha( '' );
 
-		if( isset( $_GET['modificar'] ) ){
-			// El usuario quiere modificar una perla existente. La variable
-			// $_GET['modificar'] contiene La id de la perla en cuestión.
-			$perla->CargarDesdeBD( BD::ObtenerInstancia(), $_GET['modificar'], $_SESSION['id'] );
-		}else{
-			// El usuario va a subir una perla nueva. Rellena sus campos con
-			// los valores por defecto.
-			$perla->EstablecerTitulo( '' );
-			$perla->EstablecerTexto( '' );
-			$perla->EstablecerFecha( '' );
+		$perla->EstablecerContenidoInformatico( false );
+		$perla->EstablecerHumorNegro( false );
+		$perla->EstablecerPerlaVisual( false );
+	
+		$perla->EstablecerEtiquetas( array() );
 
-			$perla->EstablecerContenidoInformatico( false );
-			$perla->EstablecerHumorNegro( false );
-			$perla->EstablecerPerlaVisual( false );
-		
-			$perla->EstablecerEtiquetas( array() );
-
-			$perla->EstablecerParticipantes( "{$_SESSION['id']}" );
-		}
+		$perla->EstablecerParticipantes( "{$_SESSION['id']}" );
 	}
-	//die( 'Categoria: ' . $perla->ObtenerCategoria() );
 ?>
 
 
@@ -135,18 +53,17 @@
 	?>
 	</p>
 
-	<?php /*
 	<!-- Imagen (solo perlas visuales) -->
 	<h2>Imagen (s&oacute;lo perlas visuales)</h2>
 	<?php
-		if( $perla->ObtenerPerlaVisual() ){
-			echo "<img src=\"../datos/img/perlas/{$_GET['modificar']}\" width=\"100%\" >";
+		if( isset( $_GET['modificar'] ) && file_exists( "media/perlas/{$_GET['modificar']}" ) ){
+			echo "<img src=\"media/perlas/{$_GET['modificar']}\" width=\"100%\" >";
 			echo '<input type="checkbox" name="borrar_imagen" value="" />Borrar imagen<br />';
 		}
 	?>
 	<label for="imagen">Cargar imagen: </label>
 	<input type="file" name="imagen" id="imagen" />
-	<!-- <a href="Javascript:void(0)" onclick="VaciarElemento('imagen')">Resetear campo de fichero</a> --> */ ?>
+	<!-- <a href="Javascript:void(0)" onclick="VaciarElemento('imagen')">Resetear campo de fichero</a> -->
 
 	<!-- ¿Texto de la perla? (textarea) --> 
 	<h2>Texto: </h2>

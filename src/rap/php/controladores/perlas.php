@@ -13,8 +13,20 @@
 			case 'Subir perla':
 				$perla = new Perla;
 				$perla->CargarDesdeFormulario( $_POST );
-				$perla->InsertarBD( BD::ObtenerInstancia(), $_SESSION['id'] );
 
+				if( !$_FILES['imagen']['error'] ){
+					$perla->EstablecerImagen( $_FILES['imagen'] );
+				}else{
+					if( $_FILES['imagen']['error'] != 4 ){
+						MostrarErrorFichero( $_FILES['imagen']['error'] );
+					}
+				}
+				if( isset( $_POST['borrar_imagen'] ) ){
+					$perla->BorrarImagenBD();
+				}
+
+				$perla->InsertarBD( BD::ObtenerInstancia(), $_SESSION['id'] );
+				
 				RedirigirUltimaDireccion( 'OK_PERLA_SUBIDA' );
 			break;
 			case 'Modificar perla':

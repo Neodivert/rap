@@ -34,6 +34,7 @@
 		protected $fecha_subida;
 		protected $modificador;
 		protected $fecha_modificacion;
+		protected $imagen;
 
 		protected $num_votos_positivos;
 		protected $num_votos_negativos;
@@ -43,6 +44,13 @@
 
 		protected $num_comentarios;
 		protected $participantes;
+
+		function Perla()
+		{
+			$imagen = null;
+		}
+
+		function EstablecerImagen( $imagen ){ $this->imagen = $imagen; }
 	
 		function ObtenerId(){ return $this->id; }
 		function EstablecerId( $id ){ $this->id = $id; }
@@ -259,6 +267,23 @@
 
 			// Inserta en la BD las etiquetas de la perla.
 			$this->InsertarEtiquetasBD( $bd );
+	
+			/*
+			if( $_FILES['imagen']['error'] != UPLOAD_ERR_NO_FILE ||
+				(
+				isset( $_POST['modificar'] )
+				&& !isset( $_POST['borrar_imagen'] )
+				&& file_exists( 'media/perlas/' . $_POST['modificar'] )
+				)
+){
+$perla['perla_visual'] = true;
+}else{
+$perla['perla_visual'] = false;
+}
+*/
+			if( $this->imagen != null ){
+				$this->InsertarImagenBD();
+			}
 
 			// TODO: Notifica por email.
 			//NotificarPorEmail( 'nueva_perla', $id_perla );
@@ -388,6 +413,11 @@
 		}
 		*/
 
+		function BorrarImagenBD()
+		{
+			unlink( "../../media/perlas/" . $this->id );
+		}
+
 		function BorrarVotosBD( $bd )
 		{
 			$bd->Consultar( "DELETE FROM votos WHERE perla={$this->id}" );
@@ -483,6 +513,20 @@
 		}
 
 
+		// Trata de insertar la imagen $nombre para la perla cuya id es $id_perla.
+		// Si hay algún error lanza una excepción.
+		function InsertarImagenBD( $bd )
+		{
+			try{
+				ComprobarImagen( $this->imagen );
+
+				if( !move_uploaded_file($this->imagen["tmp_name"], "../../media/perlas/" . $this->id ) ) die( 'ERROR moviendo fichero' );
+				
+			}catch( Exception $e ){
+				die( $e->getMessage() );
+			}
+		}
+
 	} // Fin de la clase Perla.
 	
 	// TODO: Completar
@@ -491,66 +535,25 @@
 
 	// Comprueba que el fichero que se ha subido es válido.
 	// En caso de éxito no devuelve nada, y si hay un error lanza una excepción.
-	function ComprobarImagen( $nombre )
+	function ComprobarImagen( $imagen )
 	{
 		$tipos_soportados = array( 'image/jpeg', 'image/png' );
 
 		// ¿Hubo algún error en la subida?. El error 4 (No se subió fichero) ya
 		// se tiene en cuenta antes de intentar subir el fichero.
-		if( $_FILES[$nombre]['error'] > 0 ){
-			throw new Exception( 'ERROR: ' . MostrarErrorFichero( $_FILES[$nombre]['error'] ) );
+		if( $imagen['error'] > 0 ){
+			throw new Exception( 'ERROR: ' . MostrarErrorFichero( $imagen['error'] ) );
 		}
 
 		// Comprueba que el tipo mime de la imagen es jpeg o png.
 		// Contribución de renato en la ayuda de php.
 		$finfo = new finfo( FILEINFO_MIME );
-		$tipo_imagen = $finfo->file( $_FILES[$nombre]['tmp_name'] );
+		$tipo_imagen = $finfo->file( $imagen['tmp_name'] );
 		$tipo_mime = substr( $tipo_imagen, 0, strpos($tipo_imagen, ';') );
 		//$tipo_imagen = mime_content_type( $_FILES[$nombre]['tmp_name'] );
 		echo 'Tipo mime: ' . $tipo_mime . '<br />';
 		if( !in_array( $tipo_mime, $tipos_soportados ) ){
 			throw new Exception( 'ERROR: tipo de imagen no soportado. Tipos soportados: jpeg, png' );
-		}
-	}
-
-
-	// Devuelve una string explicativa para el error de fichero con el código $codigo.
-	// El error 4 (No se subió fichero) no se contempla.
-	function MostrarErrorFichero( $codigo )
-	{
-		$max_tam_imagen = ini_get( 'upload_max_filesize' );
-		$mensajes_error = array(
-			UPLOAD_ERR_INI_SIZE => "El tama&ntilde;o del fichero sobrepasa el m&aacute;ximo definido ($max_tam_imagen)",
-			UPLOAD_ERR_FORM_SIZE => 'El tama&ntilde;o del fichero sobrepasa el m&aacute;ximo definido en el formulario HTML',
-			UPLOAD_ERR_PARTIAL => 'S&oacute;lo se carg&oacute; parte del archivo',
-			UPLOAD_ERR_NO_TMP_DIR => 'No se encuentra el directorio temporal',
-			UPLOAD_ERR_CANT_WRITE => 'No se puede escribir en disco',
-			UPLOAD_ERR_EXTENSION => 'Una extensi&oacute;n PHP par&oacute; la subida del fichero'
-		);
-		return 'ERROR SUBIENDO FICHERO: ' . $mensajes_error[$codigo] . '<br />';
-	}
-
-
-	// Trata de insertar la imagen $nombre para la perla cuya id es $id_perla.
-	// Si hay algún error lanza una excepción.
-	function InsertarImagen( $nombre, $id_perla )
-	{
-		if( $_FILES['imagen']['error'] == UPLOAD_ERR_NO_FILE ){
-			echo 'Sin imagen subida';
-			return;
-		}
-
-		try{
-			ComprobarImagen( $nombre );
-
-			echo "Imagen: " . $_FILES["imagen"]["name"] . "<br />";
-			echo "Tipo: " . $_FILES["imagen"]["type"] . "<br />";
-			echo "Tamanno: " . ($_FILES["imagen"]["size"] / 1024) . " Kb<br />";
-
-			if( !move_uploaded_file($_FILES["imagen"]["tmp_name"], "media/perlas/" . $id_perla ) ) throw new Exception( 'ERROR moviendo fichero' );
-			echo "Guardada en: " . $_FILES["imagen"]["tmp_name"] . '<br />';
-		}catch( Exception $e ){
-			die( $e->getMessage() );
 		}
 	}
 ?>

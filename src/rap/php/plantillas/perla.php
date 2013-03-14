@@ -73,8 +73,9 @@
 		<p><?php echo $perla->ObtenerTexto(); ?></p>
 
 		<!-- Muestra la imagen (solo perlas visuales) -->
-		<?php if( $perla->ObtenerPerlaVisual() ){
-			echo "<img src=\"media/perlas/{$perla->ObtenerId()}\" width=\"100%\" alt=\"perla visual - {$perla->ObtenerTitulo()}\" >";
+
+		<?php if( file_exists( "media/perlas/{$perla->ObtenerId()}" ) ){
+			echo "<img src=\"media/perlas/{$perla->ObtenerId()}\" width=\"100%\" alt=\"perla visual - {$perla->ObtenerTitulo()} ({$perla->ObtenerId()})\" >";
 		} ?>
 
 		<!-- Subidor y fecha de subida. Ultimo modificador y fecha de modificacion. -->
