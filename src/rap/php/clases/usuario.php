@@ -101,22 +101,17 @@
 		function InsertarAvatarBD( $imagen )
 		{
 			if( $imagen['error'] == UPLOAD_ERR_NO_FILE ){
-				echo 'Sin avatar subido';
-				return;
+				return -1;
 			}
 
 			try{
 				ComprobarImagen( $imagen );
-
-				echo "Imagen: " . $imagen["name"] . "<br />";
-				echo "Tipo: " . $imagen["type"] . "<br />";
-				echo "Tamanno: " . ($imagen["size"] / 1024) . " Kb<br />";
-
-				if( !move_uploaded_file($imagen["tmp_name"], "../../media/avatares/" . $this->id ) ) throw new Exception( 'ERROR moviendo fichero' );
-				echo "Guardada en: " . $imagen["tmp_name"] . '<br />';
+				if( !move_uploaded_file($imagen["tmp_name"], "../../media/avatares/" . $this->id ) ) return -2;
 			}catch( Exception $e ){
 				die( $e->getMessage() );
 			}
+
+			return 0;
 		}
 
 		function BorrarAvatarBD()

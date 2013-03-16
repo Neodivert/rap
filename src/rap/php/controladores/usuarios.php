@@ -19,9 +19,13 @@
 			break;
 			case 'Cambiar avatar':
 				$usuario = Usuario::ObtenerInstancia( $_SESSION['id'] );
-				$usuario->InsertarAvatarBD( $_FILES['avatar'] );
+				$res = $usuario->InsertarAvatarBD( $_FILES['avatar'] );
 
-				header( 'Location: ../../general.php?seccion=perfil&notificacion=OK_AVATAR_CAMBIADO' );
+				if( !$res ){ 
+					header( 'Location: ../../general.php?seccion=perfil&notificacion=OK_AVATAR_CAMBIADO' );
+				}else{
+					header( 'Location: ../../general.php?seccion=perfil&notificacion=ERROR_CAMBIANDO_AVATAR' );
+				}
 			break;
 			case 'Borrar avatar':
 				$usuario = Usuario::ObtenerInstancia( $_SESSION['id'] );

@@ -19,6 +19,7 @@
 	);
 
 	$notificaciones_malas = array(
-		'ERROR_VALIDANDO_EMAIL' => 'Error validando el email'
+		'ERROR_VALIDANDO_EMAIL' => 'Error validando el email',
+		'ERROR_CAMBIANDO_AVATAR' => 'Error cambiando el avatar'
 	);
 ?>
