@@ -1,4 +1,9 @@
-<?php $get = $_GET; ?>
+<?php
+	$get = $_GET;
+	if( isset( $get['notificacion'] ) ){
+		unset( $get['notificacion'] );
+	}
+?>
 <div id="seleccion_paginas">
 	<?php
 		$nPaginas = $nElementos / $nElementosPorPagina;

@@ -67,7 +67,7 @@
 
 	<!-- Etiquetas de la perla -->
 	<h2>Etiquetas: </h2>
-	<label for="etiquetas">Introduce las etiquetas separadas por comas. Por ejemplo: "pastelillo, g&eacute;minis, sub-woofer, napoleon":</label>
+	<label for="etiquetas">Introduce las etiquetas separadas por comas. Por favor, usa palabras o frases simples que alguien pueda usar para buscar tu perla. Ejemplo de etiquetas: "pastelillo, g&eacute;minis, sub-woofer, napoleon":</label>
 	<?php
 		echo "<input type=\"text\" name=\"etiquetas\" id=\"etiquetas\" value=\"{$perla->ObtenerEtiquetasStr()}\" required />";
 	?>

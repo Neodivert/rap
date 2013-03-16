@@ -11,7 +11,7 @@
 	
 	$nElementos = $bd->ObtenerNumFilasEncontradas();
 
-	foreach( $notificaciones as $notificacion ){
+	while( $notificacion = $notificaciones->fetch_assoc() ){
 		echo "[{$notificacion['fecha_modificacion']}]: ";
 		switch( $notificacion['tipo'] ){
 			case 'perla':
@@ -42,6 +42,9 @@
 			break;
 			case 'usuario':
 				echo "Nuevo usuario: {$notificacion['titulo']}";
+			break;
+			default:
+				echo "SIN_TIPO[{$notificacion['tipo']}]";
 			break;
 		}
 		echo '<br /><br />';

@@ -111,7 +111,6 @@
 		function ObtenerNombreSubidor(){ return $this->subidor; }
 		function EstablecerNombreSubidor( $subidor ){ $this->subidor = $subidor; }
 
-		
 		function ObtenerFechaSubida(){ return $this->fecha_subida; }
 		function EstablecerFechaSubida( $fecha_subida ){ $this->fecha_subida = $fecha_subida; }
 		
@@ -183,8 +182,12 @@
 			$this->CargarEtiquetasBD( $bd );
 			$this->CargarParticipantesBD( $bd );
 			$this->CargarVotosBD( $bd, $id_usuario );
-
+			$this->CargarNumComentariosBD( $bd );
 			// TODO: Falta los comentarios (nº de comentarios).
+		}
+
+		function EsSubidor( $id_usuario ){
+			return ( $this->subidor == $id_usuario );
 		}
 
 		// Inserta la perla en la BD.
@@ -245,6 +248,12 @@ $perla['perla_visual'] = false;
 				}
 			}
 			*/
+		}
+
+		private function CargarNumComentariosBD( $bd ){
+			$res = $bd->Consultar( "SELECT COUNT(*) as n FROM comentarios WHERE perla = {$this->id}" );
+			$reg = $res->fetch_assoc();
+			$this->num_comentarios = $reg['n'];
 		}
 
 		private function InsertarParticipantesBD( $bd ){

@@ -8,18 +8,20 @@
 		<div class="izquierda">
 			<h1><?php echo $perla->ObtenerTitulo(); ?></h1>
 			<?php 
-				$modificable = $perla->EsParticipante( $_SESSION['id'] );
+				/*$modificable = $perla->EsParticipante( $_SESSION['id'] );
 				$hoy = date("Y-m-d H:i:s");
 				$t2 = strtotime( $hoy );
 				$t1 = strtotime( $perla->ObtenerFechaSubida() );
-				$minutos = ($t2 - $t1)/60;
+				$minutos = ($t2 - $t1)/60;*/
 
-				if( $modificable ){
+				if( $perla->EsParticipante( $usuario->ObtenerId() ) ){
 					CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post' );
 					echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla->ObtenerId()}\" />";
 					echo '<input type="submit" name="accion" value="Modificar perla" />';
 					echo '</form>';
-
+				}
+			
+				if( $perla->EsSubidor( $usuario->ObtenerId() ) ){
 					CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post', "Estas segur@ de querer BORRAR la perla [{$perla->ObtenerTitulo()}]?" );
 					echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla->ObtenerId()}\" />";
 					echo '<input type="submit" name="accion" value="Borrar perla" />';

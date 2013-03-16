@@ -2,6 +2,8 @@
 	ini_set("default_charset", "UTF-8");
 	session_start();
 
+	die( getcwd() );
+
 	require_once 'php/config/rutas.php';
 	require_once DIR_CLASES . 'rap.php';
 	require_once DIR_CLASES . 'usuario.php';
@@ -48,8 +50,8 @@
 		<div id="panel_login">
 			<h2>Login:</h2>
 			<form id="form_login" action="php/controladores/usuarios.php" method="post" onSubmit="return ValidarLogin();" >
-					<p>Nombre: <input type="text" id="nombre" name="nombre" /></p>
-					<p>Contrase&ntilde;a: <input type="password" id="contrasenna" name="contrasenna" /></p>
+					<p>Nombre: <input type="text" id="nombre" name="nombre" required /></p>
+					<p>Contrase&ntilde;a: <input type="password" id="contrasenna" name="contrasenna" required /></p>
 					<input type="submit" name="accion" value="Entrar" />
 			</form>
 		</div>

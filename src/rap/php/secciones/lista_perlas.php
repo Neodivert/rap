@@ -30,8 +30,6 @@
 
 <!-- TÍTULO -->
 
-
-
 <h1>Lista de Perlas</h1>
 
 <!--                           Barra de busqueda                            -->
@@ -48,100 +46,23 @@
 	  <option value="Opera">
 	  <option value="Safari">
 	</datalist> -->
-	
-	<p>Introduce una palabra o una frase sencilla</p>
+	<p>Introduce una palabra o una frase sencilla. Si quieres ver todas las perlas, deja el campo de texto vac&iacute;o y pulsa en "Buscar perlas".</p>
 	<form action="general.php" method="get">
 		<input list="etiquetas" name="etiquetas">
 		<input type="submit" value="Buscar perlas" />
 	</form>
-
-	<?php
-	/*die( '3. Comentar perlas (¿clase comentario?)<br />4. Buscar etiquetas (datalist con etiquetas mas populares)<br/>5. Buscar etiquetas (¿una o mas de una?) / incluir boton para buscar cualquiera<br />5.5 RESTO DE SECCIONES<br/>6. ¿Publicar?<br/>6.5. Denunciar perlas<br/>7. ¿Avisos? (humor negro, informatico, etc) ¿tabla BD (etiqueta, aviso)?' );*/
-	
-	/*<form id="form_busqueda" method="get">
-
-		<!-- Busqueda. Seleccion de categoria 
-		<label for="categoria">Categor&iacute;a: </label>
-  		<select name="categoria" id="categoria" >
-		<?php
-			$categorias = $rap->ObtenerCategorias();
-			$total_perlas = 0;
-		
-			// Bucle que itera a lo largo de las categorías y va creando las
-			// opciones del select.
-			while( $categoria = $categorias->fetch_object() ){
-				echo "<option ";
-				if( $categoria->id == $_GET['categoria'] ){
-					// Si la categoría coincide con la actual, muestra esta 
-					// opción como preseleccionada.
-					echo 'selected="selected" ';
-				}
-            echo "value=\"{$categoria->id}\" >{$categoria->nombre} ({$categoria->num_perlas})</option>";
-
-				// Cada categoría en la BD tiene guardado el número de perlas
-				// de la misma para evitar consultar la BD y contar. El total
-				// de perlas, sin embargo, se va calculando a medida que se 
-				// recuperan las categorías de la BD.
-				$total_perlas += $categoria->num_perlas;
-			}
-
-			// Muestra una última opción 'Cualquiera' en el select.
-			echo "<option ";
-			if( $_GET['categoria'] == 0 ){
-				echo 'selected="selected" ';
-			}
-			echo "value=\"0\">Cualquiera ($total_perlas)</option>";
-		?>
-		</select> -->
-
-		<!-- Busqueda. Seleccion de participante 
-		<label for="participante">Participante</label>
-		<select name="participante" id="participante">
-      	<?php
-            $usuarios = $rap->ObtenerUsuarios();
-            while( $usuario = $usuarios->fetch_object() ){
-              	echo '<option ';
-              	if( $usuario->id == $_GET['participante'] ){
-						// Si el participante coincide con el actual, muestra esta 
-						// opción como preseleccionada.
-						echo 'selected="selected" ';
-					}
-          		echo "value=\"{$usuario->id}\">";
-            	echo $usuario->nombre;
-            	echo '</option>';
-            }
-
-            // Muestra una última opción 'Cualquiera' en el select.
-				echo "<option ";
-				if( $_GET['participante'] == 0 ){
-					echo 'selected="selected" ';
-				}
-				echo "value=\"0\">Cualquiera</option>";
-        		?>
-     	</select> -->
-
-		<!-- Busqueda. Seleccion de flags 
-		<?php
-			echo '<br /><input type="checkbox" name="contenido_informatico" value="0" ';
-			if( $_GET['contenido_informatico'] == 0 ){
-				echo 'checked';
-			}
-			echo '/>NO quiero perlas con "humor inform&aacute;tico"';
-			echo '<br /><input type="checkbox" name="humor_negro" value="1" ';
-			if( $_GET['humor_negro'] == 0 ){
-				echo 'checked';
-			}
-			echo '/>NO quiero perlas con humor negro';
-			
-		?>
-		<br />
-      <input type="submit" value="Buscar Perlas" />
-	</form> --> */ ?>
 </div>
 
 
 <!--                           Lista de perlas                              -->
 <?php 
+	if( $etiquetas != '' ){
+		echo "<h2>Resultados de la b&uacute;squeda para la etiqueta '$etiquetas'</h2>";
+	}else{
+		echo "<h2>Todas las perlas</h2>";
+	}
+	
+
 	$bd = BD::ObtenerInstancia();
 
 	// Obtiene las perlas de la pagina actual.
@@ -150,19 +71,14 @@
 	// Obtiene el numero de perlas.
 	$nElementos = $bd->ObtenerNumFilasEncontradas();
 	
+	// Establece el numero de perlas por cada pagina.
 	$nElementosPorPagina = 5;
-
-	//echo "Filas encontradas: " . $bd->ObtenerNumFilasEncontradas();
 	
+	// Muestra cada perla.
 	foreach( $perlas as $perla ){
-		$modificable = false;
 		require DIR_PLANTILLAS . 'perla.php';
 	} // Fin del while que recorre las perlas.
 	
-	// Crea los enlaces a las otras páginas
-	if( isset( $_GET['notificacion'] ) ){
-		unset( $_GET['notificacion'] );
-	}
-	
+	// Crea los enlaces a las otras paginas.
 	require DIR_PLANTILLAS . 'selector_paginas.php';
 ?>
