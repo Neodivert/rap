@@ -6,7 +6,7 @@
 ?>
 
 <!-- MUESTRA LA PERLA -->
-<br/><br/><br/><br/><br/><br/>
+<br /><br /><br /><br /><br /><br /><br /> <!-- TODO: QUITAR ESTO Y QUE EL TITULO DE LA PERLA NO SE META ENTRE EL MENU SUPERIOR Y EL BORDE DEL CONTENEDOR -->
 <?php
 	$perla = new Perla;
 	$perla->CargarDesdeBD( BD::ObtenerInstancia(), $_GET['perla'], $_SESSION['id'] );

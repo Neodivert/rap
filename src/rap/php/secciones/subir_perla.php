@@ -18,10 +18,6 @@
 		$perla->EstablecerTitulo( '' );
 		$perla->EstablecerTexto( '' );
 		$perla->EstablecerFecha( '' );
-
-		$perla->EstablecerContenidoInformatico( false );
-		$perla->EstablecerHumorNegro( false );
-		$perla->EstablecerPerlaVisual( false );
 	
 		$perla->EstablecerEtiquetas( array() );
 

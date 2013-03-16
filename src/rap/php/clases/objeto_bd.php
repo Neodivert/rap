@@ -1,7 +1,6 @@
 <?php
 	/* Info:
-	Clase abstracta que representa un ente que puede leerse y/o escribirse
-	en la BD. 
+	Interfaz de todos los objetos que pueden leerse de la BD.
 	/*
     This file is part of RAP.
 
@@ -18,6 +17,8 @@
     You should have received a copy of the GNU General Public License
     along with RAP.  If not, see <http://www.gnu.org/licenses/>.
 	*/
+	// TODO: VER SI AMPLIO ESTA INTERFAZ O ES INNECESARIA -> CAMBIAR INFO AL
+	// PRINCIPIO.
 
 	require_once 'bd.php';
 
@@ -25,5 +26,7 @@
 
 		//public function CargarDatos( $info );
 		public function InsertarBD( $bd, $id_usuario );
-	} // Final de la definicion de la clase BD.
+
+	} // Final de la definicion de la interfaz ObjetoBD.
+
 ?>

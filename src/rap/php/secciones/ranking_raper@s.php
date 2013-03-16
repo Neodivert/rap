@@ -14,7 +14,7 @@
 		echo '<div class="galeria">';
 		$usuarios = call_user_func_array( $top[1], $top[2] );
 		while( $usuario = $usuarios->fetch_assoc() ){
-			$rap->MostrarAvatar( $usuario['nombre'], $usuario['n'] );
+			$rap->MostrarAvatar( $usuario['id'], $usuario['n'] );
 		}
 		echo '</div>';
 	}

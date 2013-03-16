@@ -13,7 +13,9 @@
 		'OK_COMENTARIO_BORRADO' => 'El comentario se ha borrado correctamente',
 		'OK_COMENTARIO_MODIFICADO' => 'El comentario ha sido modificado correctamente',
 		'OK_COMENTARIO_SUBIDO' => 'El comentario se ha subido correctamente',
-		'OK_CONTRASENNA_CAMBIADA' => 'La contraseña se ha cambiado correctamente'
+		'OK_CONTRASENNA_CAMBIADA' => 'La contraseña se ha cambiado correctamente',
+		'OK_AVATAR_CAMBIADO' => 'El avatar se ha cambiado correctamente',
+		'OK_AVATAR_BORRADO' => 'El avatar se ha borrado correctamente'
 	);
 
 	$notificaciones_malas = array(

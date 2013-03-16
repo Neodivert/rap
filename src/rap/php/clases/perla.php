@@ -1,5 +1,6 @@
 <?php
-	// Conjunto de funciones relacionadas con las perlas.
+	/* Info:
+	Clase que representa una perla de la RAP.
 	/*
     This file is part of RAP.
 
@@ -20,15 +21,13 @@
 	require_once DIR_CLASES . 'objeto_bd.php';
 
 	class Perla implements ObjetoBD {
+		/*** Atributos ***/
 		protected $id;
 		protected $titulo;
 		protected $etiquetas;
 		protected $nota_acumulada;
 		protected $num_votos;
 		protected $texto;
-		protected $contenido_informatico;
-		protected $humor_negro;
-		protected $perla_visual;
 		protected $fecha;
 		protected $subidor;
 		protected $fecha_subida;
@@ -50,14 +49,15 @@
 			$imagen = null;
 		}
 
-		function EstablecerImagen( $imagen ){ $this->imagen = $imagen; }
-	
+		/*** Getters y Setters ***/
 		function ObtenerId(){ return $this->id; }
 		function EstablecerId( $id ){ $this->id = $id; }
 
 		function ObtenerTitulo(){ return $this->titulo; }
-		function EstablecerTitulo( $titulo ){ $this->titulo = str_replace( '"', '&quot;', $titulo ); }
+		function EstablecerTitulo( $titulo ){ $this->titulo = $titulo; } // TODO: He quitado un replace de '"' que usaba para escapar el titulo y poder meterlo en la BD. Comprobar que funciona bien.
 
+		// Las etiquetas pueden obtenerse como un array (ObtenerEtiquetas) o como
+		// una string del tipo "etiqueta1, etiqueta2, ..." (ObtenerEtiquetasStr).
 		function ObtenerEtiquetas(){ return $this->etiquetas; }
 		function ObtenerEtiquetasStr()
 		{ 
@@ -72,14 +72,6 @@
 
 		function ObtenerNumVotos(){ return $this->num_votos; }
 		function EstablecerNumVotos( $num_votos ){ $this->num_votos = $num_votos; }
-
-		//function ObtenerNotaMedia(){ return $this->nota_acumulada/$this->num_votos; }
-
-		function ObtenerContenidoInformatico(){ return $this->contenido_informatico; }
-		function EstablecerContenidoInformatico( $contenido_informatico ){ $this->contenido_informatico = $contenido_informatico; }
-
-		function ObtenerHumorNegro(){ return $this->humor_negro; }
-		function EstablecerHumorNegro( $humor_negro ){ $this->humor_negro = $humor_negro; }
 
 		function ObtenerTexto(){
 			return $this->texto;
@@ -106,9 +98,6 @@
 				}
 			}
 		}
-
-		function ObtenerPerlaVisual(){ return $this->perla_visual; }
-		function EstablecerPerlaVisual( $perla_visual ){ $this->perla_visual = $perla_visual; }
 
 		function ObtenerFecha()
 		{ 
@@ -144,82 +133,41 @@
 		function ObtenerNumVotosNegativos(){ return $this->num_votos_negativos; }
 		function DenunciadaPorUsuario(){ return $this->denunciada_por_usuario; }
 
-		public function CargarDesdeFormulario( $info ){
-			//die( print_r( $info ) );
-			if( isset( $info['id'] ) ){
-				$this->id = $info['id'];
+		function EstablecerImagen( $imagen ){ $this->imagen = $imagen; }
+
+
+		/*** Otros metodos ***/
+
+		// Carga los atributos a partir de un formulario ($_POST).
+		public function CargarDesdeFormulario( $form ){
+			if( isset( $form['id'] ) ){
+				$this->id = $form['id'];
 			}
-			$this->EstablecerTitulo( $info['titulo'] );
-			$this->EstablecerTexto( $info['texto'] );
-			$this->etiquetas = explode( ', ', $info['etiquetas'] );
+			$this->EstablecerTitulo( $form['titulo'] );
+			$this->EstablecerTexto( $form['texto'] );
+			$this->etiquetas = explode( ', ', $form['etiquetas'] );
 			
-			$this->EstablecerFecha( $info['fecha'] );
-			//for
-			//$this->nota_acumulada = $info['nota_acumulada'];
-			//$this->num_votos = $info['num_votos'];
+			$this->EstablecerFecha( $form['fecha'] );
 
-			//die( print_r( $info ) );
-			if( isset( $info['participantes'] ) ){
-				$this->participantes = $info['participantes'];
+			if( isset( $form['participantes'] ) ){
+				$this->participantes = $form['participantes'];
 			}
-
-			//$this->contenido_informatico = $info['contenido_informatico'];
-			//$this->humor_negro = $info['humor_negro'];
-			//$this->perla_visual = $info['perla_visual'];
-
-			//$this->subidor = $info['subidor'];
-			//$this->fecha_subida = $info['fecha_subida'];
-			//$this->modificador = $info['modificador'];
-			//$this->fecha_modificacion = $info['fecha_modificacion'];
-
-			/*
-			if( isset( $info['num_denuncias'] ) ){
-				$this->num_denuncias = $info['num_denuncias'];
-			}else{
-				$this->num_denuncias = 0;
-			}
-			if( isset( $info['denunciada'] ) ){
-				$this->denunciada = $info['denunciada'];
-			}else{
-				$this->denunciada = false;
-			}
-			*/
-			//$this->num_comentarios = $info['num_comentarios'];
 		}
 
-		public function CargarDesdeRegistro( $registro, $id_usuario ){
-			// TODO: Faltan participantes y etiquetas.
-			if( isset( $registro['id'] ) ){			
-				$this->id = $registro['id'];
-			}
-			$this->titulo = $registro['titulo'];
-			// TODO: $this->etiquetas = $registro['etiquetas'];
-			//$this->nota_acumulada = $info['nota_acumulada'];
-			//$this->num_votos = $info['num_votos'];
-			$this->texto = $registro['texto'];
-			//$this->contenido_informatico = $info['contenido_informatico'];
-			//$this->humor_negro = $info['humor_negro'];
-			//$this->perla_visual = $info['perla_visual'];
-			$this->fecha = $registro['fecha'];
+		// Carga los atributos a partir del registro $reg. Tambien establece
+		// al usuario con id $id_usuario como subidor y ultimo modificador
+		// de la perla.
+		public function CargarDesdeRegistro( $reg, $id_usuario ){
+			$this->id = isset( $reg['id'] ) ? $reg['id'] : null;
 
-			$this->subidor = $registro['subidor'];
-			$this->fecha_subida = $registro['fecha_subida'];
-			$this->modificador = $registro['modificador'];
-			$this->fecha_modificacion = $registro['fecha_modificacion'];
+			$this->titulo = $reg['titulo'];
+			$this->texto = $reg['texto'];
+			$this->fecha = $reg['fecha'];
 
-			/*
-			if( isset( $registro['num_denuncias'] ) ){
-				$this->num_denuncias = $registro['num_denuncias'];
-			}else{
-				$this->num_denuncias = 0;
-			}
-			if( isset( $registro['denunciada'] ) ){
-				$this->denunciada = $registro['denunciada'];
-			}else{
-				$this->denunciada = false;
-			}
-			*/
-			//$this->num_comentarios = $info['num_comentarios'];
+			$this->subidor = $reg['subidor'];
+			$this->fecha_subida = $reg['fecha_subida'];
+			$this->modificador = $reg['modificador'];
+			$this->fecha_modificacion = $reg['fecha_modificacion'];
 		}
 
 		function CargarDesdeBD( $bd, $id_perla, $id_usuario )
@@ -236,18 +184,17 @@
 			$this->CargarParticipantesBD( $bd );
 			$this->CargarVotosBD( $bd, $id_usuario );
 
-			// TODO: Falta los comentarios.
+			// TODO: Falta los comentarios (nº de comentarios).
 		}
 
 		// Inserta la perla en la BD.
 		function InsertarBD( $bd, $id_usuario, $borrar_imagen = false ){
-			//die( 'Participantes: ' .  print_r( $this->participantes ) );
 
 			$titulo = $bd->EscaparString( $this->titulo );
 			$texto = $bd->EscaparString( $this->texto );
 			$fecha = $bd->EscaparString( $this->fecha );
 
-			if( !isset( $this->id ) ){
+			if( $this->id == null ){
 				// La perla es nueva. Inserta la perla en la BD y obtiene su ID.
 				$this->id = $bd->Consultar( "INSERT INTO perlas (titulo, texto, fecha_subida, fecha, subidor, fecha_modificacion, modificador) VALUES( '$titulo', '$texto', NOW(), '$fecha', '$id_usuario', NOW(), '$id_usuario' )" );
 			}else{
@@ -528,32 +475,4 @@ $perla['perla_visual'] = false;
 		}
 
 	} // Fin de la clase Perla.
-	
-	// TODO: Completar
-	
-	
-
-	// Comprueba que el fichero que se ha subido es válido.
-	// En caso de éxito no devuelve nada, y si hay un error lanza una excepción.
-	function ComprobarImagen( $imagen )
-	{
-		$tipos_soportados = array( 'image/jpeg', 'image/png' );
-
-		// ¿Hubo algún error en la subida?. El error 4 (No se subió fichero) ya
-		// se tiene en cuenta antes de intentar subir el fichero.
-		if( $imagen['error'] > 0 ){
-			throw new Exception( 'ERROR: ' . MostrarErrorFichero( $imagen['error'] ) );
-		}
-
-		// Comprueba que el tipo mime de la imagen es jpeg o png.
-		// Contribución de renato en la ayuda de php.
-		$finfo = new finfo( FILEINFO_MIME );
-		$tipo_imagen = $finfo->file( $imagen['tmp_name'] );
-		$tipo_mime = substr( $tipo_imagen, 0, strpos($tipo_imagen, ';') );
-		//$tipo_imagen = mime_content_type( $_FILES[$nombre]['tmp_name'] );
-		echo 'Tipo mime: ' . $tipo_mime . '<br />';
-		if( !in_array( $tipo_mime, $tipos_soportados ) ){
-			throw new Exception( 'ERROR: tipo de imagen no soportado. Tipos soportados: jpeg, png' );
-		}
-	}
 ?>

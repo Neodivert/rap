@@ -10,7 +10,7 @@
 		protected $id;
 		protected $nombre;
 		protected $email;
-		protected $cod_validacion;
+		protected $cod_validacion_email;
 
 		// Constructor privado.
    	private function Usuario( $id )
@@ -66,6 +66,8 @@
 
 		public function ObtenerEmail(){ return $this->email; }
 
+		function ObtenerCodValidacionEmail(){ return $this->cod_validacion_email; }
+
 
 		// Actualiza en la BD la contraseña del usuario actual con la nueva 
 		// contraseña $contrasenna.
@@ -85,102 +87,78 @@
 			$registro = $res->fetch_assoc();
 		
 			$this->nombre = $registro['nombre'];
-			$this->email = $registro['nombre'];
-			if( isset( $registro['cod_validacion'] ) ){
-				$this->cod_validacion = $registro['cod_validacion'];
+			$this->email = $registro['email'];
+			if( isset( $registro['cod_validacion_email'] ) ){
+				$this->cod_validacion_email = $registro['cod_validacion_email'];
 			}else{
-				$registro['cod_validacion'] = null;
+				$this->cod_validacion_email = null;
 			}
 		}
 
 		// TODO: Completar.
 		//public function InsertarBD( $bd, $id_usuario ){}
 		//public function CargarDatos( $info ){}
+		function InsertarAvatarBD( $imagen )
+		{
+			if( $imagen['error'] == UPLOAD_ERR_NO_FILE ){
+				echo 'Sin avatar subido';
+				return;
+			}
 
-		
-		
+			try{
+				ComprobarImagen( $imagen );
+
+				echo "Imagen: " . $imagen["name"] . "<br />";
+				echo "Tipo: " . $imagen["type"] . "<br />";
+				echo "Tamanno: " . ($imagen["size"] / 1024) . " Kb<br />";
+
+				if( !move_uploaded_file($imagen["tmp_name"], "../../media/avatares/" . $this->id ) ) throw new Exception( 'ERROR moviendo fichero' );
+				echo "Guardada en: " . $imagen["tmp_name"] . '<br />';
+			}catch( Exception $e ){
+				die( $e->getMessage() );
+			}
+		}
+
+		function BorrarAvatarBD()
+		{
+			unlink( "../../media/avatares/" . $this->id );
+		}
+
+		function EstablecerEmailBD( $bd, $email )
+		{
+			$this->email = $email;
+
+			$res = $bd->Consultar( "UPDATE usuarios SET email='{$this->email}' WHERE id='{$this->id}'" );
+			$this->cod_validacion_email = $random_hash = md5(uniqid(rand(), true));
+			$res = $bd->Consultar( "UPDATE usuarios SET cod_validacion_email='{$this->cod_validacion_email}' WHERE id='{$this->id}'" );
+
+			// Generar email de confirmacion
+			$titulo = 'RAP - Validar email';
+			$cuerpo = "Este es un mensaje para validar el email indicado en la RAP \r\n";
+			$cuerpo .= "Entra en tu perfil e introduce el siguiente \r\n";
+			$cuerpo .= "codigo de validacion en la seccion de email: \r\n";
+			$cuerpo .= "{$this->cod_validacion_email}";
+			$cuerpo .= "\r\n";
+			$cuerpo = wordwrap($cuerpo, 70, "\r\n");
+
+			ini_set('sendmail_from', 'neodivert@gmail.com' );
+			if( !mail( $this->email, $titulo, $cuerpo ) ){
+				die( 'Error enviando el email' );
+			}
+		}
+
+		function ValidarEmailBD( $bd, $cod_validacion_email )
+		{
+			if( $this->cod_validacion_email == $cod_validacion_email ){
+				$res = $bd->Consultar( "UPDATE usuarios SET cod_validacion_email=NULL WHERE id={$this->id}" );
+				return 0;
+			}else{
+				return -1;
+			}
+		}
 
 	} // Fin de la clase Usuario.
-
 	
-	
-
-	function InsertarAvatar( $imagen, $nombre )
-	{
-		if( $imagen['error'] == UPLOAD_ERR_NO_FILE ){
-			echo 'Sin avatar subido';
-			return;
-		}
-
-		try{
-			ComprobarImagen( "avatar" );
-
-			echo "Imagen: " . $imagen["name"] . "<br />";
-			echo "Tipo: " . $imagen["type"] . "<br />";
-			echo "Tamanno: " . ($imagen["size"] / 1024) . " Kb<br />";
-
-			if( !move_uploaded_file($imagen["tmp_name"], "media/avatares/" . $nombre ) ) throw new Exception( 'ERROR moviendo fichero' );
-			echo "Guardada en: " . $imagen["tmp_name"] . '<br />';
-		}catch( Exception $e ){
-			die( $e->getMessage() );
-		}
-	}
-
-	function ObtenerEmail( $usuario )
-	{
-		$bd = ConectarBD();
-
-		$res = $bd->query( "SELECT email, cod_validacion_email FROM usuarios WHERE id='$usuario'" ) or die( $bd->error );
-
-		$bd->close();
-
-		$res = $res->fetch_array();
-		return $res;
-	}
-
-	function EstablecerEmail( $usuario, $email )
-	{
-		$bd = ConectarBD();
-
-		$res = $bd->query( "UPDATE usuarios SET email='$email' WHERE id='$usuario'" ) or die( $bd->error );
-		$cod_validacion_email = $random_hash = md5(uniqid(rand(), true));
-		$res = $bd->query( "UPDATE usuarios SET cod_validacion_email='$cod_validacion_email' WHERE id='$usuario'" ) or die( $bd->error );
-
-		$bd->close();
-
-		// Generar email de confirmacion
-		$titulo = 'RAP - Validar email';
-		$cuerpo = "Este es un mensaje para validar el email indicado en la RAP \r\n";
-		$cuerpo .= "Entra en tu perfil e introduce el siguiente \r\n";
-		$cuerpo .= "codigo de validacion en la seccion de email: \r\n";
-		$cuerpo .= "$cod_validacion_email";
-		$cuerpo .= "\r\n";
-		$cuerpo = wordwrap($cuerpo, 70, "\r\n");
-
-		ini_set('sendmail_from', 'neodivert@gmail.com' );
-		if( !mail( $email, $titulo, $cuerpo ) ){
-			die( 'Error enviando el email' );
-		}
-	}
-
-	function ValidarEmail( $usuario, $cod_validacion_email )
-	{
-		$bd = ConectarBD();
-
-		$res = $bd->query( "SELECT id, cod_validacion_email FROM usuarios WHERE id=$usuario AND cod_validacion_email='$cod_validacion_email'" ) or die( $bd->error );
-	
-		//die( "SELECT id, cod_validacion_email FROM usuarios WHERE id=$usuario AND cod_validacion_email='$cod_validacion_email'" );
-
-		if( $res->fetch_array() ){
-			$res = $bd->query( "UPDATE usuarios SET cod_validacion_email=NULL WHERE id=$usuario" ) or die( $bd->error );
-			$bd->close();
-			return true;
-		}else{ 
-			$bd->close();
-			return false;
-		}
-	}
-
 	function ObtenerNotificacionesEmail( $usuario )
 	{
 		$notificaciones = array(

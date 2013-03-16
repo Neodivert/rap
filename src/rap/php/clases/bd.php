@@ -1,10 +1,11 @@
 <?php
-	/* Info:
+	/*** Info: ***
 	Clase singlenton para el manejo de la base de datos.
 	Fuente: 
 	http://www.cristalab.com/tutoriales/crear-e-implementar-el-patron-de-diseno-singleton-en-php-c256l/
 	// TODO: Seguir el enlace para convertir la BD en una verdadera singlenton.
-	/*
+
+	/*** Licencia ***
     This file is part of RAP.
 
     RAP is free software: you can redistribute it and/or modify
@@ -24,8 +25,11 @@
 	require_once DIR_CONFIG . 'bd.php';
 
 	class BD {
+		/*** Atributos ***/
+		// Instancia privada (patron Singlenton).
    	private static $instancia;
 
+		// Datos de conexion a la base de datos.
 		private $host;
 		private $usuario;
 		private $contrasenna;
@@ -34,10 +38,13 @@
 		// Filas encontradas en la ultima busqueda.
 		private $numFilas;
 
-		// Constructor privado.
+
+		/*** Metodos ***/
+
+		// (Patron Singlenton) Constructor privado.
    	private function __construct(){}
 
-		// Obtiene la instancia unica.
+		// (Patron Singlenton) Obtiene la instancia unica.
    	public static function ObtenerInstancia()
 		{
       	if( !self::$instancia instanceof self ){
@@ -46,7 +53,7 @@
 			return self::$instancia;
    	}
 
-		// Configura los datos de conexion a la BD.
+		// Establece los datos de conexion a la BD.
 		public function Configurar( $host, $usuario, $contrasenna, $bd )
 		{
 			$this->host = $host;
@@ -55,20 +62,23 @@
 			$this->bd = $bd;
 		}
 
-		// Conecta a la BD y devuelve el objeto de la conexion (mysqli).
+		// Conecta a la BD, establece la codificacion y devuelve el objeto de la 
+		// conexion (mysqli).
 		public function Conectar()
 		{
+			// Intenta conectar a la BD. En caso de error se muestra el mismo.
 			$bd = new mysqli( $this->host, $this->usuario, $this->contrasenna, 
 									$this->bd );
-
 			if( $bd->connect_errno ){
 				die( "Error conectando a BD (".$bd->connect_errno.") - ".$bd->connect_error );
 			}
 
+			// Se establece la codificacion de la BD.
 			if( !$bd->set_charset( 'utf8' ) ){
 				die( $bd->error );
 			}
 
+			// Devuelve el objeto de la conexion (mysqli).
 			return $bd;
 		}
 
@@ -82,11 +92,13 @@
 			$res = $bd->query( $consulta ) 
 				or die( "Error con consulta [$consulta]: {$bd->error}" );
 
+			// Si la consulta contenia la macro SQL_CALC_FOUND_ROWS, guarda en
+			// el atributo numFilas el numero de filas encontradas.
+			// Fuente: http://quenerapu.com/mysql/me-encanta-select-found_rows/
 			if( strpos($consulta, 'SQL_CALC_FOUND_ROWS') !== false ){
 				$res1 = $bd->query( 'SELECT FOUND_ROWS()' );
 				$this->numFilas = $res1->fetch_row();
 				$this->numFilas = $this->numFilas[0];
-				//die( "numFilas == " . print_r( $this->numFilas ) );
 			}
 
 			// Si la consulta es de tipo INSERT y fue bien, devuelve el id
@@ -100,16 +112,20 @@
 			return $res;
 		}
 
+		// Escapa $string para evitar errores en las sentencias SQL.
 		function EscaparString( $string ){
+			// Conecta a la base de datos.
 			$bd = $this->Conectar();
-			$res = $bd->real_escape_string( $string );
-			$bd->close();
 
+			// Escapa la string.
+			$res = $bd->real_escape_string( $string );
+
+			// Cierra la conexion y devuelve el resultado.
+			$bd->close();
 			return $res;
 		}
 		
 		// Devuelve el numero de filas encontradas en la ultima consulta SELECT.
-		// Fuente: http://quenerapu.com/mysql/me-encanta-select-found_rows/
 		public function ObtenerNumFilasEncontradas()
 		{
 			return $this->numFilas;

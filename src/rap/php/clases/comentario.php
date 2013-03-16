@@ -1,7 +1,26 @@
 <?php
-	// Conjunto de funciones relacionadas con los comentarios.
-	
+	/*** Info: ***
+	Clase para el manejo de los comentarios subidos por los usuarios.
+
+	/*** Licencia ***
+    This file is part of RAP.
+
+    RAP is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    RAP is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with RAP.  If not, see <http://www.gnu.org/licenses/>.
+	*/	
+
 	class Comentario {
+		/*** Atributos ***/
 		protected $id;
 		protected $perla;
 		protected $usuario;
@@ -9,6 +28,8 @@
 		protected $fecha_subida;
 		protected $fecha_modificacion;
 
+
+		/*** Getters y Setters ***/
 		function ObtenerId(){ return $this->id; }
 		function EstablecerId( $id ){ $this->id = $id; }
 
@@ -19,75 +40,41 @@
 		function ObtenerFechaSubida(){ return $this->fecha_subida; }
 		function ObtenerFechaModificacion(){ return $this->fecha_modificacion; }
 
-		function CargarDesdeRegistro( $registro )
-		{
-			if( isset( $registro['id'] ) ){
-				$this->id = $registro['id'];
-			}
-			if( isset( $registro['perla'] ) ){
-				$this->perla = $registro['perla'];
-			}
-			$this->texto = $registro['texto'];
 
-			if( isset( $registro['usuario'] ) ){
-				$this->usuario = $registro['usuario'];
-			}
-			if( isset( $registro['fecha_subida'] ) ){
-				$this->fecha_subida = $registro['fecha_subida'];
-			}
-			if( isset( $registro['fecha_modificacion'] ) ){
-				$this->fecha_modificacion = $registro['fecha_modificacion'];
-			}
+		/*** Resto de metodos ***/
+
+		// Carga los atributos a partir del registro asociativo $reg.
+		function CargarDesdeRegistro( $reg )
+		{
+			// Salvo el campo 'texto', el resto de campos pueden estar o no
+			// en el registro.
+			$this->id = $reg['id'] = isset( $reg['id'] ) ? $reg['id'] : null;
+			$this->perla = isset( $reg['perla'] ) ? $reg['perla'] : null;
+			$this->usuario = isset( $reg['usuario'] ) ? $reg['usuario'] : null;
+			$this->fecha_subida = isset( $reg['fecha_subida'] ) ? $reg['fecha_subida'] : null;
+			$this->fecha_modificacion = isset( $reg['fecha_modificacion'] ) ? $reg['fecha_modificacion'] : null;
+
+			$this->texto = $reg['texto'];
 		}
 
+		// Inserta en la BD $bd el comentario actual por parte del usuario
+		// $usuario.
 		function InsertarBD( $bd, $usuario )
 		{
-			if( !isset( $this->id ) ){ 
+			if( $this->id == null ){ 
+				// El comentario no tiene id definida y por tanto es nuevo.
+				// Insertalo en la BD.
 				$bd->Consultar( "INSERT INTO comentarios (perla, usuario, texto, fecha_subida, fecha_modificacion) VALUES ('{$this->perla}', '$usuario', '{$this->texto}', NOW(), NOW() )" );
 			}else{
+				// El comentario tiene id definida y por tanto ya existe en la BD.
+				// Actualizalo en la BD.
 				$bd->Consultar( "UPDATE comentarios SET texto='{$this->texto}', fecha_modificacion=NOW() WHERE id={$this->id}" );
 			}
 		}
 
+		// Borra el comentario actual de la BD $bd.
 		function BorrarBD( $bd ){
 			$bd->Consultar( "DELETE FROM comentarios WHERE id={$this->id}" );
 		}
-
-	}
-
-	/* TODO: Completar.
-	function CargarDesdeBD( $bd, $id )
-	{
-		ConsultarBD( "SELECT * from comentarios WHERE perla=$id_perla ORDER BY fecha_subida ASC" );
-	}
-
-	// Recupera de la BD los comentarios de la perla cuya $id es $id_perla.
-	function ObtenerComentarios( $id_perla )
-	{
-		return ConsultarBD( "SELECT * from comentarios WHERE perla=$id_perla ORDER BY fecha_subida ASC" );
-	}
-
-
-	// Inserta un nuevo comentario con el texto $texto en la perla cuya id es 
-	// $id_perla.
-	function InsertarComentario( $id_perla, $texto )
-	{
-		return ConsultarBD( "INSERT INTO comentarios (perla, usuario, texto, fecha_subida, fecha_modificacion) VALUES ('$id_perla', '{$_SESSION['id']}', '$texto', NOW(), NOW() )" );
-	}
-
-
-	// Modifica en la BD el comentario cuya id es $id_comentario con el nuevo 
-	// texto $texto.
-	function ModificarComentario( $id_comentario, $texto )
-	{
-		return ConsultarBD( "UPDATE comentarios SET texto='$texto', fecha_modificacion=NOW() WHERE id=$id_comentario" );
-	}
-
-
-	// Borra de la BD el comentario cuya id es $id_comentario.
-	function BorrarComentario( $id_comentario )
-	{
-		return ConsultarBD( "DELETE FROM comentarios WHERE id=$id_comentario" );
-	}
-	*/
+	} // Fin de la clase Comentario.
 ?>

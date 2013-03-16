@@ -59,15 +59,7 @@
 
 	<!-- Cuerpo -->
 	<div class="cuerpo_perla">
-		<!-- Aviso de contenido informatico (si procede) -->
-		<?php if( $perla->ObtenerContenidoInformatico() ){ ?>
-			<span class="subtexto"><strong>Nota: La perla tiene contenido inform&aacute;tico</strong></span>
-		<?php } ?>
-
-		<!-- Aviso de humor negro (si procede) -->
-		<?php if( $perla->ObtenerHumorNegro() ){ ?>
-			<span class="subtexto"><strong>Nota: La perla tiene humor negro y/o salvajadas</strong></span>
-		<?php } ?>
+		<?php // TODO: Meter los avisos por etiquetas especiales (humor negro, spoiler, etc) ?>
 
 		<!-- Texto -->
 		<p><?php echo $perla->ObtenerTexto(); ?></p>
@@ -95,7 +87,7 @@
 					// (es participante de la misma)?
 					$modificable = true;
 				}
-				$rap->MostrarAvatar( $rap->ObtenerNombreUsuario( $participante ) );
+				$rap->MostrarAvatar( $participante );
 			}
 		?>
 		</div>

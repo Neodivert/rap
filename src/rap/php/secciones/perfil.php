@@ -1,10 +1,3 @@
-<?php
-	// Página de perfil. La única funcionalidad actual es poder cambiar la contraseña.
-	if( isset( $_FILES['avatar'] ) && ( $_FILES['avatar']['error'] != UPLOAD_ERR_NO_FILE ) ){
-		InsertarAvatar( $_FILES['avatar'], $usuario->ObtenerNombre() );
-	}
-?>
-
 <!-- TÍTULO CON NOMBRE DEL USUARIO -->
 <h1><?php echo $usuario->ObtenerNombre(); ?></h1>
 
@@ -32,28 +25,28 @@
 
 <h2 class="titulo_seccion">Cambiar avatar </h2>
 <div class="galeria">	
-<?php $rap->MostrarAvatar( $usuario->ObtenerNombre() ); ?>
+<?php $rap->MostrarAvatar( $usuario->ObtenerId() ); ?>
 </div>
-<form class="enmarcado" id="form_avatar" action="general.php?seccion=perfil" method="post" enctype="multipart/form-data">
+<form class="enmarcado" id="form_avatar" action="php/controladores/usuarios.php" method="post" enctype="multipart/form-data">
+	<input type="submit" name="accion" value="Borrar avatar" />
 	<p>
 	<label for="avatar">Subir avatar (Imagen png o jpg. Dimensiones maximas permitidas: 100x100): </label>
 	<input type="file" name="avatar" id="avatar" /><br/>
-	<input type="submit" name="cambiar_contrasenna" value="Cambiar avatar" />
+	<input type="submit" name="accion" value="Cambiar avatar" />
 	</p>
 </form>
 
 <? 
-	$info_email = ObtenerEmail( $_SESSION['id'] );
-	$email = $info_email['email'];
-	$cod_validacion_email = $info_email['cod_validacion_email'];
+	$email = $usuario->ObtenerEmail();
+	$cod_validacion_email = $usuario->ObtenerCodValidacionEmail();
  ?>
 <h2 class="titulo_seccion">Email </h2>
 
-<? if( $email && ($email != '') ){ ?>
+<? if( ($email != null) && ($email != '') ){ ?>
 	<p>Email actual: <? echo $email; ?></p>
-	<? if( $cod_validacion_email ){ ?>
+	<? if( $cod_validacion_email != null ){ ?>
 		<strong>Email no validado. Introduce aqu&iacute; el c&oacute;digo de validaci&oacute;n enviado a tu email.</strong>
-		<form action="controlador.php" method="post">
+		<form action="php/controladores/usuarios.php" method="post">
 			<input type="text" name="cod_validacion_email" /><br/>
 			<input type="submit" name="accion" value="Validar email" />
 		</form>
@@ -65,12 +58,13 @@
 ?>
 
 
-<form action="controlador.php" method="post">
+<form action="php/controladores/usuarios.php" method="post">
 	<label for="email">Introducir email: </label>
-	<input type="text" name="email" /><br/>
+	<input type="email" name="email" /><br/>
 	<input type="submit" name="accion" value="Establecer email" />
 </form>
 
+<?php /*
 <h2 class="titulo_seccion">Notificaciones por email </h2>
 <? 
 if( $email && ($email != '') && ( !$cod_validacion_email ) ){ 
@@ -104,4 +98,4 @@ if( $email && ($email != '') && ( !$cod_validacion_email ) ){
 	</form>
 <? }else{ ?>
 	<p>Especifica y valida un email en la secci&oacute;n anterior para activar este formulario</p>
-<? } ?>
+<? } ?> */ ?>

@@ -58,4 +58,28 @@
 		);
 		return 'ERROR SUBIENDO FICHERO: ' . $mensajes_error[$codigo] . '<br />';
 	}
+
+	// Comprueba que el fichero que se ha subido es válido.
+	// En caso de éxito no devuelve nada, y si hay un error lanza una excepción.
+	function ComprobarImagen( $imagen )
+	{
+		$tipos_soportados = array( 'image/jpeg', 'image/png' );
+
+		// ¿Hubo algún error en la subida?. El error 4 (No se subió fichero) ya
+		// se tiene en cuenta antes de intentar subir el fichero.
+		if( $imagen['error'] > 0 ){
+			throw new Exception( 'ERROR: ' . MostrarErrorFichero( $imagen['error'] ) );
+		}
+
+		// Comprueba que el tipo mime de la imagen es jpeg o png.
+		// Contribución de renato en la ayuda de php.
+		$finfo = new finfo( FILEINFO_MIME );
+		$tipo_imagen = $finfo->file( $imagen['tmp_name'] );
+		$tipo_mime = substr( $tipo_imagen, 0, strpos($tipo_imagen, ';') );
+		//$tipo_imagen = mime_content_type( $_FILES[$nombre]['tmp_name'] );
+		echo 'Tipo mime: ' . $tipo_mime . '<br />';
+		if( !in_array( $tipo_mime, $tipos_soportados ) ){
+			throw new Exception( 'ERROR: tipo de imagen no soportado. Tipos soportados: jpeg, png' );
+		}
+	}
 ?>
