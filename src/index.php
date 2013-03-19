@@ -2,8 +2,6 @@
 	ini_set("default_charset", "UTF-8");
 	session_start();
 
-	die( getcwd() );
-
 	require_once 'php/config/rutas.php';
 	require_once DIR_CLASES . 'rap.php';
 	require_once DIR_CLASES . 'usuario.php';
