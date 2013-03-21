@@ -146,6 +146,7 @@
 		{
 			if( $this->cod_validacion_email == $cod_validacion_email ){
 				$res = $bd->Consultar( "UPDATE usuarios SET cod_validacion_email=NULL WHERE id={$this->id}" );
+				$bd->Consultar( "INSERT IGNORE INTO notificaciones_email ( usuario ) VALUES( {$this->id} )" );
 				return 0;
 			}else{
 				return -1;
@@ -153,41 +154,4 @@
 		}
 
 	} // Fin de la clase Usuario.
-	
-	function ObtenerNotificacionesEmail( $usuario )
-	{
-		$notificaciones = array(
-			'nueva_perla' => 'nunca',
-			'nuevo_comentario' => 'nunca',
-			'cambio_nota' => 'nunca',
-			'nuevo_usuario' => 'nunca'
-		);
-	
-		$bd = ConectarBD();
-		$notificaciones_ = $bd->query( "SELECT * FROM notificaciones_email WHERE usuario='$usuario'" ) or die( $bd->error );
-		$bd->close();
-
-		while( $notificacion_ = $notificaciones_->fetch_array() ){
-			$notificaciones[$notificacion_['tipo']] = $notificacion_['frecuencia'];
-		}	
-
-		return $notificaciones;
-	}
-
-	function EstablecerNotificacionesEmail( $usuario, $notificaciones )
-	{
-		$bd = ConectarBD();
-		
-		foreach( $notificaciones as $tipo => $frecuencia ){
-			if( $tipo != 'accion' ){
-				if( $frecuencia != 'nunca' ){
-					$res = $bd->query( "INSERT INTO notificaciones_email (usuario, tipo, frecuencia) VALUES ($usuario, '$tipo', '$frecuencia') ON DUPLICATE KEY UPDATE frecuencia='$frecuencia'" ) or die( $bd->error );
-				}else{
-					$res = $bd->query( "DELETE FROM notificaciones_email WHERE usuario='$usuario' AND tipo='$tipo'" ) or die( $bd->error );
-				}
-			}
-		}
-		
-		$bd->close();
-	}
 ?>

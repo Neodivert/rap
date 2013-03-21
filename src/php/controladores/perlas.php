@@ -4,6 +4,7 @@
 	require_once '../config/rutas.php';
 	require_once DIR_CLASES . 'perla.php';
 	require_once DIR_CLASES . 'rap.php';
+	require_once DIR_CLASES . 'notificador.php';
 	require_once DIR_LIB . 'utilidades.php';
 
 	$rap = RAP::ObtenerInstancia();
@@ -25,9 +26,13 @@
 					$perla->BorrarImagenBD();
 				}
 
-				$perla->InsertarBD( BD::ObtenerInstancia(), $_SESSION['id'] );
-				
-				RedirigirUltimaDireccion( 'OK_PERLA_SUBIDA' );
+				if( !$perla->InsertarBD( BD::ObtenerInstancia(), $_SESSION['id'] ) ){
+					$notificador = new Notificador;
+					$notificador->NotificarNuevaPerlaBD( BD::ObtenerInstancia(), $perla->ObtenerId() );
+					RedirigirUltimaDireccion( 'OK_PERLA_SUBIDA' );
+				}else{
+					RedirigirUltimaDireccion( 'ERROR_SUBIENDO_PERLA' );
+				}
 			break;
 			case 'Modificar perla':
 				header( "Location: ../../general.php?seccion=subir_perla&modificar={$_POST['perla']}" );

@@ -64,13 +64,13 @@
 	<input type="submit" name="accion" value="Establecer email" />
 </form>
 
-<?php /*
 <h2 class="titulo_seccion">Notificaciones por email </h2>
-<? 
+<?php 
 if( $email && ($email != '') && ( !$cod_validacion_email ) ){ 
-	$notificaciones = ObtenerNotificacionesEmail( $_SESSION['id'] );
+	$notificador = new Notificador;
+	$notificaciones = $notificador->ObtenerPreferenciasBD( BD::ObtenerInstancia(), $usuario->ObtenerId() );
 ?>
-	<form id="form_notificaciones" action="controlador.php" method="post" >
+	<form id="form_notificaciones" action="php/controladores/usuarios.php" method="post" >
 		<fieldset>
 			<legend>Notificar cuando se suban nuevas perlas</legend>
 			<input type="radio" name="nueva_perla" value="siempre" <? if( $notificaciones['nueva_perla'] == 'siempre' ) echo 'checked'; ?> >Siempre<br>
@@ -80,14 +80,14 @@ if( $email && ($email != '') && ( !$cod_validacion_email ) ){
 		<fieldset>
 			<legend>Notificar cuando hayan nuevos comentarios</legend>
 			<input type="radio" name="nuevo_comentario" value="siempre" <? if( $notificaciones['nuevo_comentario'] == 'siempre' ) echo 'checked'; ?> >Siempre<br>
-			<input type="radio" name="nuevo_comentario" value="participante" <? if( $notificaciones['nuevo_comentario'] == 'participante' ) echo 'checked'; ?> >Sólo en perlas que he comentado<br>
+			<input type="radio" name="nuevo_comentario" value="participante" <? if( $notificaciones['nuevo_comentario'] == 'participante' ) echo 'checked'; ?> >Sólo en perlas en las que soy participante, he comentado o votado<br>
 			<input type="radio" name="nuevo_comentario" value="nunca" <? if( $notificaciones['nuevo_comentario'] == 'nunca' ) echo 'checked'; ?> >Nunca<br>
 		</fieldset>
 		<fieldset>
 			<legend>Notificar cuando cambie la nota de una perla</legend>
-			<input type="radio" name="cambio_nota" value="siempre" <? if( $notificaciones['cambio_nota'] == 'siempre' ) echo 'checked'; ?> >Siempre<br>
-			<input type="radio" name="cambio_nota" value="participante" <? if( $notificaciones['cambio_nota'] == 'participante' ) echo 'checked'; ?> >Sólo en perlas que he votado<br>
-			<input type="radio" name="cambio_nota" value="nunca" <? if( $notificaciones['cambio_nota'] == 'nunca' ) echo 'checked'; ?> >Nunca<br>
+			<input type="radio" name="nueva_nota" value="siempre" <? if( $notificaciones['nueva_nota'] == 'siempre' ) echo 'checked'; ?> >Siempre<br>
+			<input type="radio" name="nueva_nota" value="participante" <? if( $notificaciones['nueva_nota'] == 'participante' ) echo 'checked'; ?> >Sólo en perlas en las que soy participante, he comentado o votado<br>
+			<input type="radio" name="nueva_nota" value="nunca" <? if( $notificaciones['nueva_nota'] == 'nunca' ) echo 'checked'; ?> >Nunca<br>
 		</fieldset>
 		<fieldset>
 			<legend>Notificar cuando haya un nuevo raper@</legend>
@@ -96,6 +96,6 @@ if( $email && ($email != '') && ( !$cod_validacion_email ) ){
 		</fieldset>
 		<input type="submit" name="accion" value="Establecer notificaciones" />
 	</form>
-<? }else{ ?>
+<?php }else{ ?>
 	<p>Especifica y valida un email en la secci&oacute;n anterior para activar este formulario</p>
-<? } ?> */ ?>
+<?php } ?>

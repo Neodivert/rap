@@ -15,11 +15,13 @@
 		'OK_COMENTARIO_SUBIDO' => 'El comentario se ha subido correctamente',
 		'OK_CONTRASENNA_CAMBIADA' => 'La contraseña se ha cambiado correctamente',
 		'OK_AVATAR_CAMBIADO' => 'El avatar se ha cambiado correctamente',
-		'OK_AVATAR_BORRADO' => 'El avatar se ha borrado correctamente'
+		'OK_AVATAR_BORRADO' => 'El avatar se ha borrado correctamente',
+		'OK_NOTIFICACIONES_CAMBIADAS' => 'Las preferencias sobre las notificaciones email se han cambiado correctamente'
 	);
 
 	$notificaciones_malas = array(
 		'ERROR_VALIDANDO_EMAIL' => 'Error validando el email',
-		'ERROR_CAMBIANDO_AVATAR' => 'Error cambiando el avatar'
+		'ERROR_CAMBIANDO_AVATAR' => 'Error cambiando el avatar',
+		'ERROR_SUBIENDO_PERLA' => 'Hubo algún error subiendo la perla'
 	);
 ?>

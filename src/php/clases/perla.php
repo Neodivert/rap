@@ -231,10 +231,11 @@ $perla['perla_visual'] = true;
 $perla['perla_visual'] = false;
 }
 */
+			
+			// 
 			if( $this->imagen != null ){
-				$this->InsertarImagenBD();
+				if( $this->InsertarImagenBD() ) return -1;
 			}
-
 			// TODO: Notifica por email.
 			//NotificarPorEmail( 'nueva_perla', $id_perla );
 
@@ -471,11 +472,14 @@ $perla['perla_visual'] = false;
 
 		// Trata de insertar la imagen $nombre para la perla cuya id es $id_perla.
 		// Si hay algún error lanza una excepción.
-		function InsertarImagenBD( $bd )
+		function InsertarImagenBD()
 		{
 			try{
-				ComprobarImagen( $this->imagen );
+				$res = ComprobarImagen( $this->imagen );
 
+				if( $res < 0 ) return $res;
+
+				//echo getcwd() . '<br />../../media/perlas/<br/>';
 				if( !move_uploaded_file($this->imagen["tmp_name"], "../../media/perlas/" . $this->id ) ) die( 'ERROR moviendo fichero' );
 				
 			}catch( Exception $e ){

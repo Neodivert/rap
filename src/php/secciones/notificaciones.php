@@ -1,11 +1,11 @@
 
 <?php
-	require_once DIR_CLASES . 'notificador.php';
+	require_once DIR_CLASES . 'log.php';
 
 	$pagina_actual = isset( $_GET['pagina'] ) ? $_GET['pagina'] : 0;
 	
-	$notificador = new Notificador;
-	$notificaciones = $notificador->ObtenerUltimasNotificaciones( BD::ObtenerInstancia(), $pagina_actual*25, 25 );
+	$log = new log;
+	$notificaciones = $log->ObtenerUltimasNotificaciones( BD::ObtenerInstancia(), $pagina_actual*25, 25 );
 
 	$bd = BD::ObtenerInstancia();
 	

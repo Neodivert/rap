@@ -5,6 +5,7 @@
 	require_once DIR_CLASES . 'rap.php';
 	require_once DIR_CLASES . 'usuario.php';
 	require_once DIR_CLASES . 'bd.php';
+	require_once DIR_CLASES . 'notificador.php';
 
 	$rap = RAP::ObtenerInstancia();
 
@@ -59,14 +60,13 @@
 				}
 				exit();
 			break;
-			/*
 			case 'Establecer notificaciones':
 				$usuario = Usuario::ObtenerInstancia( $_SESSION['id'] );
-				EstablecerNotificacionesEmail( $_SESSION['id'], $_POST );
-				header( 'Location: ../../general.php?seccion=aviso&aviso=AV_NOTIFICACIONES_ESTABLECIDAS' );
+				$notificador = new Notificador;
+				$notificador->EstablecerPreferenciasBD( BD::ObtenerInstancia(), $usuario->ObtenerId(), $_POST );
+				header( 'Location: ../../general.php?seccion=perfil&notificacion=OK_NOTIFICACIONES_CAMBIADAS' );
 				exit();
 			break;
-			*/
 			default:
 				die( "Accion desconocida ({$_POST['accion']})" );
 			break;
