@@ -55,6 +55,7 @@
 			$titulo = 'RAP - Nueva perla subida';
 			$cuerpo = "Se ha subido una nueva perla a la RAP. Para verla pulsa en el siguiente enlace: \r\n";
 			$cuerpo .= "http://www.neodivert.com/rap/general.php?seccion=mostrar_perla&perla=$id_perla\r\n";
+			$cuerpo .= "\r\n";
 
 			$consulta  = 'SELECT DISTINCT email FROM usuarios ';
 			$consulta .= 'WHERE email IS NOT NULL ';
@@ -74,6 +75,7 @@
 			$titulo = 'RAP - Nuevo comentario subido';
 			$cuerpo = "Se ha subido un nuevo comentario a la RAP. Para verlo pulsa en el siguiente enlace: \r\n";
 			$cuerpo .= "http://www.neodivert.com/rap/general.php?seccion=mostrar_perla&perla=$id_perla\r\n";
+			$cuerpo .= "\r\n";
 
 			$consulta  = 'SELECT DISTINCT email FROM usuarios ';
 			$consulta .= 'WHERE email IS NOT NULL ';
@@ -100,6 +102,7 @@
 			$titulo = 'RAP - Nota cambiada';
 			$cuerpo = "Ha cambiado la nota de una perla en la RAP. Para verla pulsa en el siguiente enlace: \r\n";
 			$cuerpo .= "http://www.neodivert.com/rap/general.php?seccion=mostrar_perla&perla=$id_perla\r\n";
+			$cuerpo .= "\r\n";
 
 			$consulta  = 'SELECT DISTINCT email FROM usuarios ';
 			$consulta .= 'WHERE email IS NOT NULL ';
@@ -124,12 +127,22 @@
 		private function EnviarNotificacion( $emails, $titulo, $cuerpo ){
 			ini_set('sendmail_from', 'neodivert@gmail.com' );
 
+			$cuerpo = wordwrap( $cuerpo, 70, "\r\n" );
+
 			$destinatarios = '';
-			while( $email = $emails->fetch_array() ){
+			while( $email = $emails->fetch_assoc() ){
 				$destinatarios .= "{$email['email']}, ";
 			}
 
-			if( !mail( $destinatarios, $titulo, $cuerpo ) ){
+			if( $destinatarios == '' ){
+				return 0;
+			}
+
+			$cabeceras = 	'From: neodivert@gmail.com' . "\r\n" .
+    							'Reply-To: neodivert@gmail.com' . "\r\n" .
+    							'X-Mailer: PHP/' . phpversion();
+
+			if( !mail( $destinatarios, $titulo, $cuerpo, $cabeceras ) ){
 				die( 'Error enviando las notificaciones' );
 			}
 		}
