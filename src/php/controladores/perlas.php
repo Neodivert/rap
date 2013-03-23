@@ -28,7 +28,7 @@
 
 				if( !$perla->InsertarBD( BD::ObtenerInstancia(), $_SESSION['id'] ) ){
 					$notificador = new Notificador;
-					$notificador->NotificarNuevaPerlaBD( BD::ObtenerInstancia(), $perla->ObtenerId() );
+					$notificador->NotificarNuevaPerlaBD( BD::ObtenerInstancia(), $perla->ObtenerId(), $_SESSION['id'] );
 					RedirigirUltimaDireccion( 'OK_PERLA_SUBIDA' );
 				}else{
 					RedirigirUltimaDireccion( 'ERROR_SUBIENDO_PERLA' );
@@ -71,6 +71,10 @@
 				$perla = new Perla;
 				$perla->EstablecerId( $_POST['perla'] );
 				$perla->PuntuarBD( BD::ObtenerInstancia(), $_POST['nota'], $_SESSION['id'] );
+
+				$notificador = new Notificador;
+				$notificador->NotificarNuevaNotaBD( BD::ObtenerInstancia(), $perla->ObtenerId(), $_SESSION['id'] );
+
 				RedirigirUltimaDireccion( 'OK_PERLA_PUNTUADA' );
 			break;
 			default:

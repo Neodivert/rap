@@ -6,6 +6,7 @@
 	require_once DIR_CLASES . 'comentario.php';
 	require_once DIR_CLASES . 'usuario.php';
 	require_once DIR_CLASES . 'rap.php';
+	require_once DIR_CLASES . 'notificador.php';
 
 	$rap = RAP::ObtenerInstancia();
 
@@ -16,6 +17,10 @@
 			case 'Subir comentario':
 				$comentario->CargarDesdeRegistro( $_POST );
 				$comentario->InsertarBD( BD::ObtenerInstancia(), $_SESSION['id'] );
+
+				$notificador = new Notificador;
+				$notificador->NotificarNuevoComentarioBD( BD::ObtenerInstancia(), $comentario->ObtenerPerla(), $_SESSION['id'] );
+
 				header( "Location: ../../general.php?seccion=mostrar_perla&perla={$comentario->ObtenerPerla()}&notificacion=OK_COMENTARIO_SUBIDO" );
 				exit();
 			break;

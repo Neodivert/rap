@@ -50,22 +50,71 @@
 			}
 		}
 
-		function NotificarNuevaPerlaBD( $bd, $id_perla )
+		function NotificarNuevaPerlaBD( $bd, $id_perla, $id_usuario )
 		{
 			$titulo = 'RAP - Nueva perla subida';
 			$cuerpo = "Se ha subido una nueva perla a la RAP. Para verla pulsa en el siguiente enlace: \r\n";
 			$cuerpo .= "http://www.neodivert.com/rap/general.php?seccion=mostrar_perla&perla=$id_perla\r\n";
 
-			$consulta  = '(SELECT DISTINCT email FROM usuarios JOIN notificaciones_email ON usuarios.id = notificaciones_email.usuario ';
-			$consulta .= 'WHERE email IS NOT NULL AND usuarios.cod_validacion_email IS NULL) ';
-			$consulta .= 'UNION ';
-			$consulta .= '(SELECT DISTINCT email FROM usuarios JOIN notificaciones_email ON usuarios.id = notificaciones_email.usuario ';
-			$consulta .= "JOIN participantes ON notificaciones_email.usuario = participantes.usuario AND participantes.perla=$id_perla ";
-			$consulta .= 'WHERE email IS NOT NULL AND usuarios.cod_validacion_email IS NULL)';
+			$consulta  = 'SELECT DISTINCT email FROM usuarios ';
+			$consulta .= 'WHERE email IS NOT NULL ';
+			$consulta .= 'AND usuarios.cod_validacion_email IS NULL ';
+			$consulta .= "AND id != $id_usuario ";
+			$consulta .= 'AND id IN (SELECT usuario FROM notificaciones_email WHERE nueva_perla = \'siempre\' ';
+			$consulta .= 'OR (nueva_perla = \'participante\' ';
+			$consulta .= "AND usuario IN (SELECT usuario FROM participantes WHERE perla=$id_perla) ) )";
 
-			/*
-			(SELECT DISTINCT email FROM usuarios JOIN notificaciones_email ON usuarios.id = notificaciones_email.usuario WHERE email IS NOT NULL AND usuarios.cod_validacion_email IS NULL) UNION (SELECT DISTINCT email FROM usuarios JOIN notificaciones_email ON usuarios.id = notificaciones_email.usuario JOIN participantes ON notificaciones_email.usuario = participantes.usuario AND participantes.perla=186 WHERE email IS NOT NULL AND usuarios.cod_validacion_email IS NULL)
-			*/
+			$emails = $bd->Consultar( $consulta );
+
+			$this->EnviarNotificacion( $emails, $titulo, $cuerpo );
+		}
+
+		function NotificarNuevoComentarioBD( $bd, $id_perla, $id_usuario )
+		{
+			$titulo = 'RAP - Nuevo comentario subido';
+			$cuerpo = "Se ha subido un nuevo comentario a la RAP. Para verlo pulsa en el siguiente enlace: \r\n";
+			$cuerpo .= "http://www.neodivert.com/rap/general.php?seccion=mostrar_perla&perla=$id_perla\r\n";
+
+			$consulta  = 'SELECT DISTINCT email FROM usuarios ';
+			$consulta .= 'WHERE email IS NOT NULL ';
+			$consulta .= 'AND usuarios.cod_validacion_email IS NULL ';
+			$consulta .= "AND id != $id_usuario ";
+			$consulta .= 'AND id IN (SELECT usuario FROM notificaciones_email WHERE nuevo_comentario = \'siempre\' ';
+			$consulta .= ' OR ( ';
+			$consulta .= '  nuevo_comentario = \'participante\' ';
+			$consulta .= '  AND ( ';
+			$consulta .= "   usuario IN (SELECT usuario FROM participantes WHERE perla=$id_perla) ";
+			$consulta .= "   OR usuario IN (SELECT usuario FROM comentarios WHERE perla=$id_perla) ";
+			$consulta .= "   OR usuario IN (SELECT usuario FROM votos WHERE perla=$id_perla) ";
+			$consulta .= "  ) ";
+			$consulta .= " ) ";
+			$consulta .= ") ";
+
+			$emails = $bd->Consultar( $consulta );
+
+			$this->EnviarNotificacion( $emails, $titulo, $cuerpo );
+		}
+
+		function NotificarNuevaNotaBD( $bd, $id_perla, $id_usuario )
+		{
+			$titulo = 'RAP - Nota cambiada';
+			$cuerpo = "Ha cambiado la nota de una perla en la RAP. Para verla pulsa en el siguiente enlace: \r\n";
+			$cuerpo .= "http://www.neodivert.com/rap/general.php?seccion=mostrar_perla&perla=$id_perla\r\n";
+
+			$consulta  = 'SELECT DISTINCT email FROM usuarios ';
+			$consulta .= 'WHERE email IS NOT NULL ';
+			$consulta .= 'AND usuarios.cod_validacion_email IS NULL ';
+			$consulta .= "AND id != $id_usuario ";
+			$consulta .= 'AND id IN (SELECT usuario FROM notificaciones_email WHERE nueva_nota = \'siempre\' ';
+			$consulta .= ' OR ( ';
+			$consulta .= '  nueva_nota = \'participante\' ';
+			$consulta .= '  AND ( ';
+			$consulta .= "   usuario IN (SELECT usuario FROM participantes WHERE perla=$id_perla) ";
+			$consulta .= "   OR usuario IN (SELECT usuario FROM comentarios WHERE perla=$id_perla) ";
+			$consulta .= "   OR usuario IN (SELECT usuario FROM votos WHERE perla=$id_perla) ";
+			$consulta .= "  ) ";
+			$consulta .= " ) ";
+			$consulta .= ") ";
 
 			$emails = $bd->Consultar( $consulta );
 
@@ -80,7 +129,6 @@
 				$destinatarios .= "{$email['email']}, ";
 			}
 
-			die( "Destinatarios: $destinatarios" );
 			if( !mail( $destinatarios, $titulo, $cuerpo ) ){
 				die( 'Error enviando las notificaciones' );
 			}

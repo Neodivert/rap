@@ -101,7 +101,7 @@
 				}
 			}else{
 				foreach( $usuarios as $id_usuario => $nombre_usuario ){
-					if( $nombre_usuario != $_SESSION['id'] ){
+					if( $id_usuario != $_SESSION['id'] ){
 						echo "<input type=\"checkbox\" name=\"participantes[]\" value=\"{$id_usuario}\" />{$nombre_usuario}<br />";
 					}
 				}

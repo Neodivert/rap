@@ -18,8 +18,6 @@
 	require_once DIR_CLASES . 'notificador.php';
 	require_once DIR_CONFIG . 'parametros.php';
 
-	
-
 	$rap = RAP::ObtenerInstancia();
 
 	$usuario = Usuario::ObtenerInstancia( $_SESSION['id'] );
@@ -105,7 +103,7 @@
 				</ul>
 				<ul id="menu_usuario" class="menu">
 					<li class="titulo_submenu"><?php echo $usuario->ObtenerNombre(); ?></li>
-					<li><a href="general.php?seccion=notificaciones">Notificaciones</a></li>
+					<li><a href="general.php?seccion=historico">Hist&oacute;rico</a></li>
 					<li><a href="general.php?seccion=perfil">Perfil</a></li>
 					<li>
 						<form action="general.php" method="post" >
