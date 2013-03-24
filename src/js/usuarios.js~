@@ -1,26 +1,32 @@
-// Funciones javascript relacionadas con los usuarios.
+/*** 
+ usuarios.js
+ Funciones javascript relacionadas con los usuarios.
+ Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
+****
+ This file is part of RAP.
 
-// Valida el formulario de login.
+ RAP is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ RAP is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with RAP.  If not, see <http://www.gnu.org/licenses/>.
+***/
+
+// Valida el formulario de login codificando el campo "contrasenna".
 function ValidarLogin ()
 {
-	// Comprueba que el campo con el nombre no esté vacío.
-	var nombre = document.forms["form_login"]["nombre"].value;
-	if( nombre == null | nombre == '' ){
-		alert( 'ERROR: Nombre no introducido' );
-		return false;
-	}
-
-	// Comprueba que el campo con la contraseña no esté vacío.
-	var contrasenna = document.forms["form_login"]["contrasenna"].value;
-	if( contrasenna == null | contrasenna == '' ){
-		alert( 'ERROR: Contrasenna no introducida' );
-		return false;
-	}
-
 	// Codifica la contraseña.
+	var contrasenna = document.forms["form_login"]["contrasenna"].value;
 	document.forms["form_login"]["contrasenna"].value = hex_md5( contrasenna );
 
-	// Formulario validado
+	// Formulario validado.
 	return true;
 }
 

@@ -63,8 +63,18 @@
 			case 'Establecer notificaciones':
 				$usuario = Usuario::ObtenerInstancia( $_SESSION['id'] );
 				$notificador = new Notificador;
+
+				unset( $_POST['accion'] );
 				$notificador->EstablecerPreferenciasBD( BD::ObtenerInstancia(), $usuario->ObtenerId(), $_POST );
 				header( 'Location: ../../general.php?seccion=perfil&notificacion=OK_NOTIFICACIONES_CAMBIADAS' );
+				exit();
+			break;
+			case 'Logout':
+				// El usuario intenta desconectarse. Destruye la sesion y ve a la 
+				// pantalla de login.
+				unset( $_SESSION['id'] );
+
+				header( 'Location: ../../index.php' );
 				exit();
 			break;
 			default:

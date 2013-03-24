@@ -1,4 +1,24 @@
-/* Estilos comunes a todas las páginas */
+/*** 
+ general.css
+ Estilos comunes a todas las paginas.
+ Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
+****
+ This file is part of RAP.
+
+ RAP is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ RAP is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with RAP.  If not, see <http://www.gnu.org/licenses/>.
+***/
+
 
 /*                                  Contenedores                             */
 /*****************************************************************************/
@@ -128,7 +148,8 @@ fieldset {
 	padding:5px;
 }
 
-
+/*                           Notificaciones al usuario                       */
+/*****************************************************************************/
 
 .div_notificacion_buena
 {
@@ -159,19 +180,27 @@ fieldset {
 }
 
 
-/* http://css-tricks.com/left-align-and-right-align-text-on-the-same-line/ */
-.div_cabecera_perla
+/*                              Seleccion de paginas                         */
+/*****************************************************************************/
+
+#seleccion_paginas, #seleccion_paginas a
 {
-	overflow:hidden;
+	margin-top:25px;
+	text-align:center;
 }
 
-.izquierda
+#seleccion_paginas a
 {
-	float:left;
+	text-decoration:none;
+	font-size:20px;
+	color:#FFFFFF;
+
+	padding:5px;
+	background-color:#CA9100;
 }
 
-.derecha
+#seleccion_paginas a:hover
 {
-	float:right;
+	background-color:#F2D386;
 }
 

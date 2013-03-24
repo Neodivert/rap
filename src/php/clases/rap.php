@@ -38,6 +38,7 @@
 						 		  		  $GLOBALS['datos_bd']['usuario'],
 						 		  		  $GLOBALS['datos_bd']['contrasenna'],
 						 	 	  		  $GLOBALS['datos_bd']['bd'] );
+			$this->CargarUsuarios();
 		}
 
 		// Obtiene la instancia unica.

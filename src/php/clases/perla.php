@@ -1,26 +1,29 @@
 <?php
-	/* Info:
-	Clase que representa una perla de la RAP.
-	/*
-    This file is part of RAP.
+	/*** 
+	 perla.php
+	 Clase para la gestion de las perlas de la RAP.
+	 Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
+	****
+	 This file is part of RAP.
 
-    RAP is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	 RAP is free software: you can redistribute it and/or modify
+	 it under the terms of the GNU General Public License as published by
+	 the Free Software Foundation, either version 3 of the License, or
+	 (at your option) any later version.
 
-    RAP is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	 RAP is distributed in the hope that it will be useful,
+	 but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with RAP.  If not, see <http://www.gnu.org/licenses/>.
-	*/
+	 You should have received a copy of the GNU General Public License
+	 along with RAP.  If not, see <http://www.gnu.org/licenses/>.
+	***/
+
+	// TODO: librarme de esto.
 	require_once DIR_LIB . 'utilidades.php';
-	require_once DIR_CLASES . 'objeto_bd.php';
 
-	class Perla implements ObjetoBD {
+	class Perla {
 		/*** Atributos ***/
 		protected $id;
 		protected $titulo;
@@ -44,11 +47,7 @@
 		protected $num_comentarios;
 		protected $participantes;
 
-		function Perla()
-		{
-			$imagen = null;
-		}
-
+		
 		/*** Getters y Setters ***/
 		function ObtenerId(){ return $this->id; }
 		function EstablecerId( $id ){ $this->id = $id; }
@@ -137,10 +136,16 @@
 
 		/*** Otros metodos ***/
 
-		// Carga los atributos a partir de un formulario ($_POST).
+		// Constructor.
+		function Perla()
+		{
+			$imagen = null;
+		}
+
+		// Carga los atributos a partir de un formulario (array $_POST).
 		public function CargarDesdeFormulario( $form ){
 			if( isset( $form['id'] ) ){
-				$this->id = $form['id'];
+				$this->EstablecerId( $form['id'] );
 			}
 			$this->EstablecerTitulo( $form['titulo'] );
 			$this->EstablecerTexto( $form['texto'] );
@@ -157,8 +162,9 @@
 		// al usuario con id $id_usuario como subidor y ultimo modificador
 		// de la perla.
 		public function CargarDesdeRegistro( $reg, $id_usuario ){
-			$this->id = isset( $reg['id'] ) ? $reg['id'] : null;
+			$this->EstablecerId( isset( $reg['id'] ) ? $reg['id'] : null );
 
+			// TODO: Voy por aqui comentando.
 			$this->titulo = $reg['titulo'];
 			$this->texto = $reg['texto'];
 			$this->fecha = $reg['fecha'];

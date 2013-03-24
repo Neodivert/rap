@@ -1,8 +1,6 @@
 <?php
 	// Conjunto de funciones relacionadas con los usuarios.
 	require_once DIR_LIB . 'utilidades.php';
-	require_once DIR_CLASES . 'objeto_bd.php';
-
 
 	class Usuario {
    	private static $instancia;

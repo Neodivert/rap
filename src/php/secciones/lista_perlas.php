@@ -1,6 +1,6 @@
 <?php
-	//Lista de perlas. Las perlas se muestran por categorías y páginas
-	/*
+	// Lista de perlas. Las perlas se muestran por categorías y páginas
+	/***
     This file is part of RAP.
 
     RAP is free software: you can redistribute it and/or modify
@@ -15,7 +15,7 @@
 
     You should have received a copy of the GNU General Public License
     along with RAP.  If not, see <http://www.gnu.org/licenses/>.
-	*/
+	***/
 
 	// Las perlas se muestran por etiquetas.
 	$etiquetas = isset( $_GET['etiquetas'] ) ? $_GET['etiquetas'] : '';
@@ -26,6 +26,8 @@
 	// Las perlas se pueden mostrar por participantes. Participante por 
   	// defecto: 0 (cualquier participante).
 	$participante = isset( $_GET['participante'] ) ? $_GET['participante'] : 0;
+
+	require_once DIR_CLASES . 'perla.php';
 ?>
 
 <!-- TÍTULO -->

@@ -1,5 +1,6 @@
 <?php
-	//include_once 'php/funciones/perlas.php';
+	require_once DIR_CLASES . 'perla.php';
+
 	echo '<h1>TOP 10 DE PERLAS</h1>';
 
 	$perlas = $rap->ObtenerTop10Perlas();

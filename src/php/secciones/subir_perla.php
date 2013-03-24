@@ -3,8 +3,7 @@
 	//die( phpinfo() );
 	//session_start();
 
-	require_once 'php/config/rutas.php';
-	require_once DIR_CLASES . 'usuario.php';
+	require_once DIR_CLASES . 'perla.php';
 
 	$perla = new Perla;
 	// ¿El usuaruaio quiere subir una perla nueva o modificar una existente?

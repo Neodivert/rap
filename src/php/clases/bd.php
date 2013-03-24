@@ -1,32 +1,37 @@
 <?php
-	/*** Info: ***
-	Clase singlenton para el manejo de la base de datos.
-	Fuente: 
+	/*** 
+	 bd.php
+	 Clase singlenton para el manejo de la base de datos.
+	 Fuente: 
 	http://www.cristalab.com/tutoriales/crear-e-implementar-el-patron-de-diseno-singleton-en-php-c256l/
-	// TODO: Seguir el enlace para convertir la BD en una verdadera singlenton.
+	 Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
+	****
+	 This file is part of RAP.
 
-	/*** Licencia ***
-    This file is part of RAP.
+	 RAP is free software: you can redistribute it and/or modify
+	 it under the terms of the GNU General Public License as published by
+	 the Free Software Foundation, either version 3 of the License, or
+	 (at your option) any later version.
 
-    RAP is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	 RAP is distributed in the hope that it will be useful,
+	 but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 GNU General Public License for more details.
 
-    RAP is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	 You should have received a copy of the GNU General Public License
+	 along with RAP.  If not, see <http://www.gnu.org/licenses/>.
+	***/
 
-    You should have received a copy of the GNU General Public License
-    along with RAP.  If not, see <http://www.gnu.org/licenses/>.
-	*/
+	// TODO: Seguir el enlace de la fuente para terminar de convertir la BD en
+	// una verdadera singlenton.
 
+	// Datos de la conexion a la BD.
 	require_once DIR_CONFIG . 'bd.php';
 
 	class BD {
 		/*** Atributos ***/
-		// Instancia privada (patron Singlenton).
+
+		// Instancia privada (singlenton).
    	private static $instancia;
 
 		// Datos de conexion a la base de datos.
@@ -38,13 +43,12 @@
 		// Filas encontradas en la ultima busqueda.
 		private $numFilas;
 
-
 		/*** Metodos ***/
 
-		// (Patron Singlenton) Constructor privado.
+		// Constructor privado (singlenton).
    	private function __construct(){}
 
-		// (Patron Singlenton) Obtiene la instancia unica.
+		// Obtiene la instancia unica (singlenton).
    	public static function ObtenerInstancia()
 		{
       	if( !self::$instancia instanceof self ){
@@ -103,6 +107,8 @@
 
 			// Si la consulta es de tipo INSERT y fue bien, devuelve el id
 			// del objeto insertado.
+			// TODO: Cambiar para que la id se inserte en un atributo y se 
+			// devuelva 0 o un codigo de error.
 			if( (strpos($consulta, 'INSERT') !== false) && ($res == true) ){
 				$res = $bd->insert_id;
 			}
@@ -112,7 +118,7 @@
 			return $res;
 		}
 
-		// Escapa $string para evitar errores en las sentencias SQL.
+		// Escapa la string $string para evitar errores en sentencias SQL.
 		function EscaparString( $string ){
 			// Conecta a la base de datos.
 			$bd = $this->Conectar();
@@ -125,7 +131,8 @@
 			return $res;
 		}
 		
-		// Devuelve el numero de filas encontradas en la ultima consulta SELECT.
+		// Devuelve el numero de filas encontradas en la ultima consulta SELECT
+		// NOTA: Requiere que la consulta obtenga la macro SQL_CALC_FOUND_ROWS.
 		public function ObtenerNumFilasEncontradas()
 		{
 			return $this->numFilas;
