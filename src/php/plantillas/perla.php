@@ -1,10 +1,35 @@
+<?php
+	/***
+	 perla.php
+	 Plantilla que muestra al usuario la perla (objeto Perla) contenida en
+	 la variable $perla.
+	 Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
+	****
+	 This file is part of RAP.
+
+	 RAP is free software: you can redistribute it and/or modify
+	 it under the terms of the GNU General Public License as published by
+	 the Free Software Foundation, either version 3 of the License, or
+	 (at your option) any later version.
+
+	 RAP is distributed in the hope that it will be useful,
+	 but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 GNU General Public License for more details.
+
+	 You should have received a copy of the GNU General Public License
+	 along with RAP.  If not, see <http://www.gnu.org/licenses/>.
+	***/
+?>
+
 <!-- TODO: Referenciar fuentes en algun lugar -->
 <!-- http://commons.wikimedia.org/wiki/File:Gnome-edit-delete.svg -->
 
 <!-- Perla -->
 <div class="perla">
-	<!-- Titulo -->
+	<!-- Cabecera de la perla -->
 	<div class="div_cabecera_perla">
+		<!-- Titulo de la perla -->
 		<div class="izquierda">
 			<h1><?php echo $perla->ObtenerTitulo(); ?></h1>
 			<?php 
@@ -13,7 +38,9 @@
 				$t2 = strtotime( $hoy );
 				$t1 = strtotime( $perla->ObtenerFechaSubida() );
 				$minutos = ($t2 - $t1)/60;*/
-
+				
+				// Si el usuario es participante se le muestra un boton para poder
+				// modificar la perla.
 				if( $perla->EsParticipante( $usuario->ObtenerId() ) ){
 					CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post' );
 					echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla->ObtenerId()}\" />";
@@ -21,6 +48,8 @@
 					echo '</form>';
 				}
 			
+				// Si el usuario es el subidor de la perla se le muestra un boton
+				// para poder borrar la perla.
 				if( $perla->EsSubidor( $usuario->ObtenerId() ) ){
 					CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post', "Estas segur@ de querer BORRAR la perla [{$perla->ObtenerTitulo()}]?" );
 					echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla->ObtenerId()}\" />";
@@ -30,9 +59,13 @@
 			?>
 		</div>
 
+		
 		<div class="derecha">
+			<!-- Nota media de la perla -->
 			<h1 class="derecha"><?php echo "{$perla->ObtenerNota()}/10 ({$perla->ObtenerNumVotosPositivos()} votos)"; ?></h1>
-				<?php 
+
+			<!-- Formulario para puntuar la perla -->
+			<?php 
 				CrearCabeceraFormulario( 'php/controladores/perlas.php', 'post' );
 				echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla->ObtenerId()}\" />";
 			?>
@@ -66,8 +99,7 @@
 		<!-- Texto -->
 		<p><?php echo $perla->ObtenerTexto(); ?></p>
 
-		<!-- Muestra la imagen (solo perlas visuales) -->
-
+		<!-- Imagen (solo perlas visuales) -->
 		<?php if( file_exists( "media/perlas/{$perla->ObtenerId()}" ) ){
 			echo "<img src=\"media/perlas/{$perla->ObtenerId()}\" width=\"100%\" alt=\"perla visual - {$perla->ObtenerTitulo()} ({$perla->ObtenerId()})\" >";
 		} ?>
@@ -84,11 +116,6 @@
 		<?php
 			$participantes = $perla->ObtenerParticipantes();
 			foreach( $participantes as $participante ){
-				if( $participante == $_SESSION['id'] ){
-					// ¿El usuario actual tiene permisos para modificar la perla 
-					// (es participante de la misma)?
-					$modificable = true;
-				}
 				$rap->MostrarAvatar( $participante );
 			}
 		?>
@@ -106,7 +133,8 @@
 		<!-- Si el usuario actual puede modificar/borrar la perla actual se
 		le muestran los botones para hacerlo -->
 		<?php
-			/*
+			/* TODO: Los botones para modificar/borrar la perla se movieron mas
+			arriba. Mirar si se puede aprovechar algo mas de aqui 
 			$hoy = date("Y-m-d H:i:s");
 			$t2 = strtotime( $hoy );
 			$t1 = strtotime( $perla->ObtenerFechaSubida() );
@@ -134,14 +162,9 @@
 				}
 			}
 			echo '</form>'; */
-			echo "<br /><a href=\"Javascript:void(0)\" onclick=\"MostrarPerla('{$perla->ObtenerId()}')\">Comentar Perla (comentarios: {$perla->ObtenerNumComentarios()})</a>";
+			echo "<br /><a href=\"general.php?seccion=mostrar_perla&perla={$perla->ObtenerId()}\">Comentar Perla (comentarios: {$perla->ObtenerNumComentarios()})</a>";
 			echo '<br />';
-			// Formulario (select + botón) para votar la perla.
-			//GenerarFormularioVoto( $perla->ObtenerId() );
 		?>
-
-		
-
 
 	</div> <!-- Fin del cuerpo de la perla -->
 </div> <!-- Fin de la perla -->

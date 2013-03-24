@@ -1,20 +1,50 @@
 <?php
+	/***
+	 mostrar_perla.php
+	 Seccion que muestra la perla con id $_GET['perla'] y sus comentarios 
+	 asociados.
+	 Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
+	****
+	 This file is part of RAP.
+
+	 RAP is free software: you can redistribute it and/or modify
+	 it under the terms of the GNU General Public License as published by
+	 the Free Software Foundation, either version 3 of the License, or
+	 (at your option) any later version.
+
+	 RAP is distributed in the hope that it will be useful,
+	 but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 GNU General Public License for more details.
+
+	 You should have received a copy of the GNU General Public License
+	 along with RAP.  If not, see <http://www.gnu.org/licenses/>.
+	***/
+
 	// Comprueba que se ha elegido una perla para mostrar (variable GET).
+	// TODO: Rediriguir a lista_perlas y mostrar una notificacion "mala".
 	if( !isset( $_GET['perla'] ) ){
 		die( 'No se ha seleccionado una perla' );
 	}
+
+	// Se hace uso de la clase "Perla".
+	require_once 'php/config/rutas.php';
+	require_once DIR_CLASES . 'perla.php';
 ?>
 
-<!-- MUESTRA LA PERLA -->
+
+<!-- Perla -->
 <br /><br /><br /><br /><br /><br /><br /> <!-- TODO: QUITAR ESTO Y QUE EL TITULO DE LA PERLA NO SE META ENTRE EL MENU SUPERIOR Y EL BORDE DEL CONTENEDOR -->
 <?php
+	// Carga los datos de la perla desde la BD.
 	$perla = new Perla;
 	$perla->CargarDesdeBD( BD::ObtenerInstancia(), $_GET['perla'], $_SESSION['id'] );
 
+	// Muestra la perla.
 	require DIR_PLANTILLAS . 'perla.php';
 ?>
 
-<!-- MUESTRA LOS COMENTARIOS -->
+<!-- Comentarios -->
 <h1>Comentarios</h1>
 <?php
 	$comentarios = $perla->ObtenerComentariosBD( BD::ObtenerInstancia() );
@@ -44,17 +74,16 @@
 			echo '</span>';
 
 			if( $comentario->ObtenerUsuario() == $_SESSION['id'] ){
+				// Formulario para borrar el comentario actual (solo si el autor
+				// es el usuario actual).
 				CrearCabeceraFormulario( 'php/controladores/comentarios.php', 'post', 'Esta seguro/a de querer borrar este comentario?' );
-				//echo "<form action=\"general.php?seccion=mostrar_perla&perla={$perla->id}\" method=\"post\" onsubmit=\"return confirm('Esta seguro/a de querer borrar este comentario?');\" >";
 				echo "<input type=\"hidden\" name=\"comentario\" value=\"{$comentario->ObtenerId()}\" />";
 				echo "<input type=\"hidden\" name=\"perla\" value=\"{$comentario->ObtenerPerla()}\" />";
 				echo '<input type="submit" name="accion" value="Borrar comentario" />';
 				echo '</form>';
-				/*
-				CrearCabeceraFormulario( 'php/controladores/comentarios.php', 'post' );
-				echo "<input type=\"hidden\" name=\"comentario\" value=\"{$comentario->ObtenerId()}\" />";
-				echo '<input type="submit" name="accion" value="Modificar comentario" />';
-				echo '</form>';*/
+
+				// Formulario para modificar el comentario actual (solo si el autor
+				// es el usuario actual).
 				echo "<form action=\"general.php\" >";
 				echo '<input type="hidden" name="seccion" value="mostrar_perla" />';
 				echo "<input type=\"hidden\" name=\"perla\" value=\"{$comentario->ObtenerPerla()}\" />";
@@ -71,7 +100,7 @@
 	}
 ?>
 
-<!-- FORMULARIO PARA UN NUEVO COMENTARIO -->
+<!-- FORMULARIO PARA SUBIR UN NUEVO COMENTARIO -->
 <h2>Nuevo comentario</h2>
 <?php CrearCabeceraFormulario( 'php/controladores/comentarios.php', 'post' ); ?>
 	<label for="texto">Texto: </label>

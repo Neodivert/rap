@@ -1,16 +1,36 @@
 <?php
-	require_once DIR_CLASES . 'usuario.php';
+	/***
+	 lista_usuarios.php
+	 Seccion que muestra los nombres y avatares de todos los usuarios de la RAP.
+	 Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
+	****
+	 This file is part of RAP.
+
+	 RAP is free software: you can redistribute it and/or modify
+	 it under the terms of the GNU General Public License as published by
+	 the Free Software Foundation, either version 3 of the License, or
+	 (at your option) any later version.
+
+	 RAP is distributed in the hope that it will be useful,
+	 but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 GNU General Public License for more details.
+
+	 You should have received a copy of the GNU General Public License
+	 along with RAP.  If not, see <http://www.gnu.org/licenses/>.
+	***/
 ?>
 
+<!-- Titulo de la seccion -->
 <h1>Lista de Usuarios</h1>
+
+<!-- Cuerpo de la seccion -->
 <div class="galeria">
+	<?php
+		$usuarios = $rap->ObtenerUsuarios();
 
-<?php
-	$usuarios = $rap->ObtenerUsuarios();
-
-	foreach( $usuarios as $id_usuario => $usuario ){
-		$rap->MostrarAvatar( $id_usuario );
-	}
-?>
-
+		foreach( $usuarios as $id_usuario => $usuario ){
+			$rap->MostrarAvatar( $id_usuario );
+		}
+	?>
 </div>

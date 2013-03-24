@@ -1,6 +1,30 @@
-<?php	
+<?php
+	/*** 
+	 parametros.php
+	 Parametros de configuracion de la RAP.
+	 Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
+	****
+    This file is part of RAP.
+
+    RAP is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    RAP is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with RAP.  If not, see <http://www.gnu.org/licenses/>.
+	***/
+
+	// Tiempo que tarda una perla subida en publicarse (en horas).
+	// TODO: usarla.
 	define( 'TIEMPO_PUBLICACION', 24 );
 
+	// Notificaciones de acciones realizadas correctamente al usuario.
 	$notificaciones_buenas = array(
 		'OK_PERLA_BORRADA'	=> 'La perla ha sido correctamente borrada',
 		'OK_PERLA_SUBIDA' => 'La perla se ha subido correctamente',
@@ -19,6 +43,7 @@
 		'OK_NOTIFICACIONES_CAMBIADAS' => 'Las preferencias sobre las notificaciones email se han cambiado correctamente'
 	);
 
+	// Notificaciones de error posibles al usuario.
 	$notificaciones_malas = array(
 		'ERROR_VALIDANDO_EMAIL' => 'Error validando el email',
 		'ERROR_CAMBIANDO_AVATAR' => 'Error cambiando el avatar',

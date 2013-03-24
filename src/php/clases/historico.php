@@ -41,10 +41,10 @@
    	}
 
 		// Devuelve 
-		// TODO: Cambiar nombre.
+		// TODO: Cambiar nombre y comentar.
 		// TODO: ¿Separar en varios (ObtenerUltimosComentarios, 
 		// ObtenerUltimasPerlas)?
-		function ObtenerUltimasNotificaciones( $bd, $offset = 0, $n = 0 )
+		function ObtenerUltimosEventosBD( $bd, $offset = 0, $n = 0 )
 		{
 			$c1 = "SELECT SQL_CALC_FOUND_ROWS 'perla' AS tipo, id AS id_perla, id, titulo, fecha_subida, fecha_modificacion FROM perlas";
 			$c2 = "SELECT 'comentario' AS tipo, perlas.id AS id_perla, comentarios.id AS id, perlas.titulo, comentarios.fecha_subida, comentarios.fecha_modificacion FROM perlas, comentarios WHERE perlas.id = comentarios.perla";

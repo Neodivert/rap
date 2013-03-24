@@ -30,30 +30,24 @@ function ValidarLogin ()
 	return true;
 }
 
-// Valida el formulario para cambiar la contraseña de usuario y lo envía si es 
-// correcto.
-function CambiarContrasenna()
+
+// Valida el formulario para cambiar la contraseña de usuario actual.
+function ValidarCambioContrasenna()
 {
 	// Accede a los campos "contrasenna" y "repetir_contrasenna".
-	c1 = document.forms["form_perfil"]["contrasenna"];
-	c2 = document.forms["form_perfil"]["repetir_contrasenna"];
-
-	// Comprueba que el campo con la contraseña no esté vacío. 
-	if( !c1.value || c1.value == null ){
-		alert( 'Introduce una contrasenna!' );
-		return;
-	}
+	c1 = document.forms["form_cambio_contrasenna"]["contrasenna"];
+	c2 = document.forms["form_cambio_contrasenna"]["repetir_contrasenna"];
 
 	// Comprueba que los valores de los campos "contrasenna" y 
 	// "repetir_contrasenna" coincidan.
 	if( c1.value != c2.value ){
 		alert( 'Las contrasennas no coinciden, torpe!' );
-		return;
+		return false;
 	}
 
 	// Codifica la contraseña.
 	c1.value = hex_md5( c1.value );
 	
-	// Envía el formulario.
-	document.forms["form_perfil"].submit();
+	// Formulario validado.
+	return true;
 }

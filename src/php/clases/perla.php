@@ -53,7 +53,7 @@
 		function EstablecerId( $id ){ $this->id = $id; }
 
 		function ObtenerTitulo(){ return $this->titulo; }
-		function EstablecerTitulo( $titulo ){ $this->titulo = $titulo; } // TODO: He quitado un replace de '"' que usaba para escapar el titulo y poder meterlo en la BD. Comprobar que funciona bien.
+		function EstablecerTitulo( $titulo ){ $this->titulo = $titulo; }
 
 		// Las etiquetas pueden obtenerse como un array (ObtenerEtiquetas) o como
 		// una string del tipo "etiqueta1, etiqueta2, ..." (ObtenerEtiquetasStr).
@@ -139,8 +139,10 @@
 		// Constructor.
 		function Perla()
 		{
+			// TODO: ¿Solo esto? -> Inicializar todos los campos (funcion Vaciar).
 			$imagen = null;
 		}
+
 
 		// Carga los atributos a partir de un formulario (array $_POST).
 		public function CargarDesdeFormulario( $form ){
@@ -158,13 +160,11 @@
 			}
 		}
 
-		// Carga los atributos a partir del registro $reg. Tambien establece
-		// al usuario con id $id_usuario como subidor y ultimo modificador
-		// de la perla.
-		public function CargarDesdeRegistro( $reg, $id_usuario ){
+
+		// Carga los atributos a partir del registro asociativo $reg.
+		public function CargarDesdeRegistro( $reg ){
 			$this->EstablecerId( isset( $reg['id'] ) ? $reg['id'] : null );
 
-			// TODO: Voy por aqui comentando.
 			$this->titulo = $reg['titulo'];
 			$this->texto = $reg['texto'];
 			$this->fecha = $reg['fecha'];
@@ -175,41 +175,59 @@
 			$this->fecha_modificacion = $reg['fecha_modificacion'];
 		}
 
+
+		// Carga la perla con id $id_perla desde la BD $bd.
 		function CargarDesdeBD( $bd, $id_perla, $id_usuario )
 		{
+			// Carga la informacion basica (titulo, texto, subidor, etc) desde
+			// la BD.
 			$res = $bd->Consultar( "SELECT * FROM perlas WHERE id='$id_perla'" );
-			$this->CargarDesdeRegistro( $res->fetch_assoc(), $id_usuario );
+			$this->CargarDesdeRegistro( $res->fetch_assoc() );
 			
+			// Carga la informacion extra (participantes, votos, etc) desde la BD.
 			$this->CargarInfoExtraBD( $bd, $id_usuario );
 		}
 
+
+		// Carga desde la BD $bd la informacion extra sobre la perla (etiquetas,
+		// participantes, votos y nº de comentarios).
 		function CargarInfoExtraBD( $bd, $id_usuario )
 		{
 			$this->CargarEtiquetasBD( $bd );
 			$this->CargarParticipantesBD( $bd );
 			$this->CargarVotosBD( $bd, $id_usuario );
 			$this->CargarNumComentariosBD( $bd );
-			// TODO: Falta los comentarios (nº de comentarios).
 		}
 
+
+		// Devuelve true si el usuario con id $id_usuario es quien subio la
+		// perla.
 		function EsSubidor( $id_usuario ){
 			return ( $this->subidor == $id_usuario );
 		}
 
-		// Inserta la perla en la BD.
-		function InsertarBD( $bd, $id_usuario, $borrar_imagen = false ){
 
+		// Inserta la perla en la BD.
+		function InsertarBD( $bd, $id_usuario, $borrar_imagen = false )
+		{
+			// Escapa las strings que introduce el usuario.
 			$titulo = $bd->EscaparString( $this->titulo );
 			$texto = $bd->EscaparString( $this->texto );
 			$fecha = $bd->EscaparString( $this->fecha );
 
+			// Aqui se actua segun si la perla no tiene una id asignada (es nueva
+			// y por tanto se inserta en la BD por primera vez) o si tiene una id
+			// asignada (ya existe en la BD y solo tenemos que actualizarla).
 			if( $this->id == null ){
-				// La perla es nueva. Inserta la perla en la BD y obtiene su ID.
+				// Insertar perla.
 				$this->id = $bd->Consultar( "INSERT INTO perlas (titulo, texto, fecha_subida, fecha, subidor, fecha_modificacion, modificador) VALUES( '$titulo', '$texto', NOW(), '$fecha', '$id_usuario', NOW(), '$id_usuario' )" );
 			}else{
-				// La perla no es nueva. Actualiza los datos en la BD.
+				// Actualizar perla.
 				$bd->Consultar( "UPDATE perlas SET titulo='$titulo', texto='$texto', fecha='$fecha', fecha_modificacion=NOW(), modificador='{$id_usuario}' WHERE id='{$this->id}' " ) or die ($bd->error);
 				
+				// La forma de actualizar los participantes y etiquetas de una
+				// perla es a lo bruto: se borran todos los antiguos y luego se
+				// insertan los nuevos.
 				$this->BorrarParticipantesBD( $bd );
 				$this->BorrarEtiquetasBD( $bd );
 			}
@@ -224,83 +242,79 @@
 			// Inserta en la BD las etiquetas de la perla.
 			$this->InsertarEtiquetasBD( $bd );
 	
-			/*
-			if( $_FILES['imagen']['error'] != UPLOAD_ERR_NO_FILE ||
-				(
-				isset( $_POST['modificar'] )
-				&& !isset( $_POST['borrar_imagen'] )
-				&& file_exists( 'media/perlas/' . $_POST['modificar'] )
-				)
-){
-$perla['perla_visual'] = true;
-}else{
-$perla['perla_visual'] = false;
-}
-*/
-			
-			// 
+			// Inserta la imagen (si procede).
 			if( $this->imagen != null ){
 				if( $this->InsertarImagenBD() ) return -1;
 			}
-			// TODO: Notifica por email.
-			//NotificarPorEmail( 'nueva_perla', $id_perla );
-
-			// Trata de subir la imagen (sólo perlas visuales).
-			/*
-			if( $perla['perla_visual'] ){
-				try{
-					InsertarImagen( 'imagen', $id_perla );
-				}catch( Exception $e ){
-					throw $e;
-				}
-			}
-			*/
 		}
 
+		// Obtiene de la BD $bd el numero de comentarios de la perla.
 		private function CargarNumComentariosBD( $bd ){
 			$res = $bd->Consultar( "SELECT COUNT(*) as n FROM comentarios WHERE perla = {$this->id}" );
 			$reg = $res->fetch_assoc();
 			$this->num_comentarios = $reg['n'];
 		}
 
+		// Inserta en la BD $bd los participantes de la perla.
 		private function InsertarParticipantesBD( $bd ){
 			foreach( $this->participantes as $participante ){
 				$bd->Consultar( "INSERT INTO participantes (perla, usuario) VALUES ('{$this->id}', '{$participante}' )" );
 			}
 		}
 
+	
+		// Borra de la BD los participantes de la perla.
 		private function BorrarParticipantesBD( $bd ){
 			$bd->Consultar( "DELETE FROM participantes WHERE perla='{$this->id}'" );
 		}
 
 
+		// Inserta en la BD las etiquetas de la perla.
 		private function InsertarEtiquetasBD( $bd ){
 			foreach( $this->etiquetas as $etiqueta ){
+				// Inserta la etiqueta en la BD.
 				$bd->Consultar( "INSERT IGNORE INTO etiquetas (nombre) VALUES( '$etiqueta' )" );
+		
+				// Obtiene la id de la etiqueta.
 				$res = $bd->Consultar( "SELECT id FROM etiquetas WHERE nombre = '$etiqueta'" );
 				$res = $res->fetch_array();
 				$id_etiqueta = $res[0];
+
+				// Inserta la relacion (id_perla, id_etiqueta) en la BD.
 				$bd->Consultar( "INSERT INTO perlas_etiquetas (perla, etiqueta) VALUES ('{$this->id}', '{$id_etiqueta}' )" );
 			}
 		}
 
+
+		// Borra en la BD las etiquetas de la perla.
 		private function BorrarEtiquetasBD( $bd ){
+			// Borra las relaciones (perla, etiqueta).
 			$bd->Consultar( "DELETE FROM perlas_etiquetas WHERE perla='{$this->id}'" );
 
 			// Consulta auxiliar: borra todas las etiquetas que se han podido quedar sin referenciar.
 			$bd->Consultar( 'DELETE FROM etiquetas WHERE id not IN (SELECT etiqueta FROM perlas_etiquetas)' );
 		}
 		
+		
+		// Obtiene las etiquetas desde la BD y las carga en un array.
 		function CargarEtiquetasBD( $bd ){
+			// Obtiene las etiquetas desde la BD.
 			$res = $bd->Consultar( "SELECT nombre FROM etiquetas JOIN perlas_etiquetas ON perlas_etiquetas.etiqueta = etiquetas.id WHERE perlas_etiquetas.perla = {$this->id}" );
+
+			// Carga las etiquetas en un array.
 			$this->etiquetas = array();
 			while( $reg = $res->fetch_object() ){
 				$this->etiquetas[] = $reg->nombre;
 			}
 		}
 
+
+		// Obtiene los participantes desde la BD y lso carga en un array.
 		function CargarParticipantesBD( $bd ){
+			// Obtiene los participantes desde la BD.
 			$res = $bd->Consultar( "SELECT usuario FROM participantes WHERE perla = {$this->id}" );
+
+			// Carga las etiquetas en un array.
 			$this->participantes = array();
 			while( $reg = $res->fetch_object() ){
 				$this->participantes[] = $reg->usuario;
@@ -308,14 +322,22 @@ $perla['perla_visual'] = false;
 		}
 		
 
+		// Obtiene desde la BD los votos asociados a la perla.
+		// TODO: eliminar los votos negativos si al final no se implementan.
 		function CargarVotosBD( $bd, $id_usuario )
 		{
+			// Inicializaciones.
 			$this->denunciada_por_usuario = false;
 			$this->num_votos_positivos = 0;
 			$this->num_votos_negativos = 0;
 			$this->nota = 0;
 
+			// Obtiene todos los votos desde la BD.
 			$votos = $bd->Consultar( "SELECT usuario, nota FROM votos WHERE perla = {$this->id}" );
+
+			// Separa los votos en positivos y negativos y los cuenta por 
+			// separado. Los positivos los va sumando para obtener la nota
+			// acumulada. 
 			$nota_acumulada = 0;
 			while( $voto = $votos->fetch_object() ){
 				if( $voto->nota >= 0 ){
@@ -329,6 +351,7 @@ $perla['perla_visual'] = false;
 				}
 			}
 			
+			// Obtiene la nota media.
 			if( $this->num_votos_positivos > 0 ){
 				$this->nota = $nota_acumulada / $this->num_votos_positivos;
 			}else{
@@ -336,81 +359,57 @@ $perla['perla_visual'] = false;
 			}
 		}
 
-		// Actualiza en la BD la perla cuya id es '$id_perla'.
-		/*
-		function ActualizarBD( $id_perla, $borrar_imagen = false )
-		{
-			// Si con la perla se crea una nueva categoria, introduce esta en la BD.
-			// Tambien se obtiene la id de la categoria.
-			if( $perla['nueva_categoria'] != "" ){
-				$id_categoria = CrearCategoria( $perla['nueva_categoria'] );
-			}else{
-				$id_categoria = $perla['categoria'];
-			}
-
-			// Actualiza la perla en la BD.
-			$res = $bd->Consultar( "UPDATE perlas SET titulo='{$this->info['titulo']}', texto='{$this->info['texto']}', fecha='{$this->info['fecha']}', contenido_informatico='{$this->info['contenido_informatico']}', humor_negro='{$this->info['humor_negro']}', perla_visual='{$this->info['perla_visual']}', categoria='$id_categoria', fecha_modificacion=NOW(), modificador='{$this->info['subidor']}' WHERE id='{$id_perla}' " ) or die ($bd->error);
-
-			// Borra los participantes antiguos en la BD (por si se modificaron).		
-			$res = $bd->ConsultarBD( "DELETE FROM participantes WHERE perla='$id'" ) or die( $bd->error );
-
-			// Introduce los nuevos participantes en la BD.
-			InsertarParticipantes( $id_perla, $perla['participantes'] );
 		
-			// Trata de subir la imagen (sólo perlas visuales). // TODO: NO BORRAR HASTA QUE HAGA DE NUEVO LO DE LAS PERLAS VISUALES.
-			if( $_FILES['imagen']['error'] != UPLOAD_ERR_NO_FILE ){
-				try{
-					InsertarImagen( 'imagen', $id );
-				}catch( Exception $e ){
-					throw $e;
-				}
-			}else{
-				// No se subio una imagen. Esto puede indicar que la perla contenía
-				// una imagen pero el usuario quiere borrarla. Comprobamos si es así.
-				if( ($borrar_imagen == true) && file_exists( "../datos/img/perlas/" . $id ) ){
-					unlink( "../datos/img/perlas/" . $id );
-				}
-			}
-
-			$bd->close();
-		}
-		*/
-
+		// Borra de disco la imagen asociada a la perla.
 		function BorrarImagenBD()
 		{
 			unlink( "../../media/perlas/" . $this->id );
 		}
 
+
+		// Borra de la BD todos los votos asociados a la perla.
 		function BorrarVotosBD( $bd )
 		{
 			$bd->Consultar( "DELETE FROM votos WHERE perla={$this->id}" );
 		}
 
 
+		// Borra de la BD todos los comentarios asociados a la perla.
+		function BorrarComentariosBD( $bd )
+		{
+			$bd->Consultar( "DELETE FROM comentarios WHERE perla={$this->id}" );
+		}
+
+		// Borra de la BD toda la info. extra asociada a la perla (votos, 
+		// participantes, etiquetas y comentarios).
 		function BorrarInfoExtraBD( $bd )
 		{
 			$this->BorrarVotosBD( $bd );
 			$this->BorrarParticipantesBD( $bd );
 			$this->BorrarEtiquetasBD( $bd );
-
-			// TODO: Borrar comentarios.
+			$this->BorrarComentariosBD( $bd );
 		}
 
+		
+		// Borra de la BD la perla actual.
 		function BorrarBD( $bd )
 		{
+			// Si no se tiene una id no se puede borrar la perla.
 			if( !isset( $this->id ) ){ return 1; }
 
-			$this->BorrarVotosBD( $bd );
-			$this->BorrarParticipantesBD( $bd );
-			$this->BorrarEtiquetasBD( $bd );
+			// Boorra la info. extra asociada a la perla (votos, participantes,
+			// etiquetas y comentarios).
+			$this->BorrarInfoExtraBD( $bd );
 
+			// Borra la perla.
 			$bd->Consultar( "DELETE FROM perlas WHERE id={$this->id}" );
 
 			return 0;
 		}
 
 
-		// Determina si el usuario '$usuario' es participante de la perla.
+		// Devuelve true si el usuario '$usuario' es participante de la perla y
+		// false en caso contrario.
 		function EsParticipante( $usuario )
 		{
 			foreach( $this->participantes as $participante ){
@@ -420,49 +419,41 @@ $perla['perla_visual'] = false;
 		}
 
 
-		// Inserta en la BD una denuncia (voto de borrado) del usuario '$usuario'
-		// contra la perla.
-		function Denunciar( $usuario )
-		{	
-			ConsultarBD( "INSERT INTO denuncias_perlas (usuario, perla) VALUES ($usuario, {$this->info['id']})" );
-		}
-
-
-		// Borra en la BD la denuncia (voto de borrado) del usuario '$usuario' 
-		// contra la perla.
-		function CancelarDenuncia( $usuario )
-		{
-			ConsultarBD( "DELETE FROM denuncias_perlas WHERE usuario='$usuario' AND perla='{$this->info['id']}'" );
-		}
-
 		// Obtiene los participantes de la perla.
 		function ObtenerParticipantes()
 		{
-			//die( "Participantes({$this->participantes})" );
 			return $this->participantes;
 		}
 
-		// Inserta/actualiza en la BD la puntuación de la perla cuya id es $perla
-		// con la nota $nota.
+
+		// Inserta/actualiza en la BD la puntuación dada por el usuario con id 
+		// $usuario a la perla cuya id es $perla y con la nota $nota.
 		function PuntuarBD( $bd, $nota, $usuario )
 		{
 			// Al puntuar una perla se disparan unos triggers en sql que 
 			// actualizan automaticamente la tabla "logros".
 			// Fuente: http://dev.mysql.com/doc/refman/5.0/es/create-trigger.html
 
-			// Insertar o actualizar si ya existe:
-			// http://mjcarrascosa.com/insertar-o-actualizar-registros-en-mysql/
 			if( $nota == 0 ){
+				// Una nota de 0 implica borrar cualquier voto anterior del 
+				// usuario.
 				$bd->Consultar( "DELETE FROM votos WHERE perla={$this->id} AND usuario=$usuario" );
 			}else{
+				// Insertar o actualizar si ya existe:
+				// http://mjcarrascosa.com/insertar-o-actualizar-registros-en-mysql/
 				$bd->Consultar( "INSERT INTO votos (perla, usuario, nota, fecha) VALUES ({$this->id}, $usuario, $nota, NOW()) ON DUPLICATE KEY UPDATE nota=$nota, fecha=NOW()" );
 			}
 		}
 		
-
+		
+		// Obtiene y devuelve los comentarios asociados a la perla.
 		function ObtenerComentariosBD( $bd )
 		{
+			// Obtiene los comentarios desde la BD.
 			$registros = $bd->Consultar( "SELECT * from comentarios WHERE perla={$this->id} ORDER BY fecha_subida ASC" );
+
+			// Rellena un array de objetos Comentario con los comentarios 
+			// encontrados.
 			$comentarios = array();
 			$i = 0;
 			while( $registro = $registros->fetch_assoc() ){
@@ -472,20 +463,20 @@ $perla['perla_visual'] = false;
 				$i++;
 			}
 
+			// Devuelve el array resultado.
 			return $comentarios;
 		}
 
 
-		// Trata de insertar la imagen $nombre para la perla cuya id es $id_perla.
-		// Si hay algún error lanza una excepción.
+		// Carga en disco la imagen asociada a la perla.
 		function InsertarImagenBD()
 		{
 			try{
+				// Comprobaciones de formato, tamanno, etc.
 				$res = ComprobarImagen( $this->imagen );
-
 				if( $res < 0 ) return $res;
 
-				//echo getcwd() . '<br />../../media/perlas/<br/>';
+				// Mueve la imagen a la carpeta "media/perlas".
 				if( !move_uploaded_file($this->imagen["tmp_name"], "../../media/perlas/" . $this->id ) ) die( 'ERROR moviendo fichero' );
 				
 			}catch( Exception $e ){
