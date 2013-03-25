@@ -4,7 +4,7 @@
 	 Clase singlenton para el manejo del historico (cronologia de las acciones
 	 de los usuarios en la RAP).
 	 Fuente: 
-	http://www.cristalab.com/tutoriales/crear-e-implementar-el-patron-de-diseno-singleton-en-php-c256l/
+	 http://www.cristalab.com/tutoriales/crear-e-implementar-el-patron-de-diseno-singleton-en-php-c256l/
 	 Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
 	****
 	 This file is part of RAP.

@@ -3,7 +3,7 @@
 	 notificador.php
 	 Clase singlenton para la gestion de las notificaciones al email.
 	 Fuente: 
-	http://www.cristalab.com/tutoriales/crear-e-implementar-el-patron-de-diseno-singleton-en-php-c256l/
+	 http://www.cristalab.com/tutoriales/crear-e-implementar-el-patron-de-diseno-singleton-en-php-c256l/
 	 Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
 	****
 	 This file is part of RAP.

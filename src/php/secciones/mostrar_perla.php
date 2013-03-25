@@ -74,16 +74,16 @@
 			echo '</span>';
 
 			if( $comentario->ObtenerUsuario() == $_SESSION['id'] ){
-				// Formulario para borrar el comentario actual (solo si el autor
-				// es el usuario actual).
+				// Formulario para borrar el comentario actual (solo si el usuario
+				// actual es quien subio la perla).
 				CrearCabeceraFormulario( 'php/controladores/comentarios.php', 'post', 'Esta seguro/a de querer borrar este comentario?' );
 				echo "<input type=\"hidden\" name=\"comentario\" value=\"{$comentario->ObtenerId()}\" />";
 				echo "<input type=\"hidden\" name=\"perla\" value=\"{$comentario->ObtenerPerla()}\" />";
 				echo '<input type="submit" name="accion" value="Borrar comentario" />';
 				echo '</form>';
 
-				// Formulario para modificar el comentario actual (solo si el autor
-				// es el usuario actual).
+				// Formulario para modificar el comentario actual (solo si el usuario
+				// actual es quien subio la perla).
 				echo "<form action=\"general.php\" >";
 				echo '<input type="hidden" name="seccion" value="mostrar_perla" />';
 				echo "<input type=\"hidden\" name=\"perla\" value=\"{$comentario->ObtenerPerla()}\" />";

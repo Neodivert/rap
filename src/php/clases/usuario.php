@@ -2,8 +2,8 @@
 	/*** 
 	 usuario.php
 	 Clase singlenton para gestionar al usuario actual.
-	Fuente: 
-	http://www.cristalab.com/tutoriales/crear-e-implementar-el-patron-de-diseno-singleton-en-php-c256l/
+	 Fuente: 
+	 http://www.cristalab.com/tutoriales/crear-e-implementar-el-patron-de-diseno-singleton-en-php-c256l/
 	 Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
 	****
 	 This file is part of RAP.

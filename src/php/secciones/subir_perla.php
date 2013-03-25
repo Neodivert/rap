@@ -23,17 +23,19 @@
 	// Se hace uso de la clase "Perla".
 	require_once DIR_CLASES . 'perla.php';
 
-	// VOY POR AQUI COMENTANDO.
-
+	// Crea el objeto de tipo Perla que se va a rellenar. 
 	$perla = new Perla;
+
 	// ¿El usuaruaio quiere subir una perla nueva o modificar una existente?
 	if( isset( $_GET['modificar'] ) ){
-		// El usuario quiere modificar una perla existente. La variable
-		// $_GET['modificar'] contiene La id de la perla en cuestión.
+		// El usuario quiere modificar una perla existente. Cargamos dicha
+		// perla de la BD indexandola con la id guardada en $_GET['modificar'].
 		$perla->CargarDesdeBD( BD::ObtenerInstancia(), $_GET['modificar'], $_SESSION['id'] );
 	}else{
 		// El usuario va a subir una perla nueva. Rellena sus campos con
 		// los valores por defecto.
+		// TODO: Eliminar este else, y establecer los valores por defecto en
+		// el constructor de Perla ($perla = new Perla;).
 		$perla->EstablecerTitulo( '' );
 		$perla->EstablecerTexto( '' );
 		$perla->EstablecerFecha( '' );
@@ -43,8 +45,6 @@
 		$perla->EstablecerParticipantes( "{$_SESSION['id']}" );
 	}
 ?>
-
-
 
 <!-- TÍTULO -->
 <h1>Subir perla</h1>
@@ -59,7 +59,6 @@
 		}
 	?>
 
-
 	<!-- ¿Título de la perla? (campo de texto) -->
 	<h2>T&iacute;tulo:</h2>
 	<p>
@@ -71,20 +70,23 @@
 	<!-- Imagen (solo perlas visuales) -->
 	<h2>Imagen (s&oacute;lo perlas visuales)</h2>
 	<?php
+		// Si se esta modificando una perla existente que ya tiene una imagen, se
+		// le ofrece al usuario la posibilidad de borrar dicha imagen.
 		if( isset( $_GET['modificar'] ) && file_exists( "media/perlas/{$_GET['modificar']}" ) ){
 			echo "<img src=\"media/perlas/{$_GET['modificar']}\" width=\"100%\" >";
 			echo '<input type="checkbox" name="borrar_imagen" value="" />Borrar imagen<br />';
 		}
 	?>
+	<!-- Formulario para subir la imagen -->
 	<label for="imagen">Cargar imagen: </label>
 	<input type="file" name="imagen" id="imagen" />
-	<!-- <a href="Javascript:void(0)" onclick="VaciarElemento('imagen')">Resetear campo de fichero</a> -->
+	<!-- TODO: <a href="Javascript:void(0)" onclick="VaciarElemento('imagen')">Resetear campo de fichero</a> -->
 
 	<!-- ¿Texto de la perla? (textarea) --> 
 	<h2>Texto: </h2>
 	<textarea name="texto" id="texto"><?php echo $perla->ObtenerTextoPlano(); ?></textarea>
 
-	<!-- Etiquetas de la perla -->
+	<!-- Etiquetas de la perla (campo de texto) -->
 	<h2>Etiquetas: </h2>
 	<label for="etiquetas">Introduce las etiquetas separadas por comas. Por favor, usa palabras o frases simples que alguien pueda usar para buscar tu perla. Ejemplo de etiquetas: "pastelillo, g&eacute;minis, sub-woofer, napoleon":</label>
 	<?php
@@ -100,7 +102,9 @@
 
 	<!-- TODO: Meter lo del contenido informatico y el humor negro (mediante etiquetas) -->
 	
-	<!-- Conjunto de campos "checkbox" para añadir participantes a la perla -->
+	<!-- Conjunto de campos "checkbox" para añadir participantes a la perla 
+		  (no se incluye al que sube la perla, pues se annade automaticamente
+			cuando se sube la perla) -->
 	<h2>Participantes en la perla:</h2>
 	<fieldset required>
 		<?php 
@@ -109,6 +113,8 @@
 			if( !$usuarios ) die( 'Error: no se obtuvieron usuarios de la base de datos' );
 
 			if( isset( $_GET['modificar'] ) ){
+				// Se esta modificando una perla existente. Marca por defecto las
+				// casillas de los participantes actuales.
 				foreach( $usuarios as $id_usuario => $nombre_usuario ){
 					if( $id_usuario != $_SESSION['id'] ){
 						echo "<input type=\"checkbox\" name=\"participantes[]\" value=\"{$id_usuario}\" ";
@@ -119,6 +125,8 @@
 					}
 				}
 			}else{
+				// Se esta modificando una perla nueva. Muestra a todos los
+				// participantes posibles sin marcar. 
 				foreach( $usuarios as $id_usuario => $nombre_usuario ){
 					if( $id_usuario != $_SESSION['id'] ){
 						echo "<input type=\"checkbox\" name=\"participantes[]\" value=\"{$id_usuario}\" />{$nombre_usuario}<br />";
@@ -128,15 +136,6 @@
 		?>
 	</fieldset>
 
-	<!--
-	<?php
-		// Botón de "submit". Se llama a una función javascript que haga 
-		// comprobaciones sobre el formulario antes de subir el formulario.
-		echo '<input type="button" value="Subir Perla" ';
-		echo "onclick=\"SubirPerla('{$_SESSION['id']}')\" ";
-		echo '/>';
-	?> -->
-
+	<!-- Submit -->
 	<input type="submit" name="accion" value="Subir perla"/>
-	
 </form>
