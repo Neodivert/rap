@@ -1,7 +1,7 @@
 <?php
 	/***
 	 bd.php
-	 Datos de la conexion a la BD.
+	 Datos de conexion a la BD.
 	 Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
 	****
 	 This file is part of RAP.
