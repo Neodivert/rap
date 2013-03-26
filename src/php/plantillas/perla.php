@@ -62,7 +62,7 @@
 		
 		<div class="derecha">
 			<!-- Nota media de la perla -->
-			<h1 class="derecha"><?php echo "{$perla->ObtenerNota()}/10 ({$perla->ObtenerNumVotosPositivos()} votos)"; ?></h1>
+			<h1 class="derecha"><?php echo "{$perla->ObtenerNotaMedia()}/10 ({$perla->ObtenerNumVotosPositivos()} votos)"; ?></h1>
 
 			<!-- Formulario para puntuar la perla -->
 			<?php 

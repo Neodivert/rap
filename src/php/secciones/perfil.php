@@ -19,6 +19,10 @@
 	 You should have received a copy of the GNU General Public License
 	 along with RAP.  If not, see <http://www.gnu.org/licenses/>.
 	***/
+
+	// Se requiere la clase Notificador.
+	require_once 'php/config/rutas.php';
+	require_once DIR_CLASES . 'notificador.php';
 ?>
 
 <!-- TÍTULO CON NOMBRE DEL USUARIO -->
@@ -100,7 +104,7 @@
 if( $email && ($email != '') && ( !$cod_validacion_email ) ){ 
 	// El usuario dispone de un email validado, carga sus preferencias sobre
 	// notificaciones email y muestraselas en un formulario.
-	$notificador = new Notificador;
+	$notificador = Notificador::ObtenerInstancia();
 	$notificaciones = $notificador->ObtenerPreferenciasBD( BD::ObtenerInstancia(), $usuario->ObtenerId() );
 ?>
 	<form id="form_notificaciones" action="php/controladores/usuarios.php" method="post" >

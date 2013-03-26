@@ -40,7 +40,7 @@
 
 		protected $num_votos_positivos;
 		protected $num_votos_negativos;
-		protected $nota;
+		protected $nota_media;
 
 		protected $denunciada_por_usuario;
 
@@ -126,7 +126,7 @@
 		function ObtenerNumComentarios(){ return $this->num_comentarios; }
 		function EstablecerNumComentarios( $num_comentarios ){ $this->num_comentarios = $num_comentarios; }
 
-		function ObtenerNota(){ return $this->nota; }
+		function ObtenerNotaMedia(){ return number_format( $this->nota_media, 2 ); }
 		function ObtenerNumVotosPositivos(){ return $this->num_votos_positivos; }
 		function ObtenerNumVotosNegativos(){ return $this->num_votos_negativos; }
 		function DenunciadaPorUsuario(){ return $this->denunciada_por_usuario; }
@@ -330,7 +330,7 @@
 			$this->denunciada_por_usuario = false;
 			$this->num_votos_positivos = 0;
 			$this->num_votos_negativos = 0;
-			$this->nota = 0;
+			$this->nota_media = 0;
 
 			// Obtiene todos los votos desde la BD.
 			$votos = $bd->Consultar( "SELECT usuario, nota FROM votos WHERE perla = {$this->id}" );
@@ -353,9 +353,9 @@
 			
 			// Obtiene la nota media.
 			if( $this->num_votos_positivos > 0 ){
-				$this->nota = $nota_acumulada / $this->num_votos_positivos;
+				$this->nota_media = $nota_acumulada / $this->num_votos_positivos;
 			}else{
-				$this->nota = 0;
+				$this->nota_media = 0;
 			}
 		}
 

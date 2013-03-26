@@ -35,7 +35,6 @@
 
 
 <!-- Perla -->
-<br /><br /><br /><br /><br /><br /><br /> <!-- TODO: QUITAR ESTO Y QUE EL TITULO DE LA PERLA NO SE META ENTRE EL MENU SUPERIOR Y EL BORDE DEL CONTENEDOR -->
 <?php
 	// Carga los datos de la perla desde la BD.
 	$perla = new Perla;
