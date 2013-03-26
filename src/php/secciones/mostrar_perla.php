@@ -27,9 +27,10 @@
 		die( 'No se ha seleccionado una perla' );
 	}
 
-	// Se hace uso de la clase "Perla".
+	// Se hace uso de las clases "Perla" y "Comentario".
 	require_once 'php/config/rutas.php';
 	require_once DIR_CLASES . 'perla.php';
+	require_once DIR_CLASES . 'comentario.php';
 ?>
 
 
