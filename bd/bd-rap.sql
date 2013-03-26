@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 192.168.3.47
--- Tiempo de generación: 15-02-2013 a las 20:37:58
+-- Tiempo de generación: 26-03-2013 a las 02:10:39
 -- Versión del servidor: 5.1.54-log
 -- Versión de PHP: 5.3.3-7+squeeze14
 
@@ -23,27 +23,6 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `categorias`
---
-
-CREATE TABLE IF NOT EXISTS `categorias` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(100) CHARACTER SET utf8 NOT NULL,
-  `num_perlas` int(11) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `nombre` (`nombre`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=20 ;
-
---
--- Volcado de datos para la tabla `categorias`
---
-
-INSERT INTO `categorias` (`id`, `nombre`, `num_perlas`) VALUES
-(13, 'Sin categoría', 0);
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `comentarios`
 --
 
@@ -57,8 +36,7 @@ CREATE TABLE IF NOT EXISTS `comentarios` (
   PRIMARY KEY (`id`),
   KEY `perla` (`perla`,`usuario`),
   KEY `usuario` (`usuario`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
-
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=29 ;
 
 --
 -- Disparadores `comentarios`
@@ -67,7 +45,6 @@ DROP TRIGGER IF EXISTS `comentario_borrado`;
 DELIMITER //
 CREATE TRIGGER `comentario_borrado` AFTER DELETE ON `comentarios`
  FOR EACH ROW BEGIN
-    UPDATE perlas SET num_comentarios = num_comentarios - 1 WHERE perlas.id = OLD.perla;
     UPDATE logros SET num_comentarios = num_comentarios - 1 WHERE logros.usuario = OLD.usuario AND logros.mes = MONTH( OLD.fecha_subida ) AND logros.anno = YEAR( OLD.fecha_subida );
   END
 //
@@ -76,7 +53,6 @@ DROP TRIGGER IF EXISTS `nuevo_comentario`;
 DELIMITER //
 CREATE TRIGGER `nuevo_comentario` AFTER INSERT ON `comentarios`
  FOR EACH ROW BEGIN
-    UPDATE perlas SET num_comentarios = num_comentarios + 1 WHERE perlas.id = NEW.perla;
     INSERT INTO logros (usuario, mes, anno, num_comentarios) VALUES( NEW.usuario, MONTH( NEW.fecha_subida ), YEAR( NEW.fecha_subida ), 1 ) ON DUPLICATE KEY UPDATE num_comentarios = num_comentarios + 1;
   END
 //
@@ -85,15 +61,15 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `denuncias_perlas`
+-- Estructura de tabla para la tabla `etiquetas`
 --
 
-CREATE TABLE IF NOT EXISTS `denuncias_perlas` (
-  `usuario` int(11) NOT NULL,
-  `perla` int(11) NOT NULL,
-  PRIMARY KEY (`usuario`,`perla`),
-  KEY `perla` (`perla`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+CREATE TABLE IF NOT EXISTS `etiquetas` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `nombre` (`nombre`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=298 ;
 
 -- --------------------------------------------------------
 
@@ -111,7 +87,6 @@ CREATE TABLE IF NOT EXISTS `logros` (
   PRIMARY KEY (`usuario`,`mes`,`anno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-
 -- --------------------------------------------------------
 
 --
@@ -120,18 +95,12 @@ CREATE TABLE IF NOT EXISTS `logros` (
 
 CREATE TABLE IF NOT EXISTS `notificaciones_email` (
   `usuario` int(11) NOT NULL,
-  `tipo` enum('nueva_perla','nuevo_comentario','cambio_nota','nuevo_usuario') NOT NULL,
-  `frecuencia` enum('siempre','participante') NOT NULL,
-  PRIMARY KEY (`usuario`,`tipo`),
-  KEY `usuario` (`usuario`,`tipo`,`frecuencia`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Volcado de datos para la tabla `notificaciones_email`
---
-
-INSERT INTO `notificaciones_email` (`usuario`, `tipo`, `frecuencia`) VALUES
-(1, 'nueva_perla', 'siempre');
+  `nueva_perla` enum('siempre','participante','nunca') NOT NULL DEFAULT 'participante',
+  `nuevo_comentario` enum('siempre','participante','nunca') NOT NULL DEFAULT 'participante',
+  `nueva_nota` enum('siempre','participante','nunca') NOT NULL DEFAULT 'nunca',
+  `nuevo_usuario` enum('siempre','nunca') NOT NULL DEFAULT 'siempre',
+  PRIMARY KEY (`usuario`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -147,7 +116,6 @@ CREATE TABLE IF NOT EXISTS `participantes` (
   KEY `usuario` (`usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
-
 -- --------------------------------------------------------
 
 --
@@ -160,24 +128,15 @@ CREATE TABLE IF NOT EXISTS `perlas` (
   `texto` text CHARACTER SET utf8 NOT NULL,
   `fecha_subida` datetime NOT NULL,
   `fecha` varchar(50) CHARACTER SET utf8 NOT NULL,
-  `contenido_informatico` tinyint(1) NOT NULL,
-  `humor_negro` tinyint(1) NOT NULL,
-  `perla_visual` tinyint(1) NOT NULL,
-  `categoria` int(11) NOT NULL,
   `subidor` int(11) NOT NULL,
   `fecha_modificacion` datetime NOT NULL,
   `modificador` int(11) DEFAULT NULL,
-  `nota_acumulada` int(11) NOT NULL DEFAULT '0',
-  `num_votos` int(11) NOT NULL DEFAULT '0',
-  `num_comentarios` smallint(5) unsigned NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `categoria` (`categoria`,`titulo`),
-  KEY `fecha_subida` (`fecha_subida`,`categoria`),
-  KEY `categoria_2` (`categoria`),
+  UNIQUE KEY `titulo` (`titulo`),
+  KEY `fecha_subida` (`fecha_subida`),
   KEY `subidor` (`subidor`),
-  KEY `modificador` (`modificador`),
-  KEY `nota_acumulada` (`nota_acumulada`,`num_comentarios`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=157 ;
+  KEY `modificador` (`modificador`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=188 ;
 
 --
 -- Disparadores `perlas`
@@ -187,16 +146,6 @@ DELIMITER //
 CREATE TRIGGER `nueva_perla` AFTER INSERT ON `perlas`
  FOR EACH ROW BEGIN
     INSERT INTO logros (usuario, mes, anno, num_perlas) VALUES( NEW.subidor, MONTH( NEW.fecha_subida ), YEAR( NEW.fecha_subida ), 1 ) ON DUPLICATE KEY UPDATE num_perlas = num_perlas + 1;
-	 UPDATE categorias SET num_perlas = num_perlas + 1 WHERE categorias.id = NEW.categoria;
-  END
-//
-DELIMITER ;
-DROP TRIGGER IF EXISTS `perla_actualizada`;
-DELIMITER //
-CREATE TRIGGER `perla_actualizada` AFTER UPDATE ON `perlas`
- FOR EACH ROW BEGIN
-	 UPDATE categorias SET num_perlas = num_perlas - 1 WHERE categorias.id = OLD.categoria;
-	 UPDATE categorias SET num_perlas = num_perlas + 1 WHERE categorias.id = NEW.categoria;
   END
 //
 DELIMITER ;
@@ -205,10 +154,23 @@ DELIMITER //
 CREATE TRIGGER `perla_borrada` AFTER DELETE ON `perlas`
  FOR EACH ROW BEGIN
     UPDATE logros SET num_perlas = num_perlas - 1 WHERE logros.usuario = OLD.subidor AND logros.mes = MONTH( OLD.fecha_subida ) AND logros.anno = YEAR( OLD.fecha_subida );
-	 UPDATE categorias SET num_perlas = num_perlas - 1 WHERE categorias.id = OLD.categoria;
   END
 //
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `perlas_etiquetas`
+--
+
+CREATE TABLE IF NOT EXISTS `perlas_etiquetas` (
+  `perla` int(11) NOT NULL,
+  `etiqueta` int(11) NOT NULL,
+  PRIMARY KEY (`perla`,`etiqueta`),
+  KEY `perla` (`perla`),
+  KEY `etiqueta` (`etiqueta`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -227,13 +189,6 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   KEY `email` (`email`,`cod_validacion_email`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
 
---
--- Volcado de datos para la tabla `usuarios`
---
-
-INSERT INTO `usuarios` (`id`, `nombre`, `contrasenna`, `email`, `cod_validacion_email`, `fecha_registro`) VALUES
-(1, 'Neodivert', '7a0a468aed0c63530bdf7d0b9e91c554', 'neodivert@gmail.com', NULL, '2012-09-12 22:00:00');
-
 -- --------------------------------------------------------
 
 --
@@ -249,7 +204,6 @@ CREATE TABLE IF NOT EXISTS `votos` (
   KEY `usuario` (`usuario`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci;
 
-
 --
 -- Disparadores `votos`
 --
@@ -257,16 +211,7 @@ DROP TRIGGER IF EXISTS `borrar_voto`;
 DELIMITER //
 CREATE TRIGGER `borrar_voto` AFTER DELETE ON `votos`
  FOR EACH ROW BEGIN
-    UPDATE perlas SET nota_acumulada = nota_acumulada - OLD.nota, num_votos = num_votos - 1 WHERE id = OLD.perla;
     UPDATE logros SET num_perlas_calificadas = num_perlas_calificadas - 1  WHERE logros.usuario = OLD.usuario AND logros.mes = MONTH( OLD.fecha ) AND logros.anno = YEAR( OLD.fecha );
-  END
-//
-DELIMITER ;
-DROP TRIGGER IF EXISTS `cambio_voto`;
-DELIMITER //
-CREATE TRIGGER `cambio_voto` AFTER UPDATE ON `votos`
- FOR EACH ROW BEGIN
-    UPDATE perlas SET nota_acumulada = nota_acumulada + NEW.nota - OLD.nota WHERE id = NEW.perla;
   END
 //
 DELIMITER ;
@@ -274,7 +219,6 @@ DROP TRIGGER IF EXISTS `nuevo_voto`;
 DELIMITER //
 CREATE TRIGGER `nuevo_voto` AFTER INSERT ON `votos`
  FOR EACH ROW BEGIN
-    UPDATE perlas SET nota_acumulada = nota_acumulada + NEW.nota, num_votos = num_votos + 1 WHERE id = NEW.perla;
     INSERT INTO logros (usuario, mes, anno, num_perlas_calificadas) VALUES( NEW.usuario, MONTH( NEW.fecha ), YEAR( NEW.fecha ), 1 ) ON DUPLICATE KEY UPDATE num_perlas_calificadas = num_perlas_calificadas + 1;
   END
 //
@@ -288,15 +232,8 @@ DELIMITER ;
 -- Filtros para la tabla `comentarios`
 --
 ALTER TABLE `comentarios`
-  ADD CONSTRAINT `comentarios_ibfk_3` FOREIGN KEY (`perla`) REFERENCES `perlas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `comentarios_ibfk_2` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`);
-
---
--- Filtros para la tabla `denuncias_perlas`
---
-ALTER TABLE `denuncias_perlas`
-  ADD CONSTRAINT `denuncias_perlas_ibfk_3` FOREIGN KEY (`perla`) REFERENCES `perlas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `denuncias_perlas_ibfk_1` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`);
+  ADD CONSTRAINT `comentarios_ibfk_2` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`),
+  ADD CONSTRAINT `comentarios_ibfk_3` FOREIGN KEY (`perla`) REFERENCES `perlas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `logros`
@@ -314,14 +251,13 @@ ALTER TABLE `notificaciones_email`
 -- Filtros para la tabla `participantes`
 --
 ALTER TABLE `participantes`
-  ADD CONSTRAINT `participantes_ibfk_3` FOREIGN KEY (`perla`) REFERENCES `perlas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `participantes_ibfk_2` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`);
+  ADD CONSTRAINT `participantes_ibfk_2` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`),
+  ADD CONSTRAINT `participantes_ibfk_3` FOREIGN KEY (`perla`) REFERENCES `perlas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Filtros para la tabla `perlas`
 --
 ALTER TABLE `perlas`
-  ADD CONSTRAINT `perlas_ibfk_1` FOREIGN KEY (`categoria`) REFERENCES `categorias` (`id`),
   ADD CONSTRAINT `perlas_ibfk_2` FOREIGN KEY (`subidor`) REFERENCES `usuarios` (`id`),
   ADD CONSTRAINT `perlas_ibfk_3` FOREIGN KEY (`modificador`) REFERENCES `usuarios` (`id`);
 
@@ -329,8 +265,8 @@ ALTER TABLE `perlas`
 -- Filtros para la tabla `votos`
 --
 ALTER TABLE `votos`
-  ADD CONSTRAINT `votos_ibfk_3` FOREIGN KEY (`perla`) REFERENCES `perlas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `votos_ibfk_2` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`);
+  ADD CONSTRAINT `votos_ibfk_2` FOREIGN KEY (`usuario`) REFERENCES `usuarios` (`id`),
+  ADD CONSTRAINT `votos_ibfk_3` FOREIGN KEY (`perla`) REFERENCES `perlas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
