@@ -100,7 +100,11 @@
 
 		function ObtenerFecha()
 		{ 
-			return str_replace( array( '<i>', '</i>' ), '', $this->fecha );
+			if( $this->fecha != null ){
+				return str_replace( array( '<i>', '</i>' ), '', $this->fecha );
+			}else{
+				return 'no especificado';
+			}
 		}
 		function EstablecerFecha( $fecha ){ $this->fecha = $fecha; }
 
@@ -110,13 +114,23 @@
 		function ObtenerNombreSubidor(){ return $this->subidor; }
 		function EstablecerNombreSubidor( $subidor ){ $this->subidor = $subidor; }
 
-		function ObtenerFechaSubida(){ return $this->fecha_subida; }
+		function ObtenerFechaSubida()
+		{
+			// Obtiene la fecha en el formato "normal" para Espanna.
+			$fecha = new DateTime( $this->fecha_subida );
+			return date_format( $fecha, 'd-m-Y H:i:s' ); 
+		} 
 		function EstablecerFechaSubida( $fecha_subida ){ $this->fecha_subida = $fecha_subida; }
 		
 		function ObtenerModificador(){ return $this->modificador; }
 		function EstablecerModificador( $modificador ){ $this->modificador = $modificador; }
 		
-		function ObtenerFechaModificacion(){ return $this->fecha_modificacion; }
+		function ObtenerFechaModificacion()
+		{
+			// Obtiene la fecha en el formato "normal" para Espanna.
+			$fecha = new DateTime( $this->fecha_modificacion );
+			return date_format( $fecha, 'd-m-Y H:i:s' ); 
+		}
 		function EstablecerFechaModificacion( $fecha_modificacion ){ $this->fecha_modificacion = $fecha_modificacion; }
 		
 		function EstablecerParticipantes( $participantes ){

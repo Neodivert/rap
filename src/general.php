@@ -49,9 +49,8 @@
 	// y se obtienen los nombres de todos los usuarios.
 	$rap = RAP::ObtenerInstancia();
 
-	// Obtiene la unica instancia de la clase Usuario (singlenton) a partir del
-	// id del usuario actual.
-	$usuario = Usuario::ObtenerInstancia( $_SESSION['id'] );
+	// Obtiene una instancia de la clase Usuario para el id del usuario actual.
+	$usuario = new Usuario( $_SESSION['id'] );
 
 	// La seccion actual se encuentra en $_GET['seccion']. Si no hay ninguna 
 	// definida, se toma por defecto la sección 'lista_perlas'.

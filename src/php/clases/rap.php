@@ -41,7 +41,6 @@
 		// Array de la forma [id_usuario] => nombre_usuario.
 		protected $usuarios;
 
-
 		/*** Metodos ***/
 
 		// Constructor privado (singlenton).
@@ -92,7 +91,7 @@
 		// Busca en la BD las perlas que tengan la etiqueta $etiquetas y a 
 		// $participante como participante. De entre todos los resultados,
 		// devuelve $n perlas a partir de la posicion $offset.
-		function ObtenerPerlas( $id_usuario, $etiquetas = '', $participante = 0, $offset = 0, $n = 0 )
+		function ObtenerPerlas( $id_usuario, $etiquetas = '', $participante = 0, $subidor = 0, $offset = 0, $n = 0 )
 		{
 			// Comienza a construir la consulta a la BD segun el valor de los 
 			// distintos argumentos suministrados.
@@ -101,11 +100,34 @@
 			$consulta .= 'LEFT JOIN etiquetas ON perlas_etiquetas.etiqueta = etiquetas.id ';
 
 			// TODO: ¿Ampliar a busqueda por multiples etiquetas y ordenar por relevancia?.
+			// Se estan buscando perlas por etiquetas?.
 			if( $etiquetas != '' ){
 				$consulta .= "WHERE etiquetas.nombre = '$etiquetas' ";
 			}
 
-			$consulta .= ' GROUP BY perlas.id ';
+			// Se estan buscando perlas por participante?
+			/* TODO: Completar. Como meto el join?
+			if( $participante != 0 ){
+				if( $etiquetas != '' ){
+					$consulta .= 'AND ';
+				}else{
+					$consulta .= 'WHERE ';
+				}
+				$consulta .= "participante.perla = $participante ";
+			}
+			*/
+
+			// Se estan buscando perlas por subidor?
+			if( $subidor != 0 ){
+				if( $etiquetas != '' ){
+					$consulta .= 'AND ';
+				}else{
+					$consulta .= 'WHERE ';
+				}
+				$consulta .= "perlas.subidor = $subidor ";
+			}
+
+			$consulta .= 'GROUP BY perlas.id ';
 
 			$consulta .= 'ORDER BY id DESC ';
 
@@ -195,7 +217,10 @@ LIMIT 0 , 30*/
 			 }else{
 				$num = ' (' . $num . ')';
 			 }
-			 echo "<div class=\"div_avatar\"><img class=\"avatar\" width=\"100\" height=\"100\" src=\"$ruta\" alt=\"Avatar del usuario [{$this->usuarios[$id_usuario]}]\" /><br />{$this->usuarios[$id_usuario]}$num</div>";
+			 echo '<div class="div_avatar">';
+			 echo "<a href=general.php?seccion=mostrar_usuario&usuario=$id_usuario>";
+			 echo "<img class=\"avatar\" width=\"100\" height=\"100\" src=\"$ruta\" alt=\"Avatar del usuario [{$this->usuarios[$id_usuario]}]\" /><br/></a>";
+			 echo "{$this->usuarios[$id_usuario]}$num</div>";
 		}
 
 

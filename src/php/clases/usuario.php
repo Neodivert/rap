@@ -1,9 +1,7 @@
 <?php
 	/*** 
 	 usuario.php
-	 Clase singlenton para gestionar al usuario actual.
-	 Fuente: 
-	 http://www.cristalab.com/tutoriales/crear-e-implementar-el-patron-de-diseno-singleton-en-php-c256l/
+	 Clase que representa a un usuario.
 	 Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
 	****
 	 This file is part of RAP.
@@ -26,14 +24,12 @@
 
 	class Usuario {
 		/*** Atributos ***/
-
-		// Instancia privada (singlenton).
-   	private static $instancia;
-
 		protected $id;
 		protected $nombre;
 		protected $email;
 		protected $cod_validacion_email;
+		protected $fecha_registro;
+		protected $fecha_ultima_conexion;
 
 
 		/*** Getters y setters ***/
@@ -49,25 +45,31 @@
 		function ObtenerCodValidacionEmail(){ return $this->cod_validacion_email; }
 		function EstablecerCodValidacionEmail( $cod_validacion_email ){ $this->cod_validacion_email = $cod_validacion_email; }
 
+		function ObtenerFechaRegistro()
+		{
+			// Obtiene la fecha en el formato "normal" para Espanna.
+			$fecha = new DateTime( $this->fecha_registro );
+			return date_format( $fecha, 'd-m-Y H:i:s' ); 
+		}
+
+		function EstablecerFechaRegistro( $fecha_registro ){ $this->fecha_registro = $fecha_registro; }
+
+		function ObtenerFechaUltimaConexion()
+		{ 
+			// Obtiene la fecha en el formato "normal" para Espanna.
+			$fecha = new DateTime( $this->fecha_ultima_conexion );
+			return date_format( $fecha, 'd-m-Y H:i:s' ); 
+		}
+
+		function EstablecerFechaUltimaConexion( $fecha_ultima_conexion ){ $this->fecha_ultima_conexion = $fecha_ultima_conexion; }
+	
 		/*** Metodos ***/
 
-		// Constructor privado (singlenton). Carga desde la BD la informacion del 
-		// usuario con id $id.
-   	private function Usuario( $id )
+		// Constructor. Carga desde la BD la informacion del usuario con id $id.
+   	function Usuario( $id )
 		{
 			$this->CargarDesdeBD( BD::ObtenerInstancia(), $id );
 		}
-
-
-		// Obtiene la instancia unica (singlenton).
-   	public static function ObtenerInstancia( $id )
-		{
-      	if( !self::$instancia instanceof self ){
-				self::$instancia = new self( $id );
-			}
-			return self::$instancia;
-   	}
-
 
 		// Intenta logear al usuario cuyos nombre y contraseña son,
 		// respectivamente, $nombre y $contrasenna. Devuelve true en caso de
@@ -92,8 +94,9 @@
 			}
 
 			// Usuario logueado correctamente. Guarda su id en una variable de
-			// sesion y devuelve 0.
+			// sesion, actualiza su fecha de ultima conexion y devuelve 0.
 			$_SESSION['id'] = $usuario->id;
+			$bd->Consultar( "UPDATE usuarios SET fecha_ultima_conexion=NOW() WHERE id={$usuario->id}" );
 			return 0;
 		}
 
@@ -134,6 +137,9 @@
 			}else{
 				$this->EstablecerCodValidacionEmail( null );
 			}
+
+			$this->fecha_registro = $reg['fecha_registro'];
+			$this->fecha_ultima_conexion = $reg['fecha_ultima_conexion'];
 		}
 
 		
@@ -214,6 +220,52 @@
 				// El codigo de validacion no es correcto. Devuelve eror.
 				return -1;
 			}
+		}
+
+		// Devuelve una serie de estadisticas relativas al usuario.
+		function ObtenerEstadisticasBD( $bd )
+		{
+			// Cada elemento del array siguiente se refiere a una estadistica y
+			// es a su vez otro array cuyos elementos son:
+			//		- Titulo de la estadistica.
+			//		- Consulta a la BD para obtener la estadistica.
+			$consultas = array(
+				array( 
+					'N&uacute;mero de perlas que ha subido',
+					"SELECT COUNT(*) as n FROM perlas WHERE subidor={$this->id}"			
+				),
+				array( 
+					'N&uacute;mero de perlas en las que ha participado',
+					"SELECT COUNT(*) as n FROM participantes WHERE usuario={$this->id}"
+				),
+				array(
+					'N&uacute;mero de comentarios subidos',
+					"SELECT COUNT(*) as n FROM comentarios WHERE usuario={$this->id}"
+				),
+				array(
+					'N&uacute;mero de perlas votadas',
+					"SELECT COUNT(*) as n FROM votos WHERE usuario={$this->id}"
+				)
+			);
+
+			// Inicializa el array de estadisticas resultado.
+			$estadisticas = array();
+
+			// Va lanzando una a una las consultas a la BD y rellena el array
+			// resultado con pares (titulo_estadistica, resultado_estadistica).
+			$i = 0;
+			foreach( $consultas as $consulta ){
+				$res = $bd->Consultar( $consulta[1] );
+				$reg = $res->fetch_assoc();
+
+				$estadisticas[$i][0] = $consulta[0];
+				$estadisticas[$i][1] = $reg['n'];
+
+				$i++;
+			}
+
+			// Devuelve el array de estadisticas.
+			return $estadisticas;
 		}
 
 	} // Fin de la clase Usuario.

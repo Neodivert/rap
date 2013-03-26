@@ -32,6 +32,10 @@
   	// defecto: 0 (cualquier participante).
 	$participante = isset( $_GET['participante'] ) ? $_GET['participante'] : 0;
 
+	// Las perlas se pueden mostrar por subidor. Subidor por defecto: 0 
+	// (cualquiera)
+	$subidor = isset( $_GET['subidor'] ) ? $_GET['subidor'] : 0;
+
 	// Se hace uso de la clase Perla.
 	require_once DIR_CLASES . 'perla.php';
 ?>
@@ -65,8 +69,19 @@
 <?php 
 	// Si se trata de una busqueda de perlas muestra los criterios de busqueda
 	// empleados.
-	if( $etiquetas != '' ){
-		echo "<h2>Resultados de la b&uacute;squeda para la etiqueta '$etiquetas'</h2>";
+	if( $etiquetas != '' || $participante != 0 || $subidor != 0 ){
+		echo "<h2>Resultados de la b&uacute;squeda para los siguientes criterios: </h2>";
+		echo '<ul>';
+		if( $etiquetas != '' ){
+			echo "<li>Etiqueta: $etiquetas</li>";
+		}
+		if( $participante != 0 ){
+			echo "<li>Participante: {$rap->ObtenerNombreUsuario( $participante )}</li>";
+		}
+		if( $subidor != 0 ){
+			echo "<li>Participante: {$rap->ObtenerNombreUsuario( $subidor )}</li>";
+		}
+		echo '</ul>';
 	}else{
 		echo "<h2>Todas las perlas</h2>";
 	}
@@ -75,7 +90,7 @@
 	$nElementosPorPagina = 5;
 
 	// Obtiene las perlas para la pagina actual.
-	$perlas = $rap->ObtenerPerlas( $_SESSION['id'], $etiquetas, $participante, $pagina_actual*$nElementosPorPagina, $nElementosPorPagina );
+	$perlas = $rap->ObtenerPerlas( $_SESSION['id'], $etiquetas, $participante, $subidor, $pagina_actual*$nElementosPorPagina, $nElementosPorPagina );
 
 	// Obtiene el numero TOTAL de perlas encontradas (se usa para generar los
 	// enlaces a las otras paginas de la lista).

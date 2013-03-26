@@ -106,8 +106,9 @@
 
 		<!-- Subidor y fecha de subida. Ultimo modificador y fecha de modificacion. -->
 		<span class="subtexto">
-			Subida: <?php echo $perla->ObtenerFechaSubida(); ?> por <?php echo $rap->ObtenerNombreUsuario( $perla->ObtenerSubidor() ); ?><br />
-			&Uacute;ltima modificaci&oacute;n: <?php echo $perla->ObtenerFechaModificacion(); ?> por <?php echo $rap->ObtenerNombreUsuario( $perla->ObtenerModificador() ); ?><br />
+			Cu&aacute;ndo ocurri&oacute;: <?php echo $perla->ObtenerFecha(); ?><br />
+			Subida por <?php echo $rap->ObtenerNombreUsuario( $perla->ObtenerSubidor() ); ?> el <?php echo $perla->ObtenerFechaSubida(); ?><br/>
+			&Uacute;ltima modificaci&oacute;n por <?php echo $rap->ObtenerNombreUsuario( $perla->ObtenerModificador() ); ?> el <?php echo $perla->ObtenerFechaModificacion(); ?><br />
 		</span>
 
 		<!-- Participantes -->
