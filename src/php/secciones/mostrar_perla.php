@@ -59,6 +59,7 @@
 		}else{
 			echo "<div id=\"c_{$comentario->ObtenerId()}\" class=\"comentario_impar\">";
 		}
+		//$rap->MostrarAvatar( $comentario->ObtenerUsuario() );
 		if( isset( $_GET['comentario'] ) && ( $comentario->ObtenerId() == $_GET['comentario'] ) ){
 			CrearCabeceraFormulario( 'php/controladores/comentarios.php', 'post' );
 			echo "<input type=\"hidden\" name=\"id\" value=\"{$comentario->ObtenerId()}\" />";
@@ -70,12 +71,13 @@
 			echo "<p>{$comentario->ObtenerTexto()}</p>";
 			echo "<span class=\"fecha\">";
 			echo $rap->ObtenerNombreUsuario( $comentario->ObtenerUsuario() );
-			echo "<br /> subido: {$comentario->ObtenerFechaSubida()} - modificado: {$comentario->ObtenerFechaModificacion()}";
+			echo "<br />Subido: {$comentario->ObtenerFechaSubida()}<br/>";
+			echo "&Uacute;ltima modificaci&oacute;n: {$comentario->ObtenerFechaModificacion()}";
 			echo '</span>';
 
 			if( $comentario->ObtenerUsuario() == $_SESSION['id'] ){
 				// Formulario para borrar el comentario actual (solo si el usuario
-				// actual es quien subio la perla).
+				// actual es quien subio el comentario).
 				CrearCabeceraFormulario( 'php/controladores/comentarios.php', 'post', 'Esta seguro/a de querer borrar este comentario?' );
 				echo "<input type=\"hidden\" name=\"comentario\" value=\"{$comentario->ObtenerId()}\" />";
 				echo "<input type=\"hidden\" name=\"perla\" value=\"{$comentario->ObtenerPerla()}\" />";
@@ -83,7 +85,7 @@
 				echo '</form>';
 
 				// Formulario para modificar el comentario actual (solo si el usuario
-				// actual es quien subio la perla).
+				// actual es quien subio el comentario).
 				echo "<form action=\"general.php\" >";
 				echo '<input type="hidden" name="seccion" value="mostrar_perla" />';
 				echo "<input type=\"hidden\" name=\"perla\" value=\"{$comentario->ObtenerPerla()}\" />";

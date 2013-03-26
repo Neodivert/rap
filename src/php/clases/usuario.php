@@ -222,6 +222,7 @@
 			}
 		}
 
+
 		// Devuelve una serie de estadisticas relativas al usuario.
 		function ObtenerEstadisticasBD( $bd )
 		{

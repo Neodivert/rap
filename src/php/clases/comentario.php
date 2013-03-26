@@ -38,9 +38,19 @@
 		function ObtenerUsuario(){ return $this->usuario; }
 		function ObtenerTexto(){ return $this->texto; }
 		
-		function ObtenerFechaSubida(){ return $this->fecha_subida; }
-		function ObtenerFechaModificacion(){ return $this->fecha_modificacion; }
+		function ObtenerFechaSubida()
+		{
+			// Obtiene la fecha en el formato "normal" para Espanna.
+			$fecha = new DateTime( $this->fecha_subida );
+			return date_format( $fecha, 'd-m-Y H:i:s' ); 
+		}
 
+		function ObtenerFechaModificacion()
+		{
+			// Obtiene la fecha en el formato "normal" para Espanna.
+			$fecha = new DateTime( $this->fecha_modificacion );
+			return date_format( $fecha, 'd-m-Y H:i:s' ); 
+		}
 
 		/*** Resto de metodos ***/
 
