@@ -1,0 +1,103 @@
+/*** 
+ perlas.js
+ Funciones javascript relacionadas con las perlas y los comentarios.
+ Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
+****
+ This file is part of RAP.
+
+ RAP is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ RAP is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with RAP.  If not, see <http://www.gnu.org/licenses/>.
+***/
+
+/*                     Funciones relacionadas con las perlas                 */
+/*****************************************************************************/
+
+// Valida el formulario para subir/actualizar una perla. Si todo está correcto
+// envía el formulario.
+function SubirPerla( id_usuario )
+{
+	var formulario = document.forms['form_subir_perla'];
+	var string;
+	var camposTexto=['titulo_perla', 'texto_perla'];
+
+	// Comprueba que ciertos campos de texto no estén vacios
+	for( var i=0; i<camposTexto.length; i++ ){
+		string = formulario[camposTexto[i]].value;
+
+		if( string == '' || string == null ){
+			alert( 'ERROR: No has especificado - ' + camposTexto[i] );
+			return;
+		}
+	}
+
+	// Sube el formulario.
+	formulario.submit();
+}
+
+/*                   Funciones relacionadas con los comentarios              */
+/*****************************************************************************/
+
+function ModificarComentario( id, texto )
+{	
+	// Encuentra el div del comentario y límpialo.
+	var div_comentario = document.getElementById( 'c_' + id );
+	div_comentario.innerHTML = '';
+
+	// Crea un formulario.
+	var formulario = document.createElement( 'form' );
+	formulario.setAttribute( 'method', 'post' );
+
+	// Crea un textarea con el texto del comentario.
+	var campo_texto = document.createElement( 'textarea' );
+	campo_texto.setAttribute( 'name', 'texto' );
+	campo_texto.innerHTML = texto;
+
+	// Crea un campo oculto con el id del comentario.
+	var campo_oculto = document.createElement( 'input' );
+	campo_oculto.setAttribute( 'type', 'hidden' );
+	campo_oculto.setAttribute( 'name', 'comentario' );
+	campo_oculto.setAttribute( 'value', id );
+
+	// Crea un botón de submit.
+	var submit = document.createElement( 'input' );
+	submit.setAttribute( 'type', 'submit' );
+	submit.setAttribute( 'name', 'modificar_comentario' );
+	submit.setAttribute( 'value', 'Modificar comentario' );
+	
+	// Añade los campos al formulario.
+	formulario.appendChild( campo_texto );
+	formulario.appendChild( campo_oculto );
+	formulario.appendChild( submit );
+	
+	// Añade el formulario al div del comentario.
+	div_comentario.appendChild( formulario );
+}
+
+/*                Funciones para cambiar la página/sección actual            */
+/*****************************************************************************/
+
+function CambiarCategoria( categoria )
+{
+	window.location.href = 'general.php?seccion=lista_perlas&categoria=' + categoria;
+}
+
+function ModificarPerla( id_perla ){
+	window.location.href = 'general.php?seccion=subir_perla&modificar=' + id_perla;
+}
+
+function MostrarPerla( id_perla )
+{
+	window.location.href = 'general.php?seccion=mostrar_perla&perla=' + id_perla;
+}
+
+

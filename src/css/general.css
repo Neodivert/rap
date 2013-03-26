@@ -1,0 +1,206 @@
+/*** 
+ general.css
+ Estilos comunes a todas las paginas.
+ Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
+****
+ This file is part of RAP.
+
+ RAP is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ RAP is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with RAP.  If not, see <http://www.gnu.org/licenses/>.
+***/
+
+
+/*                                  Contenedores                             */
+/*****************************************************************************/
+
+body
+{
+	/* background-color:#086A87; */
+	background-color:#F4E7B8;
+}
+
+#logo_index
+{
+	display:block;
+	margin-left:auto;
+  	margin-right:auto;
+}
+
+#contenedor
+{
+	background-color:#FFFFFF;
+	width:1024px;
+
+	margin-left:auto;
+  	margin-right:auto;
+
+	border-style:solid;
+	border-width:2px;
+	border-color:black;
+}
+
+#visor
+{
+	background-color:#FFFFFF;
+
+	padding:10px;
+}
+
+
+/*                         Menú horizontal de secciones.                     */
+/*****************************************************************************/
+/* Obtenido de http://www.w3schools.com/css/css_navbar.asp */
+
+.menu
+{
+	font-size:18px;
+	display:block;
+	float:left;
+	width:30%;
+
+	list-style-type:none;
+	margin:10px;
+	padding:0px;
+
+	border-width:2px;
+	border-style:solid;
+	border-color:#000000;
+}
+
+.menu .titulo_submenu
+{
+	text-align:center;
+
+	font-weight:bold;
+	display:block;
+	background-color:#F4E7B8;
+
+	border-bottom-width:2px;
+	border-bottom-style:solid;
+	border-bottom-color:#000000;
+}
+
+.menu li
+{
+	padding-left:5px;
+	padding-right:5px;
+}
+
+.menu a
+{
+	display:block;
+	text-decoration:none;
+
+	color:#000000;
+}
+
+.menu a:hover
+{
+	background-color:#FBF8E4;
+}
+
+.titulo_seccion {
+	border-width:2px;
+	border-style:solid;
+	background-color:#F4E7B8;
+}
+
+.galeria
+{
+	overflow: hidden;
+   width: 100%;
+}
+
+.div_avatar {
+	margin-left:5px;
+	display: inline-block;
+	text-align:center;
+	float:left;
+}
+
+.avatar {
+	border-width:2px;
+	border-style:solid;
+	border-color:black;
+}
+
+fieldset {
+	margin-bottom:20px;
+}
+
+
+/*                                     Barras                                */
+/*****************************************************************************/
+
+.barra
+{
+	text-align:center;
+	padding:5px;
+}
+
+/*                           Notificaciones al usuario                       */
+/*****************************************************************************/
+
+.div_notificacion_buena
+{
+	width: 100%;
+	
+	background-color:#E6F8E0;
+
+	border-style:solid;
+	border-width:1px;
+	border-color:#0B3B0B;
+
+	text-align:center;
+	float: left;
+}
+
+.div_notificacion_mala
+{
+	width: 100%;
+	
+	background-color:#FBEFEF;
+
+	border-style:solid;
+	border-width:1px;
+	border-color:#3B0B0B;
+
+	text-align:center;
+	float: left;
+}
+
+
+/*                              Seleccion de paginas                         */
+/*****************************************************************************/
+
+#seleccion_paginas, #seleccion_paginas a
+{
+	margin-top:25px;
+	text-align:center;
+}
+
+#seleccion_paginas a
+{
+	text-decoration:none;
+	font-size:20px;
+	color:#FFFFFF;
+
+	padding:5px;
+	background-color:#CA9100;
+}
+
+#seleccion_paginas a:hover
+{
+	background-color:#F2D386;
+}
+

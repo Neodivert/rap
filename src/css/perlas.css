@@ -1,0 +1,102 @@
+/*** 
+ perlas.css
+ Estilos relacionados con las perlas.
+ Copyright (C) Moises J. Bonilla Caraballo 2012 - 2013.
+****
+ This file is part of RAP.
+
+ RAP is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ RAP is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with RAP.  If not, see <http://www.gnu.org/licenses/>.
+***/
+
+/*                                 Perlas ya subidas                         */
+/*****************************************************************************/
+
+.perla h1
+{
+	margin-bottom:5px;
+	font-size:22px;
+	color:#61380B;
+	margin-top:20px;
+}
+
+.cuerpo_perla
+{
+	border-top-style:solid;
+	border-top-width:2px;
+	border-top-color:#086A87;
+
+	border-bottom-style:solid;
+	border-bottom-width:2px;
+	border-bottom-color:#086A87;
+}
+
+.cuerpo_perla p
+{
+	font-size:16px;
+	color:#61380B;
+	text-align:justify;
+}
+
+.subtexto
+{
+	font-size:14px;
+}
+
+
+/*                Formulario de subida/actualización de perlas               */
+/*****************************************************************************/
+
+textarea, #titulo, #fecha, #etiquetas
+{
+	width:100%;
+}
+
+textarea
+{
+	resize:none;
+	height:400px;
+}
+
+input.radio
+{
+	display:inline;
+	border-style:solid;
+	border-width:2px;
+}
+
+
+/*                          Cabecera de las perlas                         */
+/***************************************************************************/
+
+.div_cabecera_perla
+{
+	overflow:hidden;
+}
+
+/*
+ Muestra el titulo y la nota de la perla en la misma fila.
+ Fuente:
+ http://css-tricks.com/left-align-and-right-align-text-on-the-same-line/
+*/
+.izquierda
+{
+	float:left;
+}
+
+.derecha
+{
+	float:right;
+}
+
+
