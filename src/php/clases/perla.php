@@ -72,12 +72,23 @@
 		function ObtenerNumVotos(){ return $this->num_votos; }
 		function EstablecerNumVotos( $num_votos ){ $this->num_votos = $num_votos; }
 
-		function ObtenerTexto(){
-			return $this->texto;
+		function ObtenerTextoFormateado(){
+			$lineas = explode( "\n", $this->texto );
+			$texto_formateado = '';
+
+			foreach( $lineas as $linea ){
+				$tokens = explode( ': ', $linea, 2 );
+				if( count( $tokens ) == 2 ){
+					$texto_formateado .= "<strong>{$tokens[0]}: </strong>{$tokens[1]}<br />";
+				}else{
+					$texto_formateado .= $linea . '<br />';
+				}
+			}
+			return $texto_formateado;
 		}
 
-		function ObtenerTextoPlano(){ 
-			return str_replace( array( '<strong>', '</strong>', '<br />' ), '', $this->texto );
+		function ObtenerTexto(){ 
+			return $this->texto;
 		}
 
 		// Texto de la perla. A éste texto se le da un formateo previo, 
@@ -85,17 +96,7 @@
 		// resaltar (poner en negrita) la parte de 'participante'.
 		function EstablecerTexto( $texto )
 		{ 	
-			$lineas = explode( "\n", $texto );
-			$this->texto = '';
-
-			foreach( $lineas as $linea ){
-				$tokens = explode( ': ', $linea, 2 );
-				if( count( $tokens ) == 2 ){
-					$this->texto .= "<strong>{$tokens[0]}: </strong>{$tokens[1]}<br />";
-				}else{
-					$this->texto .= $linea . '<br />';
-				}
-			}
+			$this->texto = $texto;
 		}
 
 		function ObtenerFecha()

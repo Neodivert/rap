@@ -97,7 +97,7 @@
 		<?php // TODO: Meter los avisos por etiquetas especiales (humor negro, spoiler, etc) ?>
 
 		<!-- Texto -->
-		<p><?php echo $perla->ObtenerTexto(); ?></p>
+		<p><?php echo $perla->ObtenerTextoFormateado(); ?></p>
 
 		<!-- Imagen (solo perlas visuales) -->
 		<?php if( file_exists( "media/perlas/{$perla->ObtenerId()}" ) ){
@@ -130,6 +130,13 @@
 				echo "<a href=\"general.php?seccion=lista_perlas&etiquetas=$etiqueta\">$etiqueta</a>, ";
 			}
 		?><br />
+
+		<!-- Formulario para borrar la perla 
+		<form action="php/controladores/perlas.php" method="post">
+			<label for="submit">¿El contenido de la perla te ofende o te ataca y no deseas que nadie la vea? Pulsa el siguiente bot&oacute;n: </label>
+			<?php echo "<input type=\"hidden\" name=\"perla\" value=\"{$perla->ObtenerId()}\" >"; ?>
+			<input type="submit" name="submit" value="Denunciar perla" />
+		</form> -->
 
 		<!-- Si el usuario actual puede modificar/borrar la perla actual se
 		le muestran los botones para hacerlo -->

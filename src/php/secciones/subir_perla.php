@@ -84,7 +84,7 @@
 
 	<!-- ¿Texto de la perla? (textarea) --> 
 	<h2>Texto: </h2>
-	<textarea name="texto" id="texto"><?php echo $perla->ObtenerTextoPlano(); ?></textarea>
+	<textarea name="texto" id="texto"><?php echo $perla->ObtenerTexto(); ?></textarea>
 
 	<!-- Etiquetas de la perla (campo de texto) -->
 	<h2>Etiquetas: </h2>
