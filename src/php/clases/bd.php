@@ -148,7 +148,7 @@
 			// TODO: NUL (ASCII 0), \n, \r, \, ', ", y Control-Z. 
 			// 
 			$string = str_replace( '"', '&quot;', $string );
-			$string = str_replace( '\'', '&#39;', $string );
+			$string = str_replace( "'", '&#39;', $string );
 
 			// Escapa la string.
 			$string = $bd->real_escape_string( $string );

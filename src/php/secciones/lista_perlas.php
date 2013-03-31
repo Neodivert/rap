@@ -38,6 +38,9 @@
 
 	// Se hace uso de la clase Perla.
 	require_once DIR_CLASES . 'perla.php';
+
+	// Obtiene acceso a la BD.
+	$bd = BD::ObtenerInstancia();
 ?>
 
 <!-- TITULO -->
@@ -62,6 +65,19 @@
 		<input list="etiquetas" name="etiquetas">
 		<input type="submit" value="Buscar perlas" />
 	</form>
+
+	<!-- Etiquetas más populaes -->
+	<div id="div_etiquetas_mas_populares">
+		<h3>Etiquetas m&aacute;s populares</h3>
+		<ol>
+		<?php
+			$etiquetas_mas_populares = $rap->ObtenerEtiquetasMasPopulares( 10 );
+			while( $etiqueta = $etiquetas_mas_populares->fetch_object() ){
+				echo "<li><a href=\"general.php?seccion=lista_perlas&etiquetas={$etiqueta->nombre}\" >{$etiqueta->nombre}</a> ({$etiqueta->n} perlas)</li>";
+			}
+		?>
+		</ol>
+	</div>
 </div>
 
 
@@ -94,7 +110,6 @@
 
 	// Obtiene el numero TOTAL de perlas encontradas (se usa para generar los
 	// enlaces a las otras paginas de la lista).
-	$bd = BD::ObtenerInstancia();
 	$nElementos = $bd->ObtenerNumFilasEncontradas();
 	
 	// Muestra cada perla.

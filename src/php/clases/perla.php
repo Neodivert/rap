@@ -228,7 +228,6 @@
 		{
 			// Escapa las strings que introduce el usuario.
 			$titulo = $bd->EscaparString( $this->titulo );
-
 			$texto = $bd->EscaparString( $this->texto );
 			$fecha = $bd->EscaparString( $this->fecha );
 
@@ -301,7 +300,7 @@
 				$id_etiqueta = $res[0];
 
 				// Inserta la relacion (id_perla, id_etiqueta) en la BD.
-				$bd->Consultar( "INSERT INTO perlas_etiquetas (perla, etiqueta) VALUES ('{$this->id}', '{$id_etiqueta}' )" );
+				$bd->Consultar( "INSERT IGNORE INTO perlas_etiquetas (perla, etiqueta) VALUES ('{$this->id}', '{$id_etiqueta}' )" );
 			}
 		}
 

@@ -75,9 +75,15 @@
 		// respectivamente, $nombre y $contrasenna. Devuelve true en caso de
 		// éxito, o finaliza la ejecución con un mensaje en caso de error.
 		public static function Loguear( $nombre, $contrasenna )
-		{	
-			// Obtiene desde la BD la informacion del usuario con nombre $nombre.
+		{		
+			// Obtiene acceso a la BD.
 			$bd = BD::ObtenerInstancia();
+
+			// Escapa las strings para evitar errores en las sentencias SQL.
+			$nombre = $bd->EscaparString( $nombre );
+		
+			// Obtiene desde la BD la informacion del usuario con nombre $nombre.
+			
 			$res = $bd->Consultar( "SELECT * from usuarios WHERE nombre='$nombre'" );
 			$usuario = $res->fetch_object();
 

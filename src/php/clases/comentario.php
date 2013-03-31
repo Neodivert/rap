@@ -73,6 +73,10 @@
 		// $usuario.
 		function InsertarBD( $bd, $usuario )
 		{
+			// Escapa las strings para evitar errores en las sentencias SQL.
+			$this->texto = $bd->EscaparString( $this->texto );
+
+			// Inserta el comentario en la BD.
 			if( $this->id == null ){ 
 				// El comentario no tiene id definida y por tanto es nuevo.
 				// Insertalo en la BD.
