@@ -65,6 +65,7 @@
 				$strEtiquetas .= $etiqueta . ', ';
 			}
 			$strEtiquetas = substr_replace($strEtiquetas ,"",-2);
+			//$strEtiquetas = str_replace( '"', '\"', $strEtiquetas );
 			return $strEtiquetas;
 		}
 		function EstablecerEtiquetas( $etiquetas ){ $this->etiquetas = $etiquetas; }
@@ -87,7 +88,7 @@
 			return $texto_formateado;
 		}
 
-		function ObtenerTexto(){ 
+		function ObtenerTexto(){
 			return $this->texto;
 		}
 
@@ -227,6 +228,7 @@
 		{
 			// Escapa las strings que introduce el usuario.
 			$titulo = $bd->EscaparString( $this->titulo );
+
 			$texto = $bd->EscaparString( $this->texto );
 			$fecha = $bd->EscaparString( $this->fecha );
 
@@ -287,6 +289,9 @@
 		// Inserta en la BD las etiquetas de la perla.
 		private function InsertarEtiquetasBD( $bd ){
 			foreach( $this->etiquetas as $etiqueta ){
+				// Escapa la etiqueta.
+				$etiqueta = $bd->EscaparString( $etiqueta );
+
 				// Inserta la etiqueta en la BD.
 				$bd->Consultar( "INSERT IGNORE INTO etiquetas (nombre) VALUES( '$etiqueta' )" );
 		

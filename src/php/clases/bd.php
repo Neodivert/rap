@@ -145,12 +145,17 @@
 			// Conecta a la base de datos.
 			$bd = $this->Conectar();
 
+			// TODO: NUL (ASCII 0), \n, \r, \, ', ", y Control-Z. 
+			// 
+			$string = str_replace( '"', '&quot;', $string );
+			$string = str_replace( '\'', '&#39;', $string );
+
 			// Escapa la string.
-			$res = $bd->real_escape_string( $string );
+			$string = $bd->real_escape_string( $string );
 
 			// Cierra la conexion y devuelve el resultado.
 			$bd->close();
-			return $res;
+			return $string;
 		}
 		
 		// Devuelve el numero de filas encontradas en la ultima consulta SELECT
