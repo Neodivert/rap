@@ -91,6 +91,10 @@
 	<label for="etiquetas">Introduce las etiquetas separadas por comas. Por favor, usa palabras o frases simples que alguien pueda usar para buscar tu perla. Ejemplo de etiquetas: "pastelillo, g&eacute;minis, sub-woofer, napoleon":</label>
 	<?php
 		echo "<input type=\"text\" name=\"etiquetas\" id=\"etiquetas\" value=\"{$perla->ObtenerEtiquetasStr()}\" required />";
+
+		// Muestra las etiquetas mas populares
+		$mostrar_etiquetas_como_enlaces = false;
+		require_once DIR_PLANTILLAS . 'mostrar_top_etiquetas.php'; 
 	?>
 
 	<!-- ¿Fecha de la perla (cuándo ocurrió)? (campo de texto) -->

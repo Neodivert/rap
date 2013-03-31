@@ -67,17 +67,10 @@
 	</form>
 
 	<!-- Etiquetas más populaes -->
-	<div id="div_etiquetas_mas_populares">
-		<h3>Etiquetas m&aacute;s populares</h3>
-		<ol>
-		<?php
-			$etiquetas_mas_populares = $rap->ObtenerEtiquetasMasPopulares( 10 );
-			while( $etiqueta = $etiquetas_mas_populares->fetch_object() ){
-				echo "<li><a href=\"general.php?seccion=lista_perlas&etiquetas={$etiqueta->nombre}\" >{$etiqueta->nombre}</a> ({$etiqueta->n} perlas)</li>";
-			}
-		?>
-		</ol>
-	</div>
+	<?php 
+		$mostrar_etiquetas_como_enlaces = true;
+		require_once DIR_PLANTILLAS . 'mostrar_top_etiquetas.php'; 
+	?>
 </div>
 
 

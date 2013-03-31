@@ -27,7 +27,7 @@
 
 	// Datos de la conexion a la BD.
 	require_once DIR_CONFIG . 'bd.php';
-	require_once DIR_EXCEPCIONES . 'excepcion_bd.php';
+	//require_once DIR_EXCEPCIONES . 'excepcion_bd.php';
 
 	class BD {
 		/*** Atributos ***/
