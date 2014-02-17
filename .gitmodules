@@ -1,0 +1,3 @@
+[submodule "install/utilities"]
+	path = install/utilities
+	url = git@github.com:Neodivert/web_install_utilities
