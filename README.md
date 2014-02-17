@@ -4,7 +4,7 @@ La RAP es una web privada donde un grupo de amigos puede subir sus "perlas" (tex
 Este repositorio contiene todo el código necesario para montar una RAP privada y extenderla si se desea.
 
 Instalación manual (en localhost y en servidor remoto)
-===
+====
 - Clonar este repositorio en local
 ```
 git clone git@github.com:Neodivert/rap <directorio>
@@ -15,14 +15,16 @@ git clone git@github.com:Neodivert/rap <directorio>
 cd <directorio>
 ```
 
+- Acceder al panel de control de phpmyadmin.
+
 - Crear una base de datos vacía e importar la estructura desde el fichero "bd/bd-rap.sql".
 
 - Crea un usuario MySQL con permisos INSERT, UPDATE, SELECT y DELETE sobre la base de datos anterior.
 
-- Desde el panel de control de phpmyadmin, crear los usuarios pertinentes (nombre + contraseña).
+- Crear uno o más usuarios en la base de datos anterior (nombre + contraseña).
 	- (*) Las contraseñas deben guardarse codificadas en MD5. las contraseñas se pueden codificar en la página siguiente: http://pajhome.org.uk/crypt/md5/
 
-- Instalación del código.
+- Abandonar el panel de control de phpmyadmin.
  
 - Copiar la carpeta "web" en el servidor web, renombrándola a gusto.
 
@@ -31,7 +33,7 @@ cd <directorio>
 - Iniciar XAMPP.
 
 Instalación automática (sólo en localhost)
-===
+====
 - Clonar este repositorio en local
 ```
 git clone git@github.com:Neodivert/rap <directorio>
