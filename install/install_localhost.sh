@@ -105,8 +105,6 @@ if [[ ! -z "`$mysql -u root --password=${MYSQL_PASSWORD} -e "SELECT 1 FROM mysql
 	exit 1
 fi
 
-exit 0
-
 
 # Step 8: Database instalation
 ###############################################################################
@@ -115,29 +113,8 @@ exit 0
 read -e -s -p "Write a password for the MySQL user [$DB_USER_NAME]: " DB_USER_PASSWORD
 echo
 
-# Create the database
-printf "Creating database [%s] ...\n" "${DB_NAME}"
-"$mysql" -u root --password="${MYSQL_PASSWORD}" -e "create database ${DB_NAME}"
-printf "Creating database [%s] ...OK\n" "${DB_NAME}"
-
-# Import the database structure from file ../bd/bd-gcs.sql.
-printf "Importing database structure from file ...\n"
-"$mysql" -u root --password="${MYSQL_PASSWORD}" "${DB_NAME}" < ../bd/bd_gcs.sql
-printf "Importing database structure from file ...OK\n"
-
-# Create the database user.
-printf "Creating mysql user [%s] ...\n" "${DB_USER_NAME}"
-"$mysql" -u root --password="${MYSQL_PASSWORD}" -e "CREATE USER '${DB_USER_NAME}'@'localhost' IDENTIFIED BY '${DB_USER_PASSWORD}';"
-printf "Creating mysql user [%s] ...OK\n" "${DB_USER_NAME}"
-
-# Allow the created user to perfom SELECT on the database.
-DB_USER_PRIVILEGES="DELETE, INSERT, SELECT, UPDATE"
-
-printf "Giving [%s] privileges to user [%s] ...\n" "${DB_USER_PRIVILEGES}" "${DB_USER_NAME}"
-$mysql -u root --password="${MYSQL_PASSWORD}" -e "GRANT ${DB_USER_PRIVILEGES} ON ${DB_NAME}.* TO '${DB_USER_NAME}'@'localhost';"
-"$mysql" -u root --password="${MYSQL_PASSWORD}" -e "FLUSH PRIVILEGES;"
-printf "Giving [%s] privileges to user [%s] ...OK\n" "${DB_USER_PRIVILEGES}" "${DB_USER_NAME}"
-
+# Create and init the database and its user.
+./utilities/src/init_database.sh "$mysql" "$MYSQL_PASSWORD" "$DB_NAME" "$DB_USER_PASSWORD" "../bd/bd-rap.sql"
 
 # Step 9: Directory instalation
 ###############################################################################
