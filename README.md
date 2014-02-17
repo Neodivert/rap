@@ -15,6 +15,8 @@ git clone git@github.com:Neodivert/rap <directorio>
 cd <directorio>
 ```
 
+- Iniciar XAMPP.
+
 - Acceder al panel de control de phpmyadmin.
 
 - Crear una base de datos vacía e importar la estructura desde el fichero "bd/bd-rap.sql".
@@ -30,7 +32,6 @@ cd <directorio>
 
 - Modificar el fichero <web>/php/config/bd.php con los datos de conexión de la base de datos y usuario anteriores.
 
-- Iniciar XAMPP.
 
 Instalación automática (sólo en localhost)
 ====
