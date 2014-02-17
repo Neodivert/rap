@@ -21,6 +21,12 @@ XAMPP_DIRECTORY=${XAMPP_DIRECTORY%/}
 # Construct the web path.
 WEB_PATH="${XAMPP_DIRECTORY}/htdocs/${WEB_NAME}"
 
+# Get mysql command's path.
+mysql="${XAMPP_DIRECTORY}/bin/mysql"
+
+# MySQL user will have the same name as the database.
+DB_USER_NAME=$DB_NAME
+
 
 # Step 2: Wait for user confirmation.
 ###############################################################################
@@ -46,20 +52,23 @@ fi
 # Step 3: Check if XAMPP is installed where the user said.
 ###############################################################################
 
-utilities/src/check_if_exist.sh "${XAMPP_DIRECTORY}/lampp"
+declare -a files=(
+	"${XAMPP_DIRECTORY}/lampp"
+	"$mysql"
+)
+
+./utilities/src/check_if_exist.sh ${files[@]}
 if [ $? -ne 0 ] ; then
 	exit 1
 fi
 
-exit 0
 
-
-# Step 4: Check if given web path isn't already in use.
+# Step 4: Check if given web path is already in use.
 ###############################################################################
 
-# Check if web path isn't already in use.
-if [ -d "${WEB_PATH}" ]; then
-	printf "ERROR: web path [%s] already in use\n" "${WEB_PATH}" 1>&2
+# Check if web path is already in use.
+utilities/src/check_if_exist.sh "${WEB_PATH}" &> /dev/null 
+if [ $? -eq 0 ] ; then
 	exit 1
 fi
 
@@ -71,14 +80,11 @@ printf "Starting MySQL ...\n"
 sudo ${XAMPP_DIRECTORY}/lampp startmysql
 printf "Starting MySQL ...OK\n"
 
-# Get mysql command's path
-mysql="${XAMPP_DIRECTORY}/bin/mysql"
-
 
 # Step 6: Ask the user for him/her administrative MySQL password.
 ###############################################################################
 # Ask the user for him/her administrative MySQL password.
-MYSQL_PASSWORD=`./install_utilities/src/get_mysql_user_password.sh "$mysql"`
+MYSQL_PASSWORD=`./utilities/src/get_mysql_user_password.sh "$mysql"`
 printf "\n"
 
 
@@ -99,12 +105,14 @@ if [[ ! -z "`$mysql -u root --password=${MYSQL_PASSWORD} -e "SELECT 1 FROM mysql
 	exit 1
 fi
 
+exit 0
+
 
 # Step 8: Database instalation
 ###############################################################################
 
 # Ask the user for a password for the database user.
-read -e -s -p "Write a password for the GCS database user: " DB_USER_PASSWORD
+read -e -s -p "Write a password for the MySQL user [$DB_USER_NAME]: " DB_USER_PASSWORD
 echo
 
 # Create the database
