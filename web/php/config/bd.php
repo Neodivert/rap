@@ -21,9 +21,9 @@
 	***/
 	
 	$datos_bd = Array(
-		'host' 			=> 'host',
-		'usuario' 		=> 'usuario',
-		'contrasenna' 		=> 'contrasenna',
-		'bd' 			=> 'bd'
+		'host' 			=> 'localhost',
+		'usuario' 		=> '~~DB_USER_NAME~~',
+		'contrasenna' 		=> '~~DB_USER_PASSWORD~~',
+		'bd' 			=> '~~DB_NAME~~'
 	);
 ?>

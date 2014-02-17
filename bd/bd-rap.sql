@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 192.168.3.47
--- Tiempo de generación: 26-03-2013 a las 02:10:39
+-- Tiempo de generación: 17-02-2014 a las 19:00:06
 -- Versión del servidor: 5.1.54-log
--- Versión de PHP: 5.3.3-7+squeeze14
+-- Versión de PHP: 5.3.3-7+squeeze15
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `comentarios` (
   PRIMARY KEY (`id`),
   KEY `perla` (`perla`,`usuario`),
   KEY `usuario` (`usuario`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=29 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=32 ;
 
 --
 -- Disparadores `comentarios`
@@ -66,10 +66,10 @@ DELIMITER ;
 
 CREATE TABLE IF NOT EXISTS `etiquetas` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(50) NOT NULL,
+  `nombre` varchar(150) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nombre` (`nombre`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=298 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1131 ;
 
 -- --------------------------------------------------------
 
@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS `perlas` (
   KEY `fecha_subida` (`fecha_subida`),
   KEY `subidor` (`subidor`),
   KEY `modificador` (`modificador`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=188 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci AUTO_INCREMENT=208 ;
 
 --
 -- Disparadores `perlas`
@@ -185,9 +185,10 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `email` varchar(32) DEFAULT NULL,
   `cod_validacion_email` varchar(32) DEFAULT NULL,
   `fecha_registro` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fecha_ultima_conexion` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   KEY `email` (`email`,`cod_validacion_email`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=17 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=18 ;
 
 -- --------------------------------------------------------
 

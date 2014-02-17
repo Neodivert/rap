@@ -125,13 +125,13 @@ sudo chown -R "$APACHE_USER" "${WEB_PATH}"
 sudo chmod -R 0755 "${WEB_PATH}"
 printf "Copying web content to [%s] ...OK\n" "${WEB_PATH}"
 
-utilities_file="${WEB_PATH}/php/utilities.php"
-printf "utilities_file: [%s]\n" "$utilities_file"
+config_file="${WEB_PATH}/php/config/bd.php"
+printf "utilities_file: [%s]\n" "$config_file"
 
 printf "Personalizing web configuration ...\n"
-sudo sed -i "s/~~DB_USER_NAME~~/'${DB_USER_NAME}'/g" "$utilities_file"
-sudo sed -i "s/~~DB_USER_PASSWORD~~/'${DB_USER_PASSWORD}'/g" "$utilities_file"
-sudo sed -i "s/~~DB_NAME~~/'${DB_NAME}'/g" "$utilities_file"
+sudo sed -i "s/~~DB_USER_NAME~~/${DB_USER_NAME}/g" "$config_file"
+sudo sed -i "s/~~DB_USER_PASSWORD~~/${DB_USER_PASSWORD}/g" "$config_file"
+sudo sed -i "s/~~DB_NAME~~/${DB_NAME}/g" "$config_file"
 printf "Personalizing web configuration ...OK\n"
 
 
