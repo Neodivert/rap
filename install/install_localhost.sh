@@ -138,5 +138,9 @@ printf "Personalizing web configuration ...OK\n"
 # Step 10: Done!
 ###############################################################################
 
+printf "Restarting XAMPP ...\n"
+sudo ${XAMPP_DIRECTORY}/lampp start
+printf "Restarting XAMPP ...OK\n"
+
 printf "\n\nInstall finished. Now you can visit \"localhost/$WEB_NAME\"\n\n"
 exit 0
