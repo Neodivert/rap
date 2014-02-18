@@ -84,13 +84,17 @@
 
 	<!-- ¿Texto de la perla? (textarea) --> 
 	<h2>Texto: </h2>
-	<textarea name="texto" id="texto"><?php echo $perla->ObtenerTextoPlano(); ?></textarea>
+	<textarea name="texto" id="texto"><?php echo $perla->ObtenerTexto(); ?></textarea>
 
 	<!-- Etiquetas de la perla (campo de texto) -->
 	<h2>Etiquetas: </h2>
 	<label for="etiquetas">Introduce las etiquetas separadas por comas. Por favor, usa palabras o frases simples que alguien pueda usar para buscar tu perla. Ejemplo de etiquetas: "pastelillo, g&eacute;minis, sub-woofer, napoleon":</label>
 	<?php
 		echo "<input type=\"text\" name=\"etiquetas\" id=\"etiquetas\" value=\"{$perla->ObtenerEtiquetasStr()}\" required />";
+
+		// Muestra las etiquetas mas populares
+		$mostrar_etiquetas_como_enlaces = false;
+		require_once DIR_PLANTILLAS . 'mostrar_top_etiquetas.php'; 
 	?>
 
 	<!-- ¿Fecha de la perla (cuándo ocurrió)? (campo de texto) -->

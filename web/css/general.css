@@ -56,6 +56,21 @@ body
 	padding:10px;
 }
 
+#div_etiquetas_mas_populares
+{
+	/* 
+		Ancho igual al ancho del contenido.
+		Fuente:
+		http://stackoverflow.com/questions/450903/make-css-div-width-equal-to-contents
+	*/
+	display:-moz-inline-stack;
+	display:inline-block;
+	zoom:1;
+	*display:inline;
+
+	text-align:left;
+}
+
 
 /*                         Menú horizontal de secciones.                     */
 /*****************************************************************************/

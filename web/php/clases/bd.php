@@ -27,6 +27,7 @@
 
 	// Datos de la conexion a la BD.
 	require_once DIR_CONFIG . 'bd.php';
+	//require_once DIR_EXCEPCIONES . 'excepcion_bd.php';
 
 	class BD {
 		/*** Atributos ***/
@@ -45,10 +46,17 @@
 
 		/*** Metodos ***/
 
-		// Constructor privado (singlenton).
+
+		/***
+		* Constuctor privado (singlenton).
+		***/
    	private function __construct(){}
 
-		// Obtiene la instancia unica (singlenton).
+
+		/***
+		* Obtiene la unica instancia de la clase (singlenton).
+		* Valor devuelto: Instancia de la clase actual.
+		***/
    	public static function ObtenerInstancia()
 		{
       	if( !self::$instancia instanceof self ){
@@ -57,7 +65,10 @@
 			return self::$instancia;
    	}
 
-		// Establece los datos de conexion a la BD.
+
+		/***
+		* Establece los datos de conexion a la BD.
+		***/
 		public function Configurar( $host, $usuario, $contrasenna, $bd )
 		{
 			$this->host = $host;
@@ -66,35 +77,46 @@
 			$this->bd = $bd;
 		}
 
-		// Conecta a la BD, establece la codificacion y devuelve el objeto de la 
-		// conexion (mysqli).
+
+		/***
+		* Conecta a la BD y establece el conjunto de caracteres utf-8.
+		* Valor devuelto: Objeto mysqli con la conexion abierta. 
+		* Posibles excepciones: RuntimeException.
+		***/
 		public function Conectar()
 		{
-			// Intenta conectar a la BD. En caso de error se muestra el mismo.
+			// Intenta conectar a la BD. En caso de error se lanza una excepcion.
 			$bd = new mysqli( $this->host, $this->usuario, $this->contrasenna, 
 									$this->bd );
 			if( $bd->connect_errno ){
-				die( "Error conectando a BD (".$bd->connect_errno.") - ".$bd->connect_error );
+				throw new RuntimeException( $bd->connect_error );
 			}
 
 			// Se establece la codificacion de la BD.
 			if( !$bd->set_charset( 'utf8' ) ){
-				die( $bd->error );
+				throw new RuntimeException( $bd->error );
 			}
 
 			// Devuelve el objeto de la conexion (mysqli).
 			return $bd;
 		}
 
-		// Lanza la consulta '$consulta' a la BD.
+		
+		/***
+		* Lanza la consulta $consulta a la BD.
+		* TODO: Completar.
+		***/
 		public function Consultar( $consulta )
 		{
 			// Conecta a la BD.
 			$bd = $this->Conectar();
 
 			// Lanza la consulta a la BD.
-			$res = $bd->query( $consulta ) 
-				or die( "Error con consulta [$consulta]: {$bd->error}" );
+			$res = $bd->query( $consulta );
+
+			if( !$res ){
+				throw new RuntimeException( "Error con consulta [$consulta]: {$bd->error}" );
+			}
 
 			// Si la consulta contenia la macro SQL_CALC_FOUND_ROWS, guarda en
 			// el atributo numFilas el numero de filas encontradas.
@@ -123,12 +145,17 @@
 			// Conecta a la base de datos.
 			$bd = $this->Conectar();
 
+			// TODO: NUL (ASCII 0), \n, \r, \, ', ", y Control-Z. 
+			// 
+			$string = str_replace( '"', '&quot;', $string );
+			$string = str_replace( "'", '&#39;', $string );
+
 			// Escapa la string.
-			$res = $bd->real_escape_string( $string );
+			$string = $bd->real_escape_string( $string );
 
 			// Cierra la conexion y devuelve el resultado.
 			$bd->close();
-			return $res;
+			return $string;
 		}
 		
 		// Devuelve el numero de filas encontradas en la ultima consulta SELECT

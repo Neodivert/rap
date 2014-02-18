@@ -102,6 +102,9 @@
 			// TODO: ¿Ampliar a busqueda por multiples etiquetas y ordenar por relevancia?.
 			// Se estan buscando perlas por etiquetas?.
 			if( $etiquetas != '' ){
+				// Escapa las strings para evitar errores en las sentencias SQL.
+				$etiquetas = $this->bd->EscaparString( $etiquetas );
+
 				$consulta .= "WHERE etiquetas.nombre = '$etiquetas' ";
 			}
 
@@ -157,8 +160,14 @@
 	
 		// Obtiene las etiquetas mas populares (las que tienen un mayor numero de
 		// perlas que las referencian).
-		function ObtenerEtiquetasMasPopulares()
+		function ObtenerEtiquetasMasPopulares( $n = 10 )
 		{
+			$consulta =  'SELECT nombre, COUNT(*) as n FROM etiquetas ';
+			$consulta .= 'JOIN perlas_etiquetas ON etiquetas.id = perlas_etiquetas.etiqueta ';
+			$consulta .= "GROUP BY perlas_etiquetas.etiqueta ORDER BY n DESC LIMIT $n";
+
+			return $this->bd->Consultar( $consulta );
+
 			// TODO: Completar.
 			// SELECT nombre, COUNT(*) AS n FROM etiquetas JOIN perlas_etiquetas ON etiquetas.id = perlas_etiquetas.etiqueta GROUP BY id ORDER BY n DESC, nombre ASC;
 
