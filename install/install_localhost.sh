@@ -132,6 +132,7 @@ printf "Personalizing web configuration ...\n"
 sudo sed -i "s/~~DB_USER_NAME~~/${DB_USER_NAME}/g" "$config_file"
 sudo sed -i "s/~~DB_USER_PASSWORD~~/${DB_USER_PASSWORD}/g" "$config_file"
 sudo sed -i "s/~~DB_NAME~~/${DB_NAME}/g" "$config_file"
+sudo sed -i "s/~~WEB_NAME~~/${WEB_NAME}/g" "${WEB_PATH}/php/config/rutas.php"
 printf "Personalizing web configuration ...OK\n"
 
 

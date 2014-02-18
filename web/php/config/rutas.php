@@ -20,7 +20,7 @@
     along with RAP.  If not, see <http://www.gnu.org/licenses/>.
 	***/
 
-	define("DIR_WEB", $_SERVER['DOCUMENT_ROOT'] . '/rap/' ); 
+	define("DIR_WEB", $_SERVER['DOCUMENT_ROOT'] . '/~~WEB_NAME~~/' ); 
 	define("DIR_CONFIG", DIR_WEB . 'php/config/' );
 	define("DIR_CONTROLADORES", DIR_WEB . 'php/controladores/' );
 	define("DIR_LIB", DIR_WEB . 'php/lib/' );
