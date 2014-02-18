@@ -32,6 +32,8 @@ cd <directorio>
 
 - Modificar el fichero <web>/php/config/bd.php con los datos de conexión de la base de datos y usuario anteriores.
 
+- Modificar la variable "DIR_WEB" el fichero <web>/php/config/rutas.php para que apunte al directorio donde se aloja la RAP.
+
 
 Instalación automática (sólo en localhost)
 ====
