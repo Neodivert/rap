@@ -1,10 +1,11 @@
-RAP - Real Academia de las Perlas
-===
+# RAP - Real Academia de las Perlas
+
 La RAP es una web privada donde un grupo de amigos puede subir sus "perlas" (textos o imágenes): frases célebres, conversaciones legendarias, situaciones surrealistas... .
 Este repositorio contiene todo el código necesario para montar una RAP privada y extenderla si se desea.
 
-Instalación manual (en localhost y en servidor remoto)
-====
+
+## Instalación manual (en localhost y en servidor remoto)
+
 - Clonar este repositorio en local
 ```
 git clone git@github.com:Neodivert/rap <directorio>
@@ -35,8 +36,8 @@ cd <directorio>
 - Modificar la variable "DIR_WEB" el fichero <web>/php/config/rutas.php para que apunte al directorio donde se aloja la RAP.
 
 
-Instalación automática (sólo en localhost)
-====
+## Instalación automática (sólo en localhost)
+
 - Clonar este repositorio en local
 ```
 git clone git@github.com:Neodivert/rap <directorio>
@@ -52,6 +53,6 @@ cd <directorio>/install
 sudo ./install_localhost.sh
 ```
 
-Notas
-===
+## Notas
+
 - Si se trabaja en local, al intentar acceder a "localhost/phpmyadmin" puede surgir un mensaje de error del tipo "Acceso prohibido! XAMPP nuevo concepto de seguridad: [...]". Este "error" lo solucioné en mi caso siguiendo las indicaciones del siguiente enlace: http://stackoverflow.com/questions/11630412/phpmyadmin-xampp-error
