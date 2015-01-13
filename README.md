@@ -3,6 +3,9 @@
 La RAP es una web privada donde un grupo de amigos puede subir sus "perlas" (textos o imágenes): frases célebres, conversaciones legendarias, situaciones surrealistas... .
 Este repositorio contiene todo el código necesario para montar una RAP privada y extenderla si se desea.
 
+## Estado actual
+
+La RAP es un proyecto **inactivo y potencialmente inseguro para su uso en producción**. El proyecto puede construirse desde código y obtener un sitio web funcional, pero se desarrolló como un proyecto didáctico y no cuenta con garantías de seguridad para su uso público.
 
 ## Instalación manual (en localhost y en servidor remoto)
 
