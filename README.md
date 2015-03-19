@@ -38,29 +38,24 @@ La RAP es un proyecto **inactivo y potencialmente inseguro para su uso en produc
 
 #### a) Instalación manual (en localhost -testeado en Ubuntu 14.04- y en servidor remoto)
 
-1. Iniciar XAMPP.
+1. Abrir un navegador y acceder al panel de control de phpmyadmin (http://*host*/phpmyadmin).
 
-2. Acceder al panel de control de phpmyadmin (http://*host*/phpmyadmin).
+2. Crear una base de datos e importar la estructura desde el fichero "bd/bd-rap.sql".
 
-3. Crear una base de datos e importar la estructura desde el fichero "bd/bd-rap.sql".
+3. Crea un usuario MySQL con permisos INSERT, UPDATE, SELECT y DELETE sobre la base de datos anterior.
 
-4. Crea un usuario MySQL con permisos INSERT, UPDATE, SELECT y DELETE sobre la base de datos anterior.
-
-5. Crear uno o más usuarios en la base de datos anterior (nombre + contraseña).
-	- (*) Las contraseñas deben guardarse codificadas en MD5. las contraseñas se pueden codificar en la página siguiente: http://pajhome.org.uk/crypt/md5/
-
-6. Abandonar el panel de control de phpmyadmin.
+4. Abandonar el panel de control de phpmyadmin.
  
-7. Copiar la carpeta "web" en el servidor web, renombrándola a gusto. En los siguientes pasos nos referiremos a la nueva ruta como *web*.
+5. Copiar la carpeta "web" en el servidor web, renombrándola a gusto. En los siguientes pasos nos referiremos a la nueva ruta como *web*.
 
-8. Cambiar el propietario de *web*.
+6. Cambiar el propietario de *web*.
  ```
  sudo chown -R daemon:daemon /opt/lampp/htdocs/rap/ 
  ```
 
-9. Modificar el fichero *web*/php/config/bd.php con los datos de conexión de la base de datos y usuario anteriores.
+7. Modificar el fichero *web*/php/config/bd.php con los datos de conexión de la base de datos y usuario anteriores.
 
-10. Modificar la variable "DIR_WEB" el fichero *web*/php/config/rutas.php para que apunte al directorio donde se aloja la RAP.
+8. Modificar la variable "DIR_WEB" el fichero *web*/php/config/rutas.php para que apunte al directorio donde se aloja la RAP.
 
 
 #### b) Instalación automática (sólo en localhost)
@@ -74,6 +69,19 @@ La RAP es un proyecto **inactivo y potencialmente inseguro para su uso en produc
  ```
  sudo ./install_localhost.sh
  ```
+
+### Creación de usuarios
+
+Lamentablemente, el proyecto RAP no cuenta con un panel de administración
+desde el que registrar a nuevos usuarios (al ser una web privada, quité que los
+usuarios pudieran registrarse ellos mismos). Por lo tanto, la creación de 
+usuarios debe realizarse desde el panel de administración phpmyadmin.
+
+1. Abrir un navegador y acceder al panel de control de phpmyadmin (http://*host*/phpmyadmin).
+
+2. Crear uno o más usuarios en la base de datos anterior (nombre + contraseña (*) ).
+	- (*) Las contraseñas deben guardarse codificadas en MD5. las contraseñas se pueden codificar en la página siguiente: http://pajhome.org.uk/crypt/md5/
+
 
 ## Notas
 
