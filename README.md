@@ -1,5 +1,7 @@
 # RAP - Real Academia de las Perlas
 
+![RAP screenshot](img/rap.png "RAP screenshot")
+
 La RAP es una web privada donde un grupo de amigos puede subir sus "perlas" (textos o imágenes): frases célebres, conversaciones legendarias, situaciones surrealistas... .
 Este repositorio contiene todo el código necesario para montar una RAP privada y extenderla si se desea.
 
