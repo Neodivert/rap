@@ -23,7 +23,7 @@ La RAP es un proyecto **inactivo y potencialmente inseguro para su uso en produc
 
 4. Iniciar XAMPP.
 
-5. Acceder al panel de control de phpmyadmin (http://<host>/phpmyadmin).
+5. Acceder al panel de control de phpmyadmin (http://*host*/phpmyadmin).
 
 6. Crear una base de datos e importar la estructura desde el fichero "bd/bd-rap.sql".
 
@@ -34,16 +34,16 @@ La RAP es un proyecto **inactivo y potencialmente inseguro para su uso en produc
 
 9. Abandonar el panel de control de phpmyadmin.
  
-10. Copiar la carpeta "web" en el servidor web, renombrándola a gusto. En los siguientes pasos nos referiremos a la nueva ruta como <web>.
+10. Copiar la carpeta "web" en el servidor web, renombrándola a gusto. En los siguientes pasos nos referiremos a la nueva ruta como *web*.
 
-11. Cambiar el propietario de <web>.
+11. Cambiar el propietario de *web*.
  ```
  sudo chown -R daemon:daemon /opt/lampp/htdocs/rap/ 
  ```
 
-12. Modificar el fichero <web>/php/config/bd.php con los datos de conexión de la base de datos y usuario anteriores.
+12. Modificar el fichero *web*/php/config/bd.php con los datos de conexión de la base de datos y usuario anteriores.
 
-13. Modificar la variable "DIR_WEB" el fichero <web>/php/config/rutas.php para que apunte al directorio donde se aloja la RAP.
+13. Modificar la variable "DIR_WEB" el fichero *web*/php/config/rutas.php para que apunte al directorio donde se aloja la RAP.
 
 
 ## Instalación automática (sólo en localhost)
