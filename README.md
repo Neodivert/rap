@@ -9,52 +9,59 @@ La RAP es un proyecto **inactivo y potencialmente inseguro para su uso en produc
 
 ## Instalación manual (en localhost y en servidor remoto)
 
-- Clonar este repositorio en local
-```
-git clone git@github.com:Neodivert/rap <directorio>
-```
+1. Instalar XAMPP
 
-- Acceder al directorio recién instalado.
-```
-cd <directorio>
-```
+2. Clonar este repositorio en local
+ ```
+ git clone git@github.com:moisesjbc/rap
+ ```
 
-- Iniciar XAMPP.
+3. Acceder al directorio recién instalado.
+ ```
+ cd rap
+ ```
 
-- Acceder al panel de control de phpmyadmin.
+4. Iniciar XAMPP.
 
-- Crear una base de datos vacía e importar la estructura desde el fichero "bd/bd-rap.sql".
+5. Acceder al panel de control de phpmyadmin (http://<host>/phpmyadmin).
 
-- Crea un usuario MySQL con permisos INSERT, UPDATE, SELECT y DELETE sobre la base de datos anterior.
+6. Crear una base de datos e importar la estructura desde el fichero "bd/bd-rap.sql".
 
-- Crear uno o más usuarios en la base de datos anterior (nombre + contraseña).
+7. Crea un usuario MySQL con permisos INSERT, UPDATE, SELECT y DELETE sobre la base de datos anterior.
+
+8. Crear uno o más usuarios en la base de datos anterior (nombre + contraseña).
 	- (*) Las contraseñas deben guardarse codificadas en MD5. las contraseñas se pueden codificar en la página siguiente: http://pajhome.org.uk/crypt/md5/
 
-- Abandonar el panel de control de phpmyadmin.
+9. Abandonar el panel de control de phpmyadmin.
  
-- Copiar la carpeta "web" en el servidor web, renombrándola a gusto.
+10. Copiar la carpeta "web" en el servidor web, renombrándola a gusto. En los siguientes pasos nos referiremos a la nueva ruta como <web>.
 
-- Modificar el fichero <web>/php/config/bd.php con los datos de conexión de la base de datos y usuario anteriores.
+11. Cambiar el propietario de <web>.
+ ```
+ sudo chown -R daemon:daemon /opt/lampp/htdocs/rap/ 
+ ```
 
-- Modificar la variable "DIR_WEB" el fichero <web>/php/config/rutas.php para que apunte al directorio donde se aloja la RAP.
+12. Modificar el fichero <web>/php/config/bd.php con los datos de conexión de la base de datos y usuario anteriores.
+
+13. Modificar la variable "DIR_WEB" el fichero <web>/php/config/rutas.php para que apunte al directorio donde se aloja la RAP.
 
 
 ## Instalación automática (sólo en localhost)
 
-- Clonar este repositorio en local
-```
-git clone git@github.com:Neodivert/rap <directorio>
-```
+1. Clonar este repositorio en local
+ ```
+ git clone git@github.com:moisesjbc/rap
+ ```
 
-- Acceder al directorio de instalación.
-```
-cd <directorio>/install
-```
+2. Acceder al directorio de instalación.
+ ```
+ cd rap/install
+ ```
 
-- Ejecutar el script de instalación y seguir instrucciones.
-```
-sudo ./install_localhost.sh
-```
+3. Ejecutar el script de instalación y seguir instrucciones.
+ ```
+ sudo ./install_localhost.sh
+ ```
 
 ## Notas
 
